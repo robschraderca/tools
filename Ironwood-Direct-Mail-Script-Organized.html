@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ironwood Direct Mail — Main Script</title>
+<style>
+  :root {
+    --navy: #1B3A5C;
+    --accent: #2E75B6;
+    --accent-light: #E8F0F8;
+    --border: #B0C4DE;
+    --crm-bg: #FFF8E1;
+    --crm-border: #F0C040;
+    --important-bg: #FDECEC;
+    --important-border: #C0392B;
+    --reminder-bg: #F0F7EE;
+    --reminder-border: #5B9A4A;
+    --text: #333;
+    --muted: #666;
+    --bg: #f8f9fa;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+  /* Sidebar Nav */
+  .sidebar {
+    position: fixed; top: 0; left: 0; width: 280px; height: 100vh;
+    background: var(--navy); color: #fff; padding: 20px 0;
+    overflow-y: auto; z-index: 100;
+  }
+  .sidebar h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; padding: 0 20px 15px; color: rgba(255,255,255,0.5); border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; }
+  .sidebar a {
+    display: block; padding: 10px 20px; color: rgba(255,255,255,0.8);
+    text-decoration: none; font-size: 14px; transition: all 0.2s;
+    border-left: 3px solid transparent;
+  }
+  .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.1); color: #fff; border-left-color: var(--accent); }
+  .sidebar .sub { padding-left: 36px; font-size: 13px; color: rgba(255,255,255,0.5); }
+  .sidebar .sub:hover { color: rgba(255,255,255,0.8); }
+
+  /* Main Content */
+  .main { margin-left: 280px; max-width: 820px; padding: 30px 40px 60px; }
+
+  /* Title Block */
+  .title-block { text-align: center; padding: 30px 0 25px; border-bottom: 4px solid var(--accent); margin-bottom: 30px; }
+  .title-block h1 { font-size: 28px; color: var(--navy); margin-bottom: 4px; letter-spacing: 1px; }
+  .title-block .subtitle { font-size: 16px; color: var(--muted); margin-bottom: 8px; }
+  .title-block .script-label { font-size: 20px; color: var(--accent); font-weight: 700; }
+  .title-block .source { font-size: 13px; color: #999; font-style: italic; margin-top: 10px; }
+
+  /* Section Headings */
+  h2.section-heading {
+    font-size: 22px; color: var(--navy); margin: 40px 0 15px;
+    padding-bottom: 8px; border-bottom: 3px solid var(--accent);
+    scroll-margin-top: 20px;
+  }
+  h3.sub-heading {
+    font-size: 17px; color: var(--accent); margin: 25px 0 10px;
+    scroll-margin-top: 20px;
+  }
+
+  /* Script Lines */
+  .agent-line {
+    margin: 10px 0; padding: 10px 15px; border-radius: 6px;
+    background: #fff; border: 1px solid #e0e0e0;
+  }
+  .agent-line .tone { font-weight: 700; color: var(--accent); font-size: 13px; display: block; margin-bottom: 3px; }
+  .agent-line .placeholder { font-weight: 700; color: var(--accent); }
+
+  .stage-direction {
+    margin: 8px 0; padding: 6px 15px; font-style: italic;
+    color: #777; font-size: 14px;
+  }
+
+  .crm-note {
+    margin: 10px 0; padding: 10px 15px; border-radius: 4px;
+    background: var(--crm-bg); border-left: 5px solid var(--crm-border);
+    font-size: 14px;
+  }
+  .crm-note strong { color: #B8860B; }
+
+  .important-note {
+    margin: 10px 0; padding: 10px 15px; border-radius: 4px;
+    background: var(--important-bg); border-left: 5px solid var(--important-border);
+    font-size: 14px;
+  }
+  .important-note strong { color: var(--important-border); }
+
+  .reminder-note {
+    margin: 10px 0; padding: 10px 15px; border-radius: 4px;
+    background: var(--reminder-bg); border-left: 5px solid var(--reminder-border);
+    font-size: 14px;
+  }
+  .reminder-note strong { color: var(--reminder-border); }
+
+  .overview-text { margin: 8px 0; font-size: 15px; line-height: 1.7; }
+
+  .key-points { margin: 12px 0 12px 20px; }
+  .key-points li { margin: 6px 0; font-size: 15px; }
+
+  .esign-steps { margin: 12px 0 12px 20px; }
+  .esign-steps li { margin: 8px 0; font-size: 15px; }
+
+  .qc-list { margin: 12px 0 12px 20px; }
+  .qc-list li { margin: 10px 0; font-size: 15px; line-height: 1.6; }
+
+  .optional-tag {
+    display: inline-block; background: #FFF3CD; color: #856404; font-size: 12px;
+    font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-left: 6px;
+    vertical-align: middle; letter-spacing: 0.5px; text-transform: uppercase;
+  }
+
+  .example-block {
+    margin: 10px 0; padding: 10px 15px; border-radius: 4px;
+    background: #F5F0FF; border-left: 5px solid #7C5CBF;
+    font-size: 14px; font-style: italic;
+  }
+
+  .contact-block {
+    margin: 20px 0; padding: 15px; text-align: center;
+    background: var(--accent-light); border-radius: 8px;
+    font-size: 15px; color: var(--navy);
+  }
+  .contact-block strong { display: block; font-size: 17px; margin-bottom: 6px; }
+
+  .transfer-steps { margin: 12px 0 12px 20px; }
+  .transfer-steps li { margin: 6px 0; font-size: 15px; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <h2>Script Sections</h2>
+  <a href="#pre-call">Pre-Call Setup</a>
+  <a href="#opening">Opening</a>
+  <a href="#debt-overview">Debt Overview &amp; Goals</a>
+  <a href="#discovery">Discovery Questions</a>
+  <a class="sub" href="#situational">Situational</a>
+  <a class="sub" href="#problem">Problem Awareness</a>
+  <a class="sub" href="#consequence">Consequence</a>
+  <a class="sub" href="#future">Future Pacing</a>
+  <a href="#empathy">Empathy Bridge</a>
+  <a href="#transition">Transition to EVVO + Options</a>
+  <a href="#loan-app">Loan Application</a>
+  <a href="#loan-turndown">Loan Turndown Response</a>
+  <a href="#debt-validation">Explanation of Debt Validation</a>
+  <a href="#how-it-works">How the Program Works</a>
+  <a href="#accounts-review">Accounts Review</a>
+  <a href="#enrollment">Enrollment Steps</a>
+  <a class="sub" href="#payment-date">Payment Date</a>
+  <a class="sub" href="#payment-info">Payment Information</a>
+  <a href="#esign">E-Sign &amp; Documents</a>
+  <a href="#transfer">Transfer to ILG</a>
+  <a href="#compliance">Compliance Checklist</a>
+</nav>
+
+<div class="main">
+
+  <div class="title-block">
+    <h1>IRONWOOD</h1>
+    <div class="subtitle">Script Helper</div>
+    <div class="script-label">DIRECT MAIL &mdash; MAIN SCRIPT</div>
+    <div class="subtitle">Live Transfer from Openers (Closer Script)</div>
+    <div class="source">Source: Motion CRM &mdash; IronWood Direct Mail Script (3/27/2026)</div>
+  </div>
+
+  <!-- Pre-Call Setup -->
+  <h2 class="section-heading" id="pre-call">Pre-Call Setup</h2>
+  <div class="crm-note"><strong>CRM/SYSTEM NOTE:</strong> Have Motion pulled up, looking at the "Debts" tab after verifying debt &mdash; push over to Continue Enrollment</div>
+  <div class="reminder-note"><strong>REMINDER:</strong> Check with client to see if they have any additional loans that are not showing up on the credit report such as payday loans, online loans, or medical debts when you are going over the debts with them</div>
+
+  <!-- Opening -->
+  <h2 class="section-heading" id="opening">Opening</h2>
+  <div class="agent-line">
+    <span class="tone">Absolute Certainty</span>
+    Hi <span class="placeholder">FIRST NAME</span>, My name is _____, I'm a senior financial advisor. I can help you out moving forward, happy <span class="placeholder">(day of the week)</span> by the way! Nice to meet you!
+  </div>
+  <div class="agent-line">
+    <span class="tone">Presupposing Tone</span>
+    For training and quality assurance this call will be recorded, okay?
+  </div>
+
+  <!-- Debt Overview & Goals -->
+  <h2 class="section-heading" id="debt-overview">Debt Overview &amp; Goals</h2>
+  <div class="agent-line">
+    <span class="tone">Absolute Certainty</span>
+    I see you have about $______ in total unsecured debt and are paying $______ per month &mdash; is that correct?<br><br>
+    What is it you're looking to accomplish? Is it to get a lower payment? Lower interest? Or perhaps both?
+  </div>
+  <div class="agent-line">
+    <span class="tone">Absolute Certainty &rarr; I Care &rarr; Reasonable Man</span>
+    We specialize in providing customized financial solutions for our clients. Today we will go over your options together to resolve the debt and restore your credit. Sound good?
+  </div>
+  <div class="agent-line">
+    <span class="tone">I Care &rarr; Absolute Certainty</span>
+    Is Bankruptcy something you're considering? That's good. It doesn't look like you are at the tipping point yet.
+  </div>
+  <div class="stage-direction">If credit is good, you may want to avoid the bankruptcy question.</div>
+
+  <!-- Discovery Questions -->
+  <h2 class="section-heading" id="discovery">Discovery Questions</h2>
+
+  <h3 class="sub-heading" id="situational">Situational Questions <span style="font-weight:400;color:#999;">(Where are they now?)</span></h3>
+  <div class="agent-line">
+    <span class="tone">I Care</span>
+    Now, I see your score used to be higher, and you had less debt. If you don't mind, <strong>PAUSE</strong> could you share with me what's been going on lately that made you start looking for help?
+  </div>
+  <div class="agent-line">
+    <span class="tone">I Care</span>
+    How long have you been trying to manage that on your own?
+  </div>
+  <div class="agent-line">
+    <span class="tone">Curious</span>
+    And with the monthly payments you're making now &mdash; does it feel like you're making progress, or are things just kind of staying the same?
+  </div>
+
+  <h3 class="sub-heading" id="problem">Problem Awareness Questions <span style="font-weight:400;color:#999;">(Is their strategy working?)</span></h3>
+  <div class="agent-line">
+    <span class="tone">Curious</span>
+    Have you been able to keep any savings set aside, or have you had to dip into that to keep up?
+  </div>
+  <div class="agent-line">
+    <span class="tone">I Care</span>
+    What's that been like day to day &mdash; has the pressure started affecting anything outside of your finances? <span class="optional-tag">Optional</span>
+  </div>
+  <div class="agent-line">
+    <span class="tone">Curious</span>
+    Have you tried applying for any credit or loans lately &mdash; or has that been a challenge too?
+  </div>
+
+  <h3 class="sub-heading" id="consequence">Consequence Questions <span style="font-weight:400;color:#999;">(What happens if nothing changes?)</span></h3>
+  <div class="agent-line">
+    <span class="tone">Curious</span>
+    Out of curiosity &mdash; if things continued the way they are now... what would that mean for you over the next 6 to 12 months? <span class="optional-tag">Optional</span>
+  </div>
+  <div class="agent-line">
+    <span class="tone">I Care</span>
+    Have you thought about what it could cost to just keep doing the same month after month? <span class="optional-tag">Optional</span>
+  </div>
+
+  <h3 class="sub-heading" id="future">Future Pacing Questions <span style="font-weight:400;color:#999;">(What do they actually want?)</span></h3>
+  <div class="agent-line">
+    <span class="tone">I Care</span>
+    And once this is behind you &mdash; what's the bigger goal? Free up cash flow, rebuild your credit, maybe prepare for something specific?
+  </div>
+
+  <!-- Empathy Bridge -->
+  <h2 class="section-heading" id="empathy">Empathy Bridge</h2>
+  <div class="agent-line">
+    <span class="tone">I Care</span>
+    Thank you for sharing that with me... unfortunately you're not alone.
+  </div>
+  <div class="agent-line">
+    <span class="tone">Preacher</span>
+    Millions of Americans live paycheck to paycheck, and it only takes one thing to really put us behind.<br><br>
+    What many people don't realize is that these creditors prey on consumers. With the high interest rates and payments, they get us to a point that we can only afford minimum payments.<br><br>
+    Then we are one hardship away from falling behind.
+  </div>
+  <div class="agent-line">
+    <span class="tone">I Care &rarr; Reasonable Man</span>
+    These same creditors are usually the last ones to help you once you start to struggle. Am I right? <strong>PAUSE</strong>
+  </div>
+
+  <!-- Transition to EVVO + Options -->
+  <h2 class="section-heading" id="transition">Transition to EVVO + Options</h2>
+  <div class="agent-line">
+    <span class="tone">Absolute Certainty</span>
+    So <span class="placeholder">FIRST NAME</span>, we are going to go ahead and go over all your options right now.<br><br>
+    The first option is a <strong>Debt Consolidation Loan</strong>. It will wrap up all your unsecured debt into one loan and one repayment.<br><br>
+    We are partnered with the largest lending network in the country, and they shop for the best real-time offers. Rates can start in the single digits.
+  </div>
+  <div class="agent-line">
+    *** I'm also going to send your file to our underwriting team to see if you might qualify for any additional hardship programs.<br><br>
+    That way, you'll be able to compare everything side by side and make the best decision for your situation. Sound good?
+  </div>
+
+  <!-- Loan Application -->
+  <h2 class="section-heading" id="loan-app">Loan Application</h2>
+  <div class="agent-line">
+    Are you in front of a computer or smartphone right now? Okay, great. I'll send you an email shortly.<br><br>
+    And the email we have on file is ____. Is that correct?<br><br>
+    And just to confirm, the loan amount you were looking to get approved for today was about $____, correct?
+  </div>
+  <div class="agent-line">
+    Okay, got it. I just want to verify some information that you provided on the application:
+  </div>
+  <div class="agent-line" style="padding-left:30px;">
+    You <span class="placeholder">[own your home or rent]</span>, correct?<br>
+    And your employment status is <span class="placeholder">________</span>?<br>
+    And your annual income is <span class="placeholder">$________</span>?<br>
+    And the address I have on file is <span class="placeholder">_________</span>, is that all accurate?
+  </div>
+  <div class="agent-line">
+    Perfect. I'm going to be submitting this to our lending Network in just a moment, and you will be getting an email with the results from me as well.<br><br>
+    If you can check your email, it's going to be coming from <strong>Horizon Financial Services</strong> and the subject will say <strong>Personalized Loan Offers</strong>.<br><br>
+    Before I send it, I'm just going to need to put you on a brief hold so I can prepare the file, this should only take a few minutes.<br><br>
+    In the meantime if you can grab yourself a pen and paper as well so we can go over your approval details together.<br><br>
+    Bare with and I'll be right back on the line with you in a few minutes!
+  </div>
+  <div class="stage-direction">For newbies: Grab Brian or Erick (huddle or Zoom)</div>
+  <div class="crm-note"><strong>CRM/SYSTEM NOTE:</strong> Click on "Loans" and click request loan (when you are ready to send) loan offers then click "compile offers" then click "details." Click "loan offers" then click on "customer page" to see what the client sees. (The email won't actually send until you click "compile offers." The status will say offers ready.)</div>
+  <div class="crm-note"><strong>CRM/SYSTEM NOTE:</strong> Now go to Enroll and set up the program. Make sure you get Eric, Brian, or myself on the phone before you present the numbers for your first 10 deals. Have all your numbers ready to go before the pitch &mdash; before you get them back off hold.
+    <div style="margin-top:12px; background:#fff; border-radius:10px; padding:20px 24px; max-width:360px; box-shadow:0 1px 4px rgba(0,0,0,0.08); font-family:'Segoe UI',Arial,sans-serif;">
+      <div style="font-weight:700; font-size:17px; color:#333; margin-bottom:14px;">Summary</div>
+      <div style="display:flex; justify-content:space-between; padding:6px 0;"><span style="color:#666;">Debts</span><span style="font-weight:700; color:#333;">5 / 16</span></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 0;"><span style="color:#666;">Total Balance</span><span style="font-weight:700; color:#333;">$12,033.00</span></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #e0e0e0;"><span style="color:#666;">Payment</span><span style="font-weight:700; color:#333;">$543.00</span></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 0; margin-top:6px;"><span style="color:#666;">Contract Amount</span><span style="font-weight:700; color:#333;">$6,102.54</span></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 0;"><span style="color:#666;">Payment Amount</span><span style="font-weight:700; color:#333;">$339.03</span></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #e0e0e0;"><span style="color:#666;">Payment Saving</span><span style="font-weight:700; color:#27ae60;">$203.97</span></div>
+      <div style="display:flex; justify-content:space-between; padding:10px 0 0;"><span style="color:#666; font-size:16px;">Savings</span><span style="font-weight:700; color:#27ae60; font-size:18px;">$5,930.46</span></div>
+    </div>
+  </div>
+  <div class="agent-line">
+    Hi <span class="placeholder">(client's name)</span> thanks for holding.<br><br>
+    If you can pull up your email you should be getting an email from us and the Subject will say <strong>"Personalized Loan Offers"</strong>. Let me know when you see it.<br><br>
+    Okay &mdash; next, click where it says "View Results" and we'll review it together...
+  </div>
+
+  <!-- Loan Turndown Response -->
+  <h2 class="section-heading" id="loan-turndown">Loan Turndown Response</h2>
+  <div class="agent-line">
+    I just got that back and unfortunately no loan offers available at this time.
+  </div>
+  <div class="stage-direction">If they received some offers then say:</div>
+  <div class="agent-line">
+    Unfortunately the offers didn't come back in like we had hoped.
+  </div>
+  <div class="stage-direction">Explain about how these bad loans wouldn't benefit them:</div>
+  <div class="agent-line">
+    The only reason for that is just due to your current credit score <span class="placeholder">(___)</span> and debt-to-credit ratio you have out on your cards and loans right now which is at <span class="placeholder">(____)</span>.<br><br>
+    Even if you did qualify, your rates would be over 35%, and I don't think you want that or it would help reach the goals that you and I discussed. Would you agree?
+  </div>
+
+  <!-- Explanation of Debt Validation -->
+  <h2 class="section-heading" id="debt-validation">Explanation of Debt Validation</h2>
+  <div class="important-note" style="background:#FFF8E1; border-left-color:#F0C040;"><strong style="color:#B8860B;">SLOW DOWN — this is the meat and potatoes!</strong></div>
+  <div class="agent-line">
+    Now the good news is our underwriting department just approved you for a program that I think aligns with your goals and what you are looking to accomplish.
+  </div>
+  <div class="agent-line">Do you happen to have a pen and paper handy?</div>
+  <div class="agent-line">
+    In this program we were able to qualify you for a new low, interest-free payment of <span class="placeholder">$(_____)</span>, which saves around <span class="placeholder">$(_____)</span> per month.
+  </div>
+  <div class="stage-direction">Don't need to explain monthly savings if they are already not paying or there is no real big savings.</div>
+  <div class="agent-line">
+    Even better &mdash; you'll be completely debt-free in just <span class="placeholder">(# months)</span> or less instead of paying on this for the next 7&ndash;9 years.
+  </div>
+  <div class="agent-line">
+    Now the reason we say <span class="placeholder">(# of months)</span> or less is because in this program there is no pre-payment penalty so you can pay this off as fast as you want.
+  </div>
+  <div class="example-block">
+    <strong>Example</strong> <span class="optional-tag">Optional</span><strong>:</strong> Also, you are saving *$500 per month, if you multiply *$500 X 24 months... that's *$12,000 that you will be keeping in your pocket as opposed to throwing that away in interest.
+  </div>
+  <div class="agent-line">Does that monthly payment sound more manageable for you?</div>
+  <div class="agent-line">
+    This program is called <strong>Debt Validation</strong> and it's offered by <strong>Ironwood Law Group (ILG)</strong>.
+  </div>
+  <div class="agent-line">This program is designed to help you in 4 key ways:</div>
+  <ul class="key-points">
+    <li>Restores your creditworthiness &mdash; which makes it easier to get approved for loans in the future</li>
+    <li>Gives you one low, interest-free monthly payment</li>
+    <li>Saves you thousands of dollars by eliminating future interest</li>
+    <li>Helps rebuild your credit score back above 700</li>
+  </ul>
+
+  <!-- How the Program Works -->
+  <h2 class="section-heading" id="how-it-works">How the Program Works</h2>
+  <div class="agent-line">
+    They'll be moving your accounts through a legal process where your creditors are required to provide proof that your debt is valid and legally collectible.<br><br>
+    This process must follow a federal and state law called the <strong>FDCPA</strong> &mdash; which stands for the <strong>Fair Debt Collection Practices Act</strong>.
+  </div>
+  <div class="agent-line">Once we are off the phone google this law so you can understand your rights.</div>
+  <div class="agent-line">Now, this law is designed to protect you from 3 things:</div>
+  <ul class="key-points">
+    <li>Predatory lending</li>
+    <li>ILLEGAL collection practices</li>
+    <li>Inaccurate credit reporting</li>
+  </ul>
+  <div class="important-note" style="background:#FFF8E1; border-left-color:#F0C040;"><strong style="color:#B8860B;">MEMORIZE THIS SECTION.</strong> This part needs to roll smooth &mdash; not clunky. You have to get them from "stop making payments" through "strategic charge off" all the way to where things shift in their favor. If this sounds choppy or rehearsed, you'll lose them. Practice it until it flows naturally.</div>
+  <div class="agent-line">
+    This next step starts by demonstrating to your creditors that you're facing financial hardship.
+  </div>
+  <div class="agent-line">
+    The only way they will understand this is when you <strong>stop making your monthly payments</strong>.
+  </div>
+  <div class="agent-line">
+    Once that happens, the accounts move into collections, which is expected, and this is called a <strong>STRATEGIC CHARGE OFF</strong>.
+  </div>
+  <div class="agent-line">
+    Now, here's where everything shifts in your favor.<br><br>
+    When a debt is transferred or sold to a collection agency, it's normally missing 3 necessary things:
+  </div>
+  <ul class="key-points">
+    <li>Your date of birth</li>
+    <li>Your Social Security number</li>
+    <li>The original signed contracts</li>
+  </ul>
+  <div class="agent-line">
+    Now remember, the original creditor has all of this information.<br><br>
+    But what many people don't realize is there are multiple privacy laws in place that prevent most of your information from being sold or shared with the collection agencies.
+  </div>
+  <div class="agent-line">
+    For example, your Social Security number can't legally be sold to a collection agency.<br><br>
+    And you definitely didn't sign a new contract with the collection agency after the debt was transferred.
+  </div>
+  <div class="agent-line">
+    So right off the bat, that's 2 out of 3 legal requirements they're missing &mdash; and that's where <strong>Ironwood Law Group (ILG)</strong> steps in.
+  </div>
+  <div class="agent-line">
+    Their job is to demand that these collection agencies can prove they have the right to legally collect on your debt...<br><br>
+    But because they don't have your personal information, they won't be able to provide that proof.
+  </div>
+  <div class="agent-line">
+    They also send <strong>Cease and Desist letters</strong> to stop all collection attempts while we work on your behalf.
+  </div>
+  <div class="agent-line">
+    Now once we show that the debt can't be legally validated, the debt becomes <strong>uncollectable</strong>.<br><br>
+    Which means the collection agency can no longer attempt to collect that debt from you, and you are no longer responsible for the debt.
+  </div>
+  <div class="agent-line">
+    And to be clear &mdash; future lenders won't see any record of the debt ever being in collections.<br><br>
+    All the negative remarks are removed from your credit.<br><br>
+    So this isn't a band-aid &mdash; it's a <strong>full reset of your credit</strong>, which gives you a clean slate moving forward with a great credit score.
+  </div>
+  <div class="agent-line">Does that make sense so far?</div>
+  <div class="important-note" style="background:#FFF8E1; border-left-color:#F0C040;"><strong style="color:#B8860B;">IF THEY SAY NO:</strong> Be ready for rebuttals. Go back to the sections of the script that they're not getting &mdash; stay on script. You can ad-lib a little to make it smoother, but don't talk too much. Let the script do the work.<br><br><span style="color:#C0392B; font-weight:700;">This is also when you want to really review your rebuttals &mdash; be prepared to reframe them back to looking at their accounts.</span></div>
+  <div class="crm-note"><strong>IF THEY'RE NOT READY TO ENROLL:</strong> Go to Communications &rarr; Send Email and send the <strong>ILG Program Offer Breakdown &ndash; Approval</strong> template. You'll find it at the bottom of the email template list. Make sure you take proper notes and set up your follow-up steps.</div>
+
+  <!-- Accounts Review -->
+  <h2 class="section-heading" id="accounts-review">Accounts Review</h2>
+  <div class="agent-line">
+    Ok so the next thing I want to do is go over all the accounts together. Do you still have access to your email?
+  </div>
+  <div class="crm-note"><strong>CRM/SYSTEM NOTE:</strong> In Motion send email in communications that says Your Approved Accounts</div>
+  <div class="crm-note"><strong>CRM/SYSTEM NOTE:</strong> Send over email with accounts</div>
+  <div class="reminder-note"><strong>REMINDER:</strong> Check with client to see if they have any additional loans that are not showing up on the credit report such as payday loans, online loans, or medical debts when you are going over the debts with them</div>
+  <div class="reminder-note"><strong>REMINDER:</strong> Let the client know they don't have to include everything in the debt validation program. If they want to hold on to a credit card or two, they can &mdash; it's their choice.</div>
+  <div class="important-note"><strong>IF CLIENT ASKS ABOUT ACCOUNTS THEY CAN'T TURN OFF AUTOPAY ON</strong> (installment accounts, payday loans, or any accounts with direct debits they can't control) &mdash; Let them know it's not a problem. We handle that with an <strong>ACH Revocation</strong>, which stops those automatic withdrawals. Let them know you'll send them the instructions for that later in the call.</div>
+
+  <!-- Enrollment Steps -->
+  <h2 class="section-heading" id="enrollment">Enrollment Steps</h2>
+  <div class="agent-line">
+    So, if you're ready to move forward, the next steps are really simple. The next step is to send you a set of documents to sign, are you familiar with electronic documents?
+  </div>
+  <div class="agent-line">Ok great, now before I send over documents there are 2 things I will need from you:</div>
+
+  <h3 class="sub-heading" id="payment-date">1. Payment Date</h3>
+  <div class="agent-line">
+    The first thing we need to do is come up with a payment date that works good for you. The soonest I can set up the first payment is <span class="placeholder">(tomorrow)</span>... <strong>pause</strong>... <em>(Wait for client to respond)</em>
+  </div>
+  <div class="reminder-note"><strong>REMINDER:</strong> Remind them the payment is less than what they are paying now (if they are currently paying). This is also what invokes their full legal coverage.</div>
+  <div class="agent-line">
+    And we will have it reoccurring the same day each month as well &mdash; Or did you have a better recurring date in mind? It could be any day of the month. <em>(Confirm payment schedule.)</em>
+  </div>
+  <div class="agent-line">
+    Okay got it, so to confirm:<br><br>
+    Your first payment of <span class="placeholder">$_________</span> will be on <span class="placeholder">[Date of first payment]</span><br><br>
+    Your recurring payment of <span class="placeholder">$_________</span> will be on the <span class="placeholder">[Day of month]</span> of each month thereafter<br><br>
+    Sounds about right?
+  </div>
+
+  <h3 class="sub-heading" id="payment-info">2. Payment Information</h3>
+  <div class="reminder-note"><strong>REMINDER:</strong> If the client doesn't feel comfortable giving out their debit card information over the phone, they can fill it out on the screen when we send them the Action Required document.</div>
+  <div class="agent-line">
+    The next step for us today is to secure your benefits by including the payment information.
+  </div>
+  <div class="agent-line">We do all of our program payments using a debit card &mdash;</div>
+  <div class="important-note"><strong>IMPORTANT:</strong> NOTHING WILL BE CHARGED UNTIL THAT FIRST PAYMENT DATE WE SELECTED OF <span class="placeholder">(____)</span>.</div>
+  <div class="agent-line">Perfect, and is it just your first and last name on the card or is there a middle initial listed?</div>
+  <div class="agent-line">Perfect, and is the billing address on the card the same as your mailing address?</div>
+  <div class="agent-line">And go ahead with your 16 digit card number whenever you're ready...</div>
+  <div class="agent-line">And expiration, and CVV.</div>
+
+  <div class="important-note"><strong>IMPORTANT:</strong> Before moving forward, go to the <a href="http://ironwoodlaw-agent-dashboard.s3-website-us-west-2.amazonaws.com/" target="_blank" style="color:var(--accent); font-weight:700;">ILG Agent Dashboard</a> and make sure there is an Account Advisor available before going through the next process. Slack whatever Account Advisor is available and let them know you've got a call coming in in a minute to confirm.<br><br>If no one is available, ask the customer what's a good time for them to receive a call back &mdash; they can call them shortly, within the hour.</div>
+
+  <!-- E-Sign & Documents -->
+  <h2 class="section-heading" id="esign">E-Sign &amp; Documents</h2>
+  <div class="agent-line">
+    Great, so we will move onto one of the last steps for us today. As promised, I have your E-Sign documents for you.
+  </div>
+  <div class="agent-line">
+    Allow me one moment to get these generated. It will be coming from <strong>Horizon Financial Services</strong> and the subject will say <strong>&ldquo;Action Required, Review Your Enrollment.&rdquo;</strong>
+  </div>
+  <div class="agent-line">Have you ever done an electronic signature before? Perfect!</div>
+  <div class="stage-direction">Send out docs, walk them through them.</div>
+  <div class="important-note"><strong>IMPORTANT:</strong> Make sure the client knows that if they have any automatic payments, they need to make sure those get stopped. This is where we send them the <strong>ACH Revocation Form</strong> and instructions if they have installment loans that are being debited directly. It's already set up as an email template in Communications called <strong>ACH Revocation Instructions</strong>.</div>
+  <div class="reminder-note"><strong>REMINDER:</strong> Let the client know that after they're done signing, it's going to ask them to create a password &mdash; that's where their portal lives.</div>
+  <div class="agent-line">
+    After docs are signed, the last step is to introduce you to your account manager (Financial Concierge) and then we go over a quick compliance check list that should not take more than a few more minutes.
+  </div>
+  <div class="reminder-note"><strong>REMINDER:</strong> Be sure to give them your contact information as well. Let them know you will be texting them your info along with sending a breakdown email of the numbers and program. Go to Communications &rarr; Send Email and send the <strong>ILG Program Offer Breakdown &ndash; Approval</strong> template (found at the bottom of the email template list).</div>
+  <div class="stage-direction">If they don't have additional questions, let them know you're going to place them on a brief hold and get them transferred over to your account management with ILG.</div>
+
+  <!-- Transfer to ILG -->
+  <h2 class="section-heading" id="transfer">Transfer to ILG</h2>
+  <div class="important-note"><strong>HOW TO TRANSFER TO ILG:</strong></div>
+  <ol class="transfer-steps">
+    <li>Add call</li>
+    <li>Type 50 then call</li>
+    <li>Once ILG agent picks up, give them file details</li>
+    <li>When ready to blind transfer &mdash; merge the 2 calls</li>
+    <li>Last step: click attended call (the 2 arrows pointing to the right)</li>
+  </ol>
+  <div class="contact-block">
+    <strong>Ironwood Law Group</strong>
+    Customer Service Number: <strong>(800) 425-7439</strong><br>
+    Customer Service Email: <strong>support@ironwoodlawgroup.com</strong><br>
+    <a href="https://ironwoodlawgroup.com/" target="_blank" style="color:var(--accent);">https://ironwoodlawgroup.com/</a>
+  </div>
+  <div class="reminder-note"><strong>REMINDER:</strong> Go to Slack and enter your deal into your daily deal group. This is your bragging rights!</div>
+
+  <!-- Compliance Checklist -->
+  <h2 class="section-heading" id="compliance">Compliance Checklist</h2>
+  <div class="important-note" style="background:#FFF8E1; border-left-color:#F0C040;"><strong style="color:#C0392B;">ATTENTION:</strong> <strong style="color:#B8860B;">Understand ALL of these questions. This is what the Account Executive is going to ask your client when you're done with your sale. Knowing these ensures you're preparing the client properly throughout the call and not promising anything you shouldn't be.</strong></div>
+  <div class="stage-direction">ILG Account Manager will go over these questions with your client:</div>
+  <div class="agent-line">
+    <span class="tone">AM Script</span>
+    I'm going to ask a few quick yes-or-no questions just to make sure everything is clear. If anything needs clarification, just let me know.
+  </div>
+  <ol class="qc-list">
+    <li>Do you understand that this program is <strong>not a loan</strong> and we are not lending you money?</li>
+    <li>Do you understand that this is <strong>not debt consolidation or traditional debt settlement</strong>, and we are not taking out new loans to pay off your debts?</li>
+    <li>Do you understand that your payments go toward <strong>attorney fees for legal representation</strong> and the dispute process?</li>
+    <li>Do you understand that in order for our team to begin disputing your accounts, those creditors typically stop receiving payments and the accounts may go into collections?</li>
+    <li>Do you understand that during the first few months you may receive collection calls, and that this is a normal part of the process?
+      <div class="reminder-note" style="margin-top:8px;"><strong>SCRIPT FOR CLIENT:</strong> "I have retained legal representation. Please direct any communication to Ironwood at 800-425-7439." Then politely hang up. Many clients also choose to block those numbers.</div>
+    </li>
+    <li>Do you understand that this process typically takes about <strong>18&ndash;24 months</strong> depending on the accounts involved?</li>
+    <li>Do you understand that if you receive any legal notices or lawsuits, you must <strong>send those to us immediately</strong> so we can assist?</li>
+    <li>Do you understand that if any enrolled debt is secured by collateral, such as a vehicle, the lender may have the right to repossess that collateral?</li>
+    <li>Do you understand that <strong>stopping automatic payments</strong> to enrolled creditors is important so it does not interfere with the dispute process?</li>
+    <li>And finally &mdash; do you understand that this program works best as a <strong>partnership</strong>, meaning staying in communication with us and sending documents when requested is important for success?</li>
+  </ol>
+
+</div>
+
+<script>
+  // Highlight active sidebar link on scroll
+  const sections = document.querySelectorAll('[id]');
+  const links = document.querySelectorAll('.sidebar a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 60) current = s.id; });
+    links.forEach(a => {
+      a.classList.remove('active');
+      if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

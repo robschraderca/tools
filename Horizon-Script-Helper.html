@@ -1,0 +1,2486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Horizon Script Helper</title>
+<!-- Updated: 2026-04-12 -->
+<style>
+  /* Password Gate Styles */
+  #password-gate {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, #1B3A5C 0%, #2E75B6 100%);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 99999; font-family: 'Segoe UI', Arial, sans-serif;
+  }
+  #password-gate .login-box {
+    background: #fff; border-radius: 12px; padding: 40px 36px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25); text-align: center;
+    max-width: 380px; width: 90%;
+  }
+  #password-gate .login-box h1 {
+    color: #1B3A5C; font-size: 22px; margin-bottom: 6px;
+  }
+  #password-gate .login-box p {
+    color: #666; font-size: 14px; margin-bottom: 24px;
+  }
+  #password-gate .login-box input {
+    width: 100%; padding: 12px 16px; border: 2px solid #B0C4DE;
+    border-radius: 8px; font-size: 16px; outline: none;
+    transition: border-color 0.2s;
+  }
+  #password-gate .login-box input:focus { border-color: #2E75B6; }
+  #password-gate .login-box input.error { border-color: #c0392b; }
+  #password-gate .login-box button {
+    width: 100%; padding: 12px; margin-top: 16px;
+    background: #1B3A5C; color: #fff; border: none;
+    border-radius: 8px; font-size: 16px; font-weight: 600;
+    cursor: pointer; transition: background 0.2s;
+  }
+  #password-gate .login-box button:hover { background: #2E75B6; }
+  #password-gate .error-msg {
+    color: #c0392b; font-size: 13px; margin-top: 10px; display: none;
+  }
+  #app-content { display: none; }
+</style>
+<style>
+  :root {
+    --navy: #1B3A5C;
+    --accent: #2E75B6;
+    --accent-light: #E8F0F8;
+    --border: #B0C4DE;
+    --crm-bg: #FFF8E1;
+    --crm-border: #F0C040;
+    --important-bg: #FDECEC;
+    --important-border: #C0392B;
+    --reminder-bg: #F0F7EE;
+    --reminder-border: #5B9A4A;
+    --text: #333;
+    --text-muted: #666;
+    --muted: #666;
+    --bg: #f8f9fa;
+    --surface: #f0f2f5;
+    --surface2: #e8ecf0;
+    --green: #2e8b57;
+    --red: #c0392b;
+    --yellow: #d4a017;
+    --blue: #2E75B6;
+    --teal: #1a9988;
+    --orange: #d97706;
+    --purple: #7c3aed;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+  /* Main Layout */
+  .container {
+    display: flex; height: 100vh; overflow: hidden;
+  }
+
+  /* Sidebar Nav */
+  .sidebar {
+    position: relative; width: 280px; height: 100vh;
+    background: var(--navy); color: #fff; padding: 20px 0;
+    overflow-y: auto; z-index: 100;
+  }
+
+  .sidebar-section {
+    padding: 12px 16px 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .sidebar button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 16px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.8);
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+    font-family: inherit;
+  }
+
+  .sidebar button:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+  }
+
+  .sidebar button.active {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border-left-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .sidebar button .icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .sidebar .sub-nav {
+    padding: 0;
+  }
+
+  .sidebar .sub-nav button {
+    padding: 6px 16px 6px 40px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    border-left: 3px solid transparent;
+  }
+
+  .sidebar .sub-nav button:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+  }
+
+  .sidebar .sub-nav button.sub-active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+  }
+
+  /* Main Content Area */
+  .main-content {
+    flex: 1; display: flex; flex-direction: column; overflow: hidden;
+  }
+
+  /* Title Block */
+  .dynamic-header {
+    padding: 16px 30px; border-bottom: 3px solid var(--accent);
+    background: #fff; position: sticky; top: 0; z-index: 50;
+  }
+  .dynamic-header h1 { font-size: 22px; color: var(--navy); letter-spacing: 0.5px; margin: 0; }
+
+  .title-block {
+    padding: 30px 40px 25px; border-bottom: 4px solid var(--accent);
+    background: #fff; flex-shrink: 0;
+  }
+  .title-block h1 { font-size: 28px; color: var(--navy); margin-bottom: 4px; letter-spacing: 1px; }
+  .title-block .subtitle { font-size: 16px; color: var(--muted); margin-bottom: 8px; }
+  .title-block .script-label { font-size: 20px; color: var(--accent); font-weight: 700; }
+  .title-block .source { font-size: 13px; color: #999; font-style: italic; margin-top: 10px; }
+
+  /* Content Scrollable Area */
+  .content-scroll {
+    flex: 1; overflow-y: auto; padding: 30px 40px 60px;
+  }
+
+  /* Tab Content */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Phase Divider */
+  .phase-divider {
+    margin: 20px 0 0; padding: 18px 20px; text-align: center;
+    background: var(--navy); color: #fff; border-radius: 8px 8px 0 0;
+    font-size: 20px; font-weight: 700; letter-spacing: 1px;
+    scroll-margin-top: 20px; cursor: pointer; user-select: none;
+    transition: background 0.2s;
+  }
+  .phase-divider.phase-collapsed { border-radius: 8px; margin-bottom: 0; }
+  .phase-divider:hover { background: #244a72; }
+  .phase-divider .phase-sub { font-size: 13px; font-weight: 400; opacity: 0.7; margin-top: 4px; }
+  .phase-divider .phase-chevron { font-size: 14px; margin-left: 10px; display: inline-block; transition: transform 0.2s; }
+  .phase-divider.phase-collapsed .phase-chevron { transform: rotate(-90deg); }
+
+  .phase-index {
+    background: #fff; border: 1px solid #e0e0e0; border-top: none;
+    border-radius: 0 0 8px 8px; padding: 16px 20px; margin: 0 0 20px;
+    display: flex; flex-wrap: wrap; gap: 6px 16px;
+  }
+  .phase-index.phase-index-hidden { display: none; }
+  .phase-index a {
+    font-size: 13px; color: var(--accent); text-decoration: none;
+    padding: 4px 0; transition: color 0.15s;
+  }
+  .phase-index a:hover { color: var(--navy); text-decoration: underline; }
+
+  .phase-content { transition: max-height 0.4s ease; overflow: hidden; }
+  .phase-content.phase-hidden { max-height: 0 !important; }
+
+  /* Section Headings — collapsible */
+  .collapsible-section { margin-top: 30px; scroll-margin-top: 20px; }
+
+  .section-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; padding: 10px 0 8px; border: none; border-bottom: 3px solid var(--accent);
+    background: transparent; cursor: pointer; text-align: left;
+    font-size: 22px; font-weight: 700; color: var(--navy); font-family: inherit;
+  }
+  .section-toggle:hover { color: var(--accent); }
+  .section-toggle .chevron {
+    font-size: 18px; transition: transform 0.2s; color: var(--accent); flex-shrink: 0; margin-left: 12px;
+  }
+  .section-toggle[aria-expanded="false"] .chevron { transform: rotate(-90deg); }
+  .section-toggle[aria-expanded="true"] .chevron { transform: rotate(0deg); }
+
+  .section-content { overflow: hidden; transition: max-height 0.3s ease; }
+  .section-content.collapsed { max-height: 0 !important; }
+
+  h3.sub-heading {
+    font-size: 17px; color: var(--accent); margin: 25px 0 10px;
+    font-weight: 600; scroll-margin-top: 20px;
+  }
+
+  /* Script Lines */
+  .agent-line {
+    margin: 10px 0; padding: 10px 15px; border-radius: 6px;
+    background: #fff; border: 1px solid #e0e0e0;
+  }
+  .agent-line .tone { font-weight: 700; color: var(--accent); font-size: 13px; display: block; margin-bottom: 3px; }
+  .agent-line .placeholder { font-weight: 700; color: var(--accent); }
+  .agent-line strong { color: var(--navy); font-weight: 600; }
+  .agent-line em { color: var(--muted); font-style: italic; }
+
+  .stage-direction {
+    margin: 8px 0; padding: 6px 15px; font-style: italic;
+    color: #777; font-size: 14px;
+  }
+
+  .crm-note {
+    margin: 10px 0; padding: 10px 15px; border-radius: 4px;
+    background: var(--crm-bg); border-left: 5px solid var(--crm-border);
+    font-size: 14px;
+  }
+  .crm-note strong { color: #B8860B; }
+
+  .crm-inline {
+    background: var(--crm-bg); color: #B8860B; font-weight: 600;
+    padding: 1px 6px; border-radius: 3px; font-style: italic; font-size: 13px;
+  }
+
+  .important-note {
+    margin: 10px 0; padding: 10px 15px; border-radius: 4px;
+    background: var(--important-bg); border-left: 5px solid var(--important-border);
+    font-size: 14px;
+  }
+  .important-note strong { color: var(--important-border); }
+
+  .reminder-note {
+    margin: 10px 0; padding: 10px 15px; border-radius: 4px;
+    background: var(--reminder-bg); border-left: 5px solid var(--reminder-border);
+    font-size: 14px;
+  }
+  .reminder-note strong { color: var(--reminder-border); }
+
+  .key-points { margin: 12px 0 12px 20px; }
+  .key-points li { margin: 6px 0; font-size: 15px; }
+
+  .esign-steps { margin: 12px 0 12px 20px; }
+  .esign-steps li { margin: 8px 0; font-size: 15px; }
+
+  .qc-list { margin: 12px 0 12px 20px; }
+  .qc-list li { margin: 10px 0; font-size: 15px; line-height: 1.6; }
+
+  .crm-steps-list { margin: 10px 0 10px 20px; }
+  .crm-steps-list li { margin: 6px 0; font-size: 15px; }
+
+  .optional-tag {
+    display: inline-block; background: #FFF3CD; color: #856404; font-size: 12px;
+    font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-left: 6px;
+    vertical-align: middle; letter-spacing: 0.5px; text-transform: uppercase;
+  }
+
+  .pro-tip-box {
+    margin: 15px 0; padding: 15px; border-radius: 6px;
+    background: #F5F0FF; border-left: 5px solid #7C5CBF; font-size: 14px;
+  }
+  .pro-tip-box strong { color: #7C5CBF; }
+  .pro-tip-box br { display: block; margin: 8px 0; }
+
+  .blank { font-weight: 700; color: var(--accent); }
+
+  .example-block {
+    margin: 10px 0; padding: 10px 15px; border-radius: 4px;
+    background: #F5F0FF; border-left: 5px solid #7C5CBF;
+    font-size: 14px; font-style: italic;
+  }
+
+  .next-step {
+    margin: 30px 0; padding: 15px; text-align: center;
+    background: var(--accent-light); border-radius: 8px;
+    font-size: 17px; color: var(--navy); font-weight: 600;
+  }
+
+  /* Reference & Tools Styling */
+  .section-title {
+    font-size: 24px; font-weight: 700; color: var(--navy); margin-bottom: 8px;
+  }
+  .section-subtitle {
+    font-size: 14px; color: var(--muted); margin-bottom: 20px;
+  }
+
+  .search-box {
+    display: flex; align-items: center; gap: 10px;
+    background: #fff; border: 1px solid var(--border); border-radius: 6px;
+    padding: 10px 12px; margin-bottom: 20px;
+  }
+  .search-icon { color: var(--muted); }
+  .search-box input {
+    flex: 1; border: none; outline: none; font-size: 14px;
+  }
+
+  .rebuttal-card {
+    background: #fff; border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 12px; overflow: hidden;
+  }
+  .rebuttal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; cursor: pointer; user-select: none;
+    background: var(--accent-light); transition: background 0.2s;
+  }
+  .rebuttal-header:hover { background: #d9e6f0; }
+  .rebuttal-header.open { background: var(--accent-light); }
+  .rebuttal-title { font-weight: 600; color: var(--navy); }
+  .rebuttal-header .chevron {
+    font-size: 12px; transition: transform 0.2s; color: var(--accent);
+  }
+  .rebuttal-header.open .chevron { transform: rotate(90deg); }
+  .rebuttal-body {
+    max-height: 0; overflow: hidden; transition: max-height 0.3s ease;
+    padding: 0 16px;
+  }
+  .rebuttal-body.open {
+    max-height: 1000px; padding: 12px 16px;
+  }
+
+  .script-line {
+    margin: 8px 0; padding: 8px 0; font-size: 14px;
+  }
+  .script-line.say { color: var(--text); }
+  .script-line.instruction {
+    background: var(--accent-light); padding: 8px 12px; border-radius: 4px;
+    color: var(--navy); font-weight: 500;
+  }
+  .script-line.tip {
+    color: var(--accent); font-weight: 600;
+  }
+
+  .ref-table {
+    width: 100%; border-collapse: collapse; margin: 12px 0;
+  }
+  .ref-table th {
+    background: var(--accent); color: #fff; padding: 10px; text-align: left; font-weight: 600;
+  }
+  .ref-table td {
+    padding: 10px; border-bottom: 1px solid var(--border);
+  }
+  .ref-table tr:nth-child(even) { background: var(--accent-light); }
+
+  .calculator-form {
+    background: #fff; border: 1px solid var(--border); border-radius: 6px;
+    padding: 20px; margin: 20px 0;
+  }
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    display: block; font-weight: 600; color: var(--navy); margin-bottom: 6px;
+  }
+  .form-group input {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--border);
+    border-radius: 4px; font-size: 14px;
+  }
+  .form-group input:focus { outline: none; border-color: var(--accent); }
+  .btn-calculate {
+    background: var(--accent); color: #fff; padding: 10px 24px; border: none;
+    border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px;
+  }
+  .btn-calculate:hover { background: #1e5a96; }
+  .result-box {
+    background: var(--accent-light); border: 2px solid var(--accent);
+    border-radius: 6px; padding: 16px; margin-top: 12px; font-size: 16px;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .container { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Password Gate -->
+<div id="password-gate">
+  <div class="login-box">
+    <h1>Horizon Financial Services</h1>
+    <p>Enter your team password to access the Script Helper</p>
+    <input type="password" id="gate-password" placeholder="Password" onkeydown="if(event.key==='Enter')checkPassword()">
+    <button onclick="checkPassword()">Sign In</button>
+    <div class="error-msg" id="gate-error">Incorrect password. Please try again.</div>
+  </div>
+</div>
+
+<div id="app-content">
+<div class="container">
+  <nav class="sidebar">
+    <div class="sidebar-section">Script</div>
+    <button class="active" onclick="showTab('script-app')" data-tab="script-app">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg></span><span>DM Application Script</span>
+    </button>
+    <div class="sub-nav" id="appSubNav">
+      <button onclick="jumpToPhase('script-app', 'app-s1')"><span>1. Form Filled</span></button>
+      <button onclick="jumpToPhase('script-app', 'app-s2')"><span>2. Answer Connect</span></button>
+      <button onclick="jumpToPhase('script-app', 'app-s3')"><span>3. Inbound Call</span></button>
+      <button onclick="jumpToPhase('script-app', 'app-s4')"><span>4. Verification</span></button>
+      <button onclick="jumpToPhase('script-app', 'app-s5')"><span>5. Explanation</span></button>
+      <button onclick="jumpToPhase('script-app', 'app-s6')"><span>6. App Questions</span></button>
+      <button onclick="jumpToPhase('script-app', 'app-s7')"><span>7. Soft Credit Pull</span></button>
+      <button onclick="jumpToPhase('script-app', 'app-s8')"><span>8. Apper to Agent</span></button>
+      <button onclick="jumpToPhase('script-app', 'app-s9')"><span>9. Live Transfer</span></button>
+      <button onclick="jumpToPhase('script-app', 'app-s10')"><span>10. Callback / Appt</span></button>
+      <button onclick="jumpToPhase('script-app', 'app-s11')"><span>11. Spouse Calling</span></button>
+      <button onclick="jumpToPhase('script-app', 'app-s12')"><span>12. CRM Steps</span></button>
+    </div>
+
+    <button onclick="showTab('script-main')" data-tab="script-main">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg></span><span>Direct Mail Script</span>
+    </button>
+    <div class="sub-nav" id="mainSubNav" style="display:none;">
+      <button onclick="jumpToPhase('script-main', 'main-pre-call')"><span>Pre-Call</span></button>
+      <button onclick="jumpToPhase('script-main', 'main-opening')"><span>Opening</span></button>
+      <button onclick="jumpToPhase('script-main', 'main-debt-overview')"><span>Debt Overview</span></button>
+      <button onclick="jumpToPhase('script-main', 'main-discovery')"><span>Discovery</span></button>
+      <button onclick="jumpToPhase('script-main', 'main-empathy')"><span>Empathy</span></button>
+      <button onclick="jumpToPhase('script-main', 'main-transition')"><span>Transition</span></button>
+      <button onclick="jumpToPhase('script-main', 'main-loan-app')"><span>Loan App</span></button>
+      <button onclick="jumpToPhase('script-main', 'main-loan-turndown')"><span>Loan Turndown</span></button>
+      <button onclick="jumpToPhase('script-main', 'main-debt-validation')"><span>Debt Validation</span></button>
+      <button onclick="jumpToPhase('script-main', 'main-how-it-works')"><span>How It Works</span></button>
+      <button onclick="jumpToPhase('script-main', 'main-accounts-review')"><span>Accounts Review</span></button>
+      <button onclick="jumpToPhase('script-main', 'main-enrollment')"><span>Enrollment</span></button>
+      <button onclick="jumpToPhase('script-main', 'main-esign')"><span>E-Sign</span></button>
+      <button onclick="jumpToPhase('script-main', 'main-transfer')"><span>Transfer to ILG</span></button>
+      <button onclick="jumpToPhase('script-main', 'main-compliance')"><span>Compliance</span></button>
+    </div>
+
+    <button onclick="showTab('script-rvm')" data-tab="script-rvm">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.05 5A5 5 0 0 1 19 8.95M15.05 1A9 9 0 0 1 23 8.94m-1 7.98v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><span>RVM Script</span>
+    </button>
+    <div class="sub-nav" id="rvmSubNav" style="display:none;">
+      <button onclick="jumpToPhase('script-rvm', 'rvm-open')"><span>1. Open</span></button>
+      <button onclick="jumpToPhase('script-rvm', 'rvm-qualify')"><span>2. Qualify</span></button>
+      <button onclick="jumpToPhase('script-rvm', 'rvm-basic-info')"><span>3. Basic Info</span></button>
+      <button onclick="jumpToPhase('script-rvm', 'rvm-probe')"><span>4. Probe</span></button>
+      <button onclick="jumpToPhase('script-rvm', 'rvm-debt')"><span>5. Debt Discussion</span></button>
+      <button onclick="jumpToPhase('script-rvm', 'rvm-commit')"><span>6. Commitment</span></button>
+      <button onclick="jumpToPhase('script-rvm', 'rvm-underwriting')"><span>7. Underwriting</span></button>
+      <button onclick="jumpToPhase('script-rvm', 'rvm-how-works')"><span>8. How It Works</span></button>
+      <button onclick="jumpToPhase('script-rvm', 'rvm-numbers')"><span>9. Numbers</span></button>
+      <button onclick="jumpToPhase('script-rvm', 'rvm-landing')"><span>10. Soft Landing</span></button>
+      <button onclick="jumpToPhase('script-rvm', 'rvm-close')"><span>11. Close</span></button>
+      <button onclick="jumpToPhase('script-rvm', 'rvm-esign')"><span>E-Sign</span></button>
+      <button onclick="jumpToPhase('script-rvm', 'rvm-transfer')"><span>Transfer</span></button>
+      <button onclick="jumpToPhase('script-rvm', 'rvm-compliance')"><span>Compliance</span></button>
+    </div>
+
+    <div class="sidebar-section">Reference</div>
+    <button onclick="showTab('rebuttals')" data-tab="rebuttals">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span>Rebuttals</span>
+    </button>
+    <div class="sub-nav" id="rebuttalsSubNav" style="display:none;">
+      <button onclick="jumpToCard('rebuttals', 0)"><span>Don't pay off debt?</span></button>
+      <button onclick="jumpToCard('rebuttals', 1)"><span>Don't feel right</span></button>
+      <button onclick="jumpToCard('rebuttals', 2)"><span>Will I be sued?</span></button>
+      <button onclick="jumpToCard('rebuttals', 3)"><span>Will it work?</span></button>
+      <button onclick="jumpToCard('rebuttals', 4)"><span>Too good to be true</span></button>
+      <button onclick="jumpToCard('rebuttals', 5)"><span>Scared to fall behind</span></button>
+    </div>
+
+    <button onclick="showTab('credit')" data-tab="credit">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span><span>Credit Impact</span>
+    </button>
+    <div class="sub-nav" id="creditSubNav" style="display:none;">
+      <button onclick="jumpToCard('credit', 0)"><span>Current / High Util</span></button>
+      <button onclick="jumpToCard('credit', 1)"><span>Behind / Low Score</span></button>
+      <button onclick="jumpToCard('credit', 2)"><span>Reinforcement Lines</span></button>
+    </div>
+
+    <button onclick="showTab('playbook')" data-tab="playbook">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span>Playbook</span>
+    </button>
+    <div class="sub-nav" id="playbookSubNav" style="display:none;">
+      <button onclick="jumpToCard('playbook', 0)"><span>Contact Checklist</span></button>
+      <button onclick="jumpToCard('playbook', 1)"><span>Cross-Collateral</span></button>
+      <button onclick="jumpToCard('playbook', 2)"><span>Timelines</span></button>
+      <button onclick="jumpToCard('playbook', 3)"><span>Talk Tracks</span></button>
+    </div>
+
+    <button onclick="showTab('settlement')" data-tab="settlement">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><polyline points="4 8 12 3 20 8"/><line x1="4" y1="8" x2="4" y2="13"/><line x1="20" y1="8" x2="20" y2="13"/><path d="M1 13h6l-3 5z"/><path d="M17 13h6l-3 5z"/></svg></span><span>Settle vs Validate</span>
+    </button>
+
+    <button onclick="showTab('collections')" data-tab="collections">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></span><span>Collections</span>
+    </button>
+
+    <button onclick="showTab('nepq')" data-tab="nepq">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></span><span>NEPQ / Saves</span>
+    </button>
+    <div class="sub-nav" id="nepqSubNav" style="display:none;">
+      <button onclick="jumpToCard('nepq', 0)"><span>Common Saves</span></button>
+      <button onclick="jumpToCard('nepq', 1)"><span>Benchmark Stats</span></button>
+      <button onclick="jumpToCard('nepq', 2)"><span>Payment Examples</span></button>
+    </div>
+
+    <div class="sidebar-section">Tools</div>
+    <button onclick="showTab('calculator')" data-tab="calculator">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="10" y2="18"/><line x1="14" y1="18" x2="16" y2="18"/></svg></span><span>Calculator</span>
+    </button>
+
+    <button onclick="showTab('creditor-codes')" data-tab="creditor-codes">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span><span>Creditor Codes</span>
+    </button>
+
+    <button onclick="showTab('laws')" data-tab="laws">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg></span><span>Laws Reference</span>
+    </button>
+
+    <button onclick="showTab('debt-sheet')" data-tab="debt-sheet">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg></span><span>Debt Cheat Sheet</span>
+    </button>
+  </nav>
+
+  <div class="main-content">
+    <div class="dynamic-header">
+      <h1 id="dynamic-title">DM Application Script</h1>
+    </div>
+
+    <div class="content-scroll">
+
+      <!-- ====================================== -->
+      <!-- SCRIPT VIEW — APPLICATION -->
+      <!-- ====================================== -->
+      <div id="script-app" class="tab-content active">
+        <div class="phase-divider" id="app-phase" onclick="togglePhase('app')">
+          DIRECT MAIL APPLICATION SCRIPT <span class="phase-chevron">&#9660;</span>
+          <div class="phase-sub">Source: Motion CRM — Direct Mail App Script (2/3/2026)</div>
+        </div>
+        <div class="phase-index" id="phase-app-index">
+          <a href="#app-s1" onclick="expandAndScroll('app','app-s1')">1. Outbound — Form Filled</a>
+          <a href="#app-s2" onclick="expandAndScroll('app','app-s2')">2. Outbound — Answer Connect</a>
+          <a href="#app-s3" onclick="expandAndScroll('app','app-s3')">3. Inbound Call</a>
+          <a href="#app-s4" onclick="expandAndScroll('app','app-s4')">4. Verification &amp; Info</a>
+          <a href="#app-s5" onclick="expandAndScroll('app','app-s5')">5. Loan Explanation</a>
+          <a href="#app-s6" onclick="expandAndScroll('app','app-s6')">6. Application Questions</a>
+          <a href="#app-s7" onclick="expandAndScroll('app','app-s7')">7. Soft Credit Pull</a>
+          <a href="#app-s8" onclick="expandAndScroll('app','app-s8')">8. Apper to Agent Transition</a>
+          <a href="#app-s9" onclick="expandAndScroll('app','app-s9')">9. Live Transfer</a>
+          <a href="#app-s10" onclick="expandAndScroll('app','app-s10')">10. Callback / Appointment</a>
+          <a href="#app-s11" onclick="expandAndScroll('app','app-s11')">11. Spouse Calling</a>
+          <a href="#app-s12" onclick="expandAndScroll('app','app-s12')">12. Motion CRM Steps</a>
+        </div>
+        <div class="phase-content" id="phase-app-content">
+
+        <!-- App Section 1: Outbound Form Filled -->
+        <div class="collapsible-section" id="app-s1">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            1. Outbound Call — Form Filled (LM) <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Hi, is this <span class="placeholder">[First Name]</span>? <em>(Pause for a response.)</em></div>
+            <div class="agent-line">Hey <span class="placeholder">[First Name]</span>, this is <span class="placeholder">[Agent Name]</span> with Horizon Financial Services — I have your online submission for the loan offer letter you received from us.<br><br>I just wanted to know if now's a good time to go over everything with you? <em>(Pause for a response.)</em></div>
+            <div class="agent-line">Perfect. On the first page of that letter, you will see an 8–11 digit <strong>"Invitation Code"</strong> (pin number) — could you read that to me please?</div>
+            <div class="crm-note"><strong>CRM NOTE:</strong> Enter the invitation code into the search field.</div>
+            <div class="agent-line">One moment while I pull up your information.</div>
+            <div class="stage-direction">Proceed below the "red" line.</div>
+          </div>
+        </div>
+
+        <!-- App Section 2: Outbound Answer Connect -->
+        <div class="collapsible-section" id="app-s2">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            2. Outbound Call — Answer Connect (AC) <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Hi, is this <span class="placeholder">[First Name]</span>? <em>(Pause for a response.)</em></div>
+            <div class="agent-line">Hey <span class="placeholder">[First Name]</span>, this is <span class="placeholder">[Agent Name]</span> with Horizon Financial Services — It looks like you called in and left a message to receive more information on the loan offer letter you received from us.<br><br>I just wanted to know if now's a good time to go over everything with you? <em>(Pause for a response.)</em></div>
+            <div class="agent-line">Perfect. On the first page of that letter, you will see an 8–11 digit <strong>"Invitation Code"</strong> (pin number) — could you read that to me please?</div>
+            <div class="crm-note"><strong>CRM NOTE:</strong> Enter the invitation code into the search field.</div>
+            <div class="agent-line">One moment while I pull up your information.</div>
+            <div class="stage-direction">Proceed below the "red" line.</div>
+          </div>
+        </div>
+
+        <!-- App Section 3: Inbound Call -->
+        <div class="collapsible-section" id="app-s3">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            3. Inbound Call <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Thank you for calling Horizon Financial Services, this is <span class="placeholder">[Agent Name]</span>. Were you calling about the letter we sent you in the mail?</div>
+            <div class="agent-line">Perfect. On the first page of that letter, you will see an 8–11 digit <strong>"Invitation Code"</strong> (pin number) — could you read that to me please?</div>
+            <div class="crm-note"><strong>CRM NOTE:</strong> Enter the invitation code into the search field.</div>
+            <div class="agent-line">One moment while I pull up your information.</div>
+
+            <h3 class="sub-heading">No Invitation Code</h3>
+            <div class="agent-line">Okay, that's fine. I'll just need to get the correct spelling of your first and last name to pull up your information in our system.</div>
+            <div class="crm-note"><strong>CRM NOTE:</strong> Enter name in the search field in Motion and continue below to "Address."</div>
+          </div>
+        </div>
+
+        <!-- App Section 4: Verification & Info -->
+        <div class="collapsible-section" id="app-s4">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            4. Verification &amp; Info Gathering <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Okay, I got your information pulled up and just to confirm — am I speaking with <span class="placeholder">[Caller's First and Last Name]</span>?</div>
+
+            <h3 class="sub-heading">Address</h3>
+            <div class="agent-line">Okay, great, and I have your current address at <span class="placeholder">[street number and name, city, state, and zip]</span>?</div>
+            <div class="crm-note"><strong>CRM NOTE:</strong> If the address is different, update the new address in Motion.</div>
+            <div class="agent-line">And have you been at that address for at least 2 years or more?</div>
+            <div class="important-note"><strong>IMPORTANT:</strong> If <strong>yes</strong> (2+ years) — just put in <strong>9 zeros</strong> for the Social Security Number.<br>If <strong>no</strong> (less than 2 years) — you will need to get the <strong>full Social Security Number</strong>.</div>
+
+            <h3 class="sub-heading">Contact &amp; Email</h3>
+            <div class="agent-line">And is the phone number you're calling in on <span class="placeholder">[XXX-XXX-XXXX]</span>, the best number to reach you at?</div>
+            <div class="stage-direction">If not: "What number would you like us to contact you at?"</div>
+            <div class="agent-line">Perfect, and what's the best email address for you?</div>
+            <div class="important-note"><strong>VERY IMPORTANT:</strong> Repeat each letter and number for the email and confirm.</div>
+          </div>
+        </div>
+
+        <!-- App Section 5: Loan Explanation -->
+        <div class="collapsible-section" id="app-s5">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            5. Loan &amp; Application Explanation <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Great, <span class="placeholder">[Caller's Name]</span> — again, my name is <span class="placeholder">[Agent Name]</span>, and I'll be guiding you through this process today.</div>
+            <div class="agent-line">So just to give you a quick overview — the money you receive from the loan will wrap up all your unsecured debt — into one loan — and one repayment. We work with the largest lending network in the country and rates start in the single digits. <em>(Pause for a response.)</em></div>
+            <div class="agent-line">So the first step is to gather some information for your loan application and if everything lines up, you could be funded as soon as today. Sound good? <em>(Pause for a response.)</em></div>
+            <div class="agent-line">Awesome. So as part of the application, we'll do a soft credit check — that just helps us verify your balances and make sure we're not missing any accounts that could be added to your consolidation loan. Does that make sense? <em>(Pause for a response.)</em><br><br>Perfect — let's go ahead and get started.</div>
+          </div>
+        </div>
+
+        <!-- App Section 6: Application Questions -->
+        <div class="collapsible-section" id="app-s6">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            6. Application Questions <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">What loan amount are you looking to get approved for today?</div>
+
+            <h3 class="sub-heading">Military / Security Clearance</h3>
+            <div class="agent-line">Okay, and are you currently active in the military? Do you currently hold a security clearance?</div>
+            <div class="important-note"><strong>IMPORTANT:</strong> If they say <strong>yes</strong> to having a security clearance, let them know you will send a loan link for them to finish the rest of the application on their own via email.</div>
+            <div class="reminder-note"><strong>REMINDER:</strong> If veteran or active military say: "Thank you so much for your service!"</div>
+
+            <h3 class="sub-heading">Employment &amp; Income</h3>
+            <div class="agent-line">Okay got it, and what is your current employment status?</div>
+            <div class="agent-line">How often are you paid — weekly, bi-weekly, semi-monthly, or monthly?</div>
+            <div class="agent-line">And what is your gross annual income?</div>
+            <div class="agent-line">Do you own your home or rent?</div>
+
+            <h3 class="sub-heading">Education</h3>
+            <div class="agent-line">Perfect. And just for the application, what's the highest level of education you've completed?</div>
+            <div class="stage-direction">If client needs more clarification:</div>
+            <div class="agent-line">This is just one of those standard lender questions — what's the highest level of school you've finished?<br><em>Example: Associate degree, Bachelors, High School, Masters… still in school</em></div>
+            <div class="stage-direction">If client asks why we need that:</div>
+            <div class="agent-line">Good question. Some lenders use it as part of their risk model, kind of like employment length — it doesn't approve or deny you by itself.</div>
+          </div>
+        </div>
+
+        <!-- App Section 7: Soft Credit Pull -->
+        <div class="collapsible-section" id="app-s7">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            7. Soft Credit Pull &amp; File Submission <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Okay thank you for that and we're almost done here. The last step is a soft pull on your credit. It won't show up as a hard inquiry or impact your score — it just gives us what we need to verify your accounts.</div>
+            <div class="agent-line">What's your date of birth? <em>(Repeat back DOB.)</em></div>
+
+            <div class="stage-direction">If at address for 2 years or more:</div>
+            <div class="crm-note"><strong>CRM NOTE:</strong> Enter <strong>9 zeros</strong> (000000000) for the Social Security Number.</div>
+
+            <div class="stage-direction">If at address for 2 years or less:</div>
+            <div class="agent-line">And I just need your Social? <em>(Repeat back 9 digits.)</em></div>
+
+            <div class="agent-line">Got it. And do you give us permission to run your soft credit check to finalize your application?</div>
+            <div class="crm-note"><strong>CRM NOTE:</strong> Enter social and click on <strong>"I Agree, Run Soft Credit Check."</strong></div>
+            <div class="important-note"><strong>IMPORTANT:</strong> Make sure if there are 4 extra digits on the zip code that you erase it and save. You can only pull credit on a <strong>5-digit zip code</strong>.</div>
+            <div class="agent-line">Great. One moment while I prepare your file.</div>
+            <div class="stage-direction">Place the call on hold for around 20 seconds.</div>
+          </div>
+        </div>
+
+        <!-- App Section 8: Apper to Agent Transition -->
+        <div class="collapsible-section" id="app-s8">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            8. Apper to Agent Transition <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="important-note"><strong>IMPORTANT:</strong> While the client is on hold, review the credit report. Make sure all the right accounts are included and nothing is missing before you move on.</div>
+            <div class="crm-note"><strong>CRM NOTE:</strong> Switch over to the <strong>Direct Mail Script</strong> and reintroduce yourself as a Senior Financial Advisor when you take the client off hold.</div>
+          </div>
+        </div>
+
+        <!-- App Section 9: Live Transfer -->
+        <div class="collapsible-section" id="app-s9">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            9. Live Transfer to Senior Advisor <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Okay, you're all set. Thanks for going through the initial steps with us — I'm going to transfer you to one of our Senior Financial Advisors to go over the final approval details with you.</div>
+            <div class="agent-line">They'll just need to ask a few additional questions to make sure we're getting you the best option possible and finalize your eligibility. You won't need to start over — they'll already have everything you've shared so far.</div>
+            <div class="agent-line">Before I do that, I just need your permission to receive text messages related to your application — like verification codes or important updates. Is that okay?</div>
+            <div class="agent-line">Perfect. I'm sending that code now — once you get it, can you read it back to me?</div>
+            <div class="agent-line">Great, thanks! Let me get you over to your Advisor now.</div>
+            <div class="crm-note"><strong>CRM NOTE:</strong> Transfer to ext. <strong>9913 Direct Mail_Sales Queue</strong>. Give sales rep the client's phone number — it's the easiest way to look up the file.</div>
+
+            <h3 class="sub-heading">If All Agents Are Busy</h3>
+            <div class="agent-line">Thanks for holding <span class="placeholder">[Client's Name]</span>, it looks like all of our advisors are currently unavailable at the moment. Your financial advisor will be calling you back within 2 hours or less to go over your loan application from a <strong>"949 area code"</strong> — They will be texting you prior to calling you as well.<br><br>It was a pleasure speaking with you — and I appreciate you taking the time with me to prepare your loan application. You are going to be in good hands and get the help you need! Hope you have a great rest of your day!</div>
+            <div class="stage-direction">Acknowledge their response and end the call.</div>
+          </div>
+        </div>
+
+        <!-- App Section 10: Callback / Appointment -->
+        <div class="collapsible-section" id="app-s10">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            10. Call Back / Appointment Set <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Okay, you're all set. Your financial advisor will be calling you back within 2 hours or less to go over your loan application from a <strong>"949 area code"</strong> — They will be texting you prior to calling you as well.</div>
+            <div class="agent-line">In order for them to do that, we would need your consent to send you text messages regarding your application and program updates. This includes things like verification codes, appointment reminders, or important alerts. Is that okay?</div>
+            <div class="agent-line">Perfect, I would just need to text you a verification code, and when you receive it could you please read that to me?<br><br>Ok, perfect — thanks for that!</div>
+            <div class="agent-line">It was a pleasure speaking with you <span class="placeholder">[Caller's First Name]</span> — and I appreciate you taking the time with me to prepare your loan application. You are going to be in good hands and get the help you need! Hope you have a great rest of your day!</div>
+            <div class="stage-direction">Acknowledge their response and end the call.</div>
+          </div>
+        </div>
+
+        <!-- App Section 11: Spouse Calling -->
+        <div class="collapsible-section" id="app-s11">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            11. Spouse Calling <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Are you calling on behalf of your spouse?</div>
+            <div class="stage-direction">If yes:</div>
+            <div class="agent-line">Is your spouse available as well?</div>
+            <div class="reminder-note"><strong>REMINDER:</strong> Proceed with the application process <strong>only</strong> if it's with the person associated with the invitation code.</div>
+            <div class="stage-direction">If spouse is not available:</div>
+            <div class="agent-line">We can set an appointment to call your spouse back to complete their application. When would be a good time for them?</div>
+            <div class="crm-note"><strong>CRM NOTE:</strong> Set up a call back reminder at that time.</div>
+          </div>
+        </div>
+
+        <!-- App Section 12: Motion CRM Steps -->
+        <div class="collapsible-section" id="app-s12">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            12. Motion CRM Steps <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="crm-note"><strong>CRM NOTE — Post-Call Steps:</strong>
+              <ul style="margin: 10px 0 0 18px; list-style: disc;">
+                <li style="margin: 6px 0;">Change status from <strong>New Lead</strong> to <strong>Apped</strong></li>
+                <li style="margin: 6px 0;">Select: <strong>"Debt Consolidation"</strong> for Loan Purpose</li>
+                <li style="margin: 6px 0;">Select any Credit Rating when creating the app, but <strong>go back and correct it</strong> after you pull credit and find out the actual score</li>
+                <li style="margin: 6px 0;">Pull Credit in the <strong>Debts tab</strong> and select &amp; review any qualified accounts we can take</li>
+                <li style="margin: 6px 0;">Hit <strong>"Save &amp; Finish"</strong> then transfer and hit <strong>"Edit"</strong> and assign to the sales rep</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        </div><!-- phase-app-content -->
+      </div>
+
+      <!-- ====================================== -->
+      <!-- SCRIPT VIEW — MAIN -->
+      <!-- ====================================== -->
+      <div id="script-main" class="tab-content">
+        <div class="phase-divider" id="main-phase" onclick="togglePhase('main')">
+          DIRECT MAIL MAIN SCRIPT <span class="phase-chevron">&#9660;</span>
+          <div class="phase-sub">Live Transfer from Openers (Closer Script)</div>
+        </div>
+        <div class="phase-index" id="phase-main-index">
+          <a href="#main-pre-call" onclick="expandAndScroll('main','main-pre-call')">Pre-Call Setup</a>
+          <a href="#main-opening" onclick="expandAndScroll('main','main-opening')">Opening</a>
+          <a href="#main-debt-overview" onclick="expandAndScroll('main','main-debt-overview')">Debt Overview</a>
+          <a href="#main-discovery" onclick="expandAndScroll('main','main-discovery')">Discovery</a>
+          <a href="#main-empathy" onclick="expandAndScroll('main','main-empathy')">Empathy Bridge</a>
+          <a href="#main-transition" onclick="expandAndScroll('main','main-transition')">Transition to EVVO</a>
+          <a href="#main-loan-app" onclick="expandAndScroll('main','main-loan-app')">Loan Application</a>
+          <a href="#main-loan-turndown" onclick="expandAndScroll('main','main-loan-turndown')">Loan Turndown</a>
+          <a href="#main-debt-validation" onclick="expandAndScroll('main','main-debt-validation')">Debt Validation</a>
+          <a href="#main-how-it-works" onclick="expandAndScroll('main','main-how-it-works')">How It Works</a>
+          <a href="#main-accounts-review" onclick="expandAndScroll('main','main-accounts-review')">Accounts Review</a>
+          <a href="#main-enrollment" onclick="expandAndScroll('main','main-enrollment')">Enrollment Steps</a>
+          <a href="#main-esign" onclick="expandAndScroll('main','main-esign')">E-Sign &amp; Documents</a>
+          <a href="#main-transfer" onclick="expandAndScroll('main','main-transfer')">Transfer to ILG</a>
+          <a href="#main-compliance" onclick="expandAndScroll('main','main-compliance')">Compliance Checklist</a>
+        </div>
+        <div class="phase-content" id="phase-main-content">
+
+        <!-- Main Section 1: Pre-Call Setup -->
+        <div class="collapsible-section" id="main-pre-call">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            Pre-Call Setup <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="crm-note"><strong>CRM/SYSTEM NOTE:</strong> Have Motion pulled up, looking at the "Debts" tab after verifying debt &mdash; push over to Continue Enrollment</div>
+            <div class="reminder-note"><strong>REMINDER:</strong> Check with client to see if they have any additional loans that are not showing up on the credit report such as payday loans, online loans, or medical debts when you are going over the debts with them</div>
+          </div>
+        </div>
+
+        <!-- Main Section 2: Opening -->
+        <div class="collapsible-section" id="main-opening">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            Opening <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="stage-direction"><strong>Tone:</strong> Absolute Certainty, Presupposing Tone</div>
+            <div class="agent-line">Hi <span class="placeholder">FIRST NAME</span>, my name is <span class="placeholder">_____</span>, I'm a senior financial advisor. I can help you out moving forward, happy <span class="placeholder">(day of the week)</span> by the way! Nice to meet you!</div>
+            <div class="agent-line">For training and quality assurance this call will be recorded, okay?</div>
+          </div>
+        </div>
+
+        <!-- Main Section 3: Debt Overview & Goals -->
+        <div class="collapsible-section" id="main-debt-overview">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            Debt Overview &amp; Goals <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">I see you have about <span class="placeholder">$______</span> in total unsecured debt and are paying <span class="placeholder">$______</span> per month &mdash; is that correct? What is it you're looking to accomplish? Is it to get a lower payment? Lower interest? Or perhaps both?</div>
+            <div class="agent-line">We specialize in providing customized financial solutions for our clients. <span class="crm-inline">(I Care)</span> Today we will go over your options together to resolve the debt and restore your credit. <span class="crm-inline">(Reasonable Man)</span> Sound good?</div>
+            <div class="agent-line">Is Bankruptcy something you're considering? <span class="crm-inline">(Absolute Certainty)</span> That's good. It doesn't look like you are at the tipping point yet.</div>
+            <div class="stage-direction">If credit is good, you may want to avoid the bankruptcy question.</div>
+          </div>
+        </div>
+
+        <!-- Main Section 4: Discovery Questions -->
+        <div class="collapsible-section" id="main-discovery">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            Discovery Questions <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <h4 class="subsection-title">Situational Questions (Where are they now?)</h4>
+            <div class="agent-line">Now, I see your score used to be higher, and you had less debt. If you don't mind, <span class="stage-direction">PAUSE</span> could you share with me what's been going on lately that made you start looking for help?</div>
+            <div class="agent-line">How long have you been trying to manage that on your own?</div>
+            <div class="agent-line">And with the monthly payments you're making now &mdash; does it feel like you're making progress, or are things just kind of staying the same?</div>
+
+            <h4 class="subsection-title">Problem Awareness Questions (Is their strategy working?)</h4>
+            <div class="agent-line">Have you been able to keep any savings set aside, or have you had to dip into that to keep up?</div>
+            <div class="agent-line">What's that been like day to day &mdash; has the pressure started affecting anything outside of your finances? <span class="optional-tag">optional</span></div>
+            <div class="agent-line">Have you tried applying for any credit or loans lately &mdash; or has that been a challenge too?</div>
+
+            <h4 class="subsection-title">Consequence Questions (What happens if nothing changes?)</h4>
+            <div class="agent-line">Out of curiosity &mdash; if things continued the way they are now... what would that mean for you over the next 6 to 12 months? <span class="optional-tag">optional</span></div>
+            <div class="agent-line">Have you thought about what it could cost to just keep doing the same month after month? <span class="optional-tag">optional</span></div>
+
+            <h4 class="subsection-title">Future Pacing Questions (What do they actually want?)</h4>
+            <div class="agent-line">And once this is behind you &mdash; what's the bigger goal? Free up cash flow, rebuild your credit, maybe prepare for something specific?</div>
+          </div>
+        </div>
+
+        <!-- Main Section 5: Empathy Bridge -->
+        <div class="collapsible-section" id="main-empathy">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            Empathy Bridge <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Thank you for sharing that with me... unfortunately you're not alone. <span class="crm-inline">(Preacher)</span> Millions of Americans live paycheck to paycheck, and it only takes one thing to really put us behind. What many people don't realize is that these creditors prey on consumers. With the high interest rates and payments, they get us to a point that we can only afford minimum payments. Then we are one hardship away from falling behind. <span class="crm-inline">(I Care)</span> These same creditors are usually the last ones to help you once you start to struggle. <span class="crm-inline">(Reasonable Man)</span> Am I right? <span class="stage-direction">PAUSE</span></div>
+          </div>
+        </div>
+
+        <!-- Main Section 6: Transition to EVVO + Options -->
+        <div class="collapsible-section" id="main-transition">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            Transition to EVVO + Options <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">So <span class="placeholder">FIRST NAME</span>, we are going to go ahead and go over all your options right now. The first option is a Debt Consolidation Loan. It will wrap up all your unsecured debt into one loan and one repayment. We are partnered with the largest lending network in the country, and they shop for the best real-time offers. Rates can start in the single digits.</div>
+            <div class="agent-line">*** I'm also going to send your file to our underwriting team to see if you might qualify for any additional hardship programs. That way, you'll be able to compare everything side by side and make the best decision for your situation. Sound good?</div>
+          </div>
+        </div>
+
+        <!-- Main Section 7: Loan Application -->
+        <div class="collapsible-section" id="main-loan-app">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            Loan Application <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Are you in front of a computer or smartphone right now? Okay, great. I'll send you an email shortly. And the email we have on file is <span class="placeholder">____</span>. Is that correct? And just to confirm, the loan amount you were looking to get approved for today was about <span class="placeholder">$____</span>, correct?</div>
+            <div class="agent-line">Okay, got it. I just want to verify some information that you provided on the application:</div>
+            <div class="agent-line">You <span class="placeholder">[own your home or rent]</span>, correct? And your employment status is <span class="placeholder">________</span>? And your annual income is <span class="placeholder">$________</span>? And the address I have on file is <span class="placeholder">_________</span>, is that all accurate?</div>
+            <div class="agent-line">Perfect. I'm going to be submitting this to our lending Network in just a moment, and you will be getting an email with the results from me as well. If you can check your email, it's going to be coming from <strong>Horizon Financial Services</strong> and the subject will say <strong>Personalized Loan Offers</strong>. Before I send it, I'm just going to need to put you on a brief hold so I can prepare the file, this should only take a few minutes. In the meantime if you can grab yourself a pen and paper as well so we can go over your approval details together. Bare with and I'll be right back on the line with you in a few minutes!</div>
+            <div class="stage-direction">For newbies: Grab Brian or Erick (huddle or Zoom)</div>
+            <div class="crm-note"><strong>CRM/SYSTEM NOTE:</strong> Click on "Loans" and click request loan (when you are ready to send) loan offers then click "compile offers" then click "details." Click "loan offers" then click on "customer page" to see what the client sees. (The email won't actually send until you click "compile offers." The status will say offers ready.)</div>
+            <div class="crm-note"><strong>CRM/SYSTEM NOTE:</strong> Now go to Enroll and set up the program. Make sure you get Eric, Brian, or myself on the phone before you present the numbers for your first 10 deals. Have all your numbers ready to go before the pitch &mdash; before you get them back off hold.
+              <div style="margin-top:12px; background:#fff; border-radius:10px; padding:20px 24px; max-width:360px; box-shadow:0 1px 4px rgba(0,0,0,0.08); font-family:'Segoe UI',Arial,sans-serif;">
+                <div style="font-weight:700; font-size:17px; color:#333; margin-bottom:14px;">Summary</div>
+                <div style="display:flex; justify-content:space-between; padding:6px 0;"><span style="color:#666;">Debts</span><span style="font-weight:700; color:#333;">5 / 16</span></div>
+                <div style="display:flex; justify-content:space-between; padding:6px 0;"><span style="color:#666;">Total Balance</span><span style="font-weight:700; color:#333;">$12,033.00</span></div>
+                <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #e0e0e0;"><span style="color:#666;">Payment</span><span style="font-weight:700; color:#333;">$543.00</span></div>
+                <div style="display:flex; justify-content:space-between; padding:6px 0; margin-top:6px;"><span style="color:#666;">Contract Amount</span><span style="font-weight:700; color:#333;">$6,102.54</span></div>
+                <div style="display:flex; justify-content:space-between; padding:6px 0;"><span style="color:#666;">Payment Amount</span><span style="font-weight:700; color:#333;">$339.03</span></div>
+                <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #e0e0e0;"><span style="color:#666;">Payment Saving</span><span style="font-weight:700; color:#27ae60;">$203.97</span></div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0 0;"><span style="color:#666; font-size:16px;">Savings</span><span style="font-weight:700; color:#27ae60; font-size:18px;">$5,930.46</span></div>
+              </div>
+            </div>
+            <div class="agent-line">Hi <span class="placeholder">(client's name)</span> thanks for holding. If you can pull up your email you should be getting an email from us and the Subject will say <strong>"Personalized Loan Offers"</strong>. Let me know when you see it. Okay &mdash; next, click where it says "View Results" and we'll review it together...</div>
+          </div>
+        </div>
+
+        <!-- Main Section 8: Loan Turndown Response -->
+        <div class="collapsible-section" id="main-loan-turndown">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            Loan Turndown Response <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">I just got that back and unfortunately no loan offers available at this time.</div>
+            <div class="stage-direction">If they received some offers then say:</div>
+            <div class="agent-line">Unfortunately the offers didn't come back in like we had hoped.</div>
+            <div class="stage-direction">Explain about how these bad loans wouldn't benefit them:</div>
+            <div class="agent-line">The only reason for that is just due to your current credit score <span class="placeholder">(___)</span> and debt-to-credit ratio you have out on your cards and loans right now which is at <span class="placeholder">(____)</span>. Even if you did qualify, your rates would be over 35%, and I don't think you want that or it would help reach the goals that you and I discussed. Would you agree?</div>
+          </div>
+        </div>
+
+        <!-- Main Section 9: Explanation of Debt Validation -->
+        <div class="collapsible-section" id="main-debt-validation">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            Explanation of Debt Validation <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="important-note" style="background:#FFF8E1; border-left-color:#F0C040;"><strong style="color:#B8860B;">SLOW DOWN &mdash; this is the meat and potatoes!</strong></div>
+            <div class="agent-line">Now the good news is our underwriting department just approved you for a program that I think aligns with your goals and what you are looking to accomplish.</div>
+            <div class="agent-line">Do you happen to have a pen and paper handy?</div>
+            <div class="agent-line">In this program we were able to qualify you for a new low, interest-free payment of <span class="placeholder">$(_____)</span>, which saves around <span class="placeholder">$(_____)</span> per month.</div>
+            <div class="stage-direction">Don't need to explain monthly savings if they are already not paying or there is no real big savings.</div>
+            <div class="agent-line">Even better &mdash; you'll be completely debt-free in just <span class="placeholder">(# months)</span> or less instead of paying on this for the next 7&ndash;9 years.</div>
+            <div class="agent-line">Now the reason we say <span class="placeholder">(# of months)</span> or less is because in this program there is no pre-payment penalty so you can pay this off as fast as you want.</div>
+            <div class="important-note" style="background:#F5F0FF; border-left-color:#7C5CBF;"><strong>Example</strong> <span class="optional-tag">optional</span><strong>:</strong> Also, you are saving *$500 per month, if you multiply *$500 X 24 months... that's *$12,000 that you will be keeping in your pocket as opposed to throwing that away in interest.</div>
+            <div class="agent-line">Does that monthly payment sound more manageable for you?</div>
+            <div class="agent-line">This program is called <strong>Debt Validation</strong> and it's offered by <strong>Ironwood Law Group (ILG)</strong>.</div>
+            <div class="agent-line"><strong>This program is designed to help you in 4 key ways:</strong></div>
+            <ul class="key-points">
+              <li>Restores your creditworthiness &mdash; which makes it easier to get approved for loans in the future</li>
+              <li>Gives you one low, interest-free monthly payment</li>
+              <li>Saves you thousands of dollars by eliminating future interest</li>
+              <li>Helps rebuild your credit score back above 700</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Main Section 10: How the Program Works -->
+        <div class="collapsible-section" id="main-how-it-works">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            How the Program Works <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">They'll be moving your accounts through a legal process where your creditors are required to provide proof that your debt is valid and legally collectible. This process must follow a federal and state law called the <strong>FDCPA</strong> &mdash; which stands for the <strong>Fair Debt Collection Practices Act</strong>.</div>
+            <div class="agent-line">Once we are off the phone google this law so you can understand your rights.</div>
+            <div class="agent-line"><strong>Now, this law is designed to protect you from 3 things:</strong></div>
+            <ul class="key-points">
+              <li>Predatory lending</li>
+              <li>ILLEGAL collection practices</li>
+              <li>Inaccurate credit reporting</li>
+            </ul>
+            <div class="important-note" style="background:#FFF8E1; border-left-color:#F0C040;"><strong style="color:#B8860B;">MEMORIZE THIS SECTION.</strong> This part needs to roll smooth &mdash; not clunky. You have to get them from "stop making payments" through "strategic charge off" all the way to where things shift in their favor. If this sounds choppy or rehearsed, you'll lose them. Practice it until it flows naturally.</div>
+            <div class="agent-line">This next step starts by demonstrating to your creditors that you're facing financial hardship.</div>
+            <div class="agent-line">The only way they will understand this is when you <strong>stop making your monthly payments</strong>.</div>
+            <div class="agent-line">Once that happens, the accounts move into collections, which is expected, and this is called a <strong>STRATEGIC CHARGE OFF</strong>.</div>
+            <div class="agent-line">Now, here's where everything shifts in your favor. When a debt is transferred or sold to a collection agency, it's normally missing 3 necessary things:</div>
+            <ul class="key-points">
+              <li>Your date of birth</li>
+              <li>Your Social Security number</li>
+              <li>The original signed contracts</li>
+            </ul>
+            <div class="agent-line">Now remember, the original creditor has all of this information. But what many people don't realize is there are multiple privacy laws in place that prevent most of your information from being sold or shared with the collection agencies.</div>
+            <div class="agent-line">For example, your Social Security number can't legally be sold to a collection agency. And you definitely didn't sign a new contract with the collection agency after the debt was transferred.</div>
+            <div class="agent-line">So right off the bat, that's 2 out of 3 legal requirements they're missing &mdash; and that's where <strong>Ironwood Law Group (ILG)</strong> steps in. Their job is to demand that these collection agencies can prove they have the right to legally collect on your debt... but because they don't have your personal information, they won't be able to provide that proof.</div>
+            <div class="agent-line">They also send <strong>Cease and Desist letters</strong> to stop all collection attempts while we work on your behalf.</div>
+            <div class="agent-line">Now once we show that the debt can't be legally validated, the debt becomes <strong>uncollectable</strong>, which means the collection agency can no longer attempt to collect that debt from you, and you are no longer responsible for the debt.</div>
+            <div class="agent-line">And to be clear &mdash; future lenders won't see any record of the debt ever being in collections. All the negative remarks are removed from your credit. So this isn't a band-aid &mdash; it's a <strong>full reset of your credit</strong>, which gives you a clean slate moving forward with a great credit score.</div>
+            <div class="agent-line">Does that make sense so far?</div>
+            <div class="important-note" style="background:#FFF8E1; border-left-color:#F0C040;"><strong style="color:#B8860B;">IF THEY SAY NO:</strong> Be ready for rebuttals. Go back to the sections of the script that they're not getting &mdash; stay on script. You can ad-lib a little to make it smoother, but don't talk too much. Let the script do the work.<br><br><span style="color:#C0392B; font-weight:700;">This is also when you want to really review your rebuttals &mdash; be prepared to reframe them back to looking at their accounts.</span></div>
+            <div class="crm-note"><strong>IF THEY'RE NOT READY TO ENROLL:</strong> Go to Communications &rarr; Send Email and send the <strong>ILG Program Offer Breakdown &ndash; Approval</strong> template. You'll find it at the bottom of the email template list. Make sure you take proper notes and set up your follow-up steps.</div>
+          </div>
+        </div>
+
+        <!-- Main Section 11: Accounts Review -->
+        <div class="collapsible-section" id="main-accounts-review">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            Accounts Review <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Ok so the next thing I want to do is go over all the accounts together. Do you still have access to your email?</div>
+            <div class="crm-note"><strong>CRM/SYSTEM NOTE:</strong> In Motion send email in communications that says Your Approved Accounts</div>
+            <div class="crm-note"><strong>CRM/SYSTEM NOTE:</strong> Send over email with accounts</div>
+            <div class="reminder-note"><strong>REMINDER:</strong> Check with client to see if they have any additional loans that are not showing up on the credit report such as payday loans, online loans, or medical debts when you are going over the debts with them</div>
+            <div class="reminder-note"><strong>REMINDER:</strong> Let the client know they don't have to include everything in the debt validation program. If they want to hold on to a credit card or two, they can &mdash; it's their choice.</div>
+            <div class="important-note"><strong>IF CLIENT ASKS ABOUT ACCOUNTS THEY CAN'T TURN OFF AUTOPAY ON</strong> (installment accounts, payday loans, or any accounts with direct debits they can't control) &mdash; Let them know it's not a problem. We handle that with an <strong>ACH Revocation</strong>, which stops those automatic withdrawals. Let them know you'll send them the instructions for that later in the call.</div>
+          </div>
+        </div>
+
+        <!-- Main Section 12: Enrollment Steps -->
+        <div class="collapsible-section" id="main-enrollment">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            Enrollment Steps <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">So, if you're ready to move forward, the next steps are really simple. The next step is to send you a set of documents to sign, are you familiar with electronic documents?</div>
+            <div class="agent-line">Ok great, now before I send over documents there are 2 things I will need from you:</div>
+
+            <h4 class="subsection-title">1. Payment Date</h4>
+            <div class="agent-line">The first thing we need to do is come up with a payment date that works good for you. The soonest I can set up the first payment is <span class="placeholder">(tomorrow)</span>... <strong>pause</strong>... <em>(Wait for client to respond)</em></div>
+            <div class="reminder-note"><strong>REMINDER:</strong> Remind them the payment is less than what they are paying now (if they are currently paying). This is also what invokes their full legal coverage.</div>
+            <div class="agent-line">And we will have it reoccurring the same day each month as well &mdash; Or did you have a better recurring date in mind? It could be any day of the month. <em>(Confirm payment schedule.)</em></div>
+            <div class="agent-line">Okay got it, so to confirm: Your first payment of <span class="placeholder">$_________</span> will be on <span class="placeholder">[Date of first payment]</span>. Your recurring payment of <span class="placeholder">$_________</span> will be on the <span class="placeholder">[Day of month]</span> of each month thereafter. Sounds about right?</div>
+
+            <h4 class="subsection-title">2. Payment Information</h4>
+            <div class="reminder-note"><strong>REMINDER:</strong> If the client doesn't feel comfortable giving out their debit card information over the phone, they can fill it out on the screen when we send them the Action Required document.</div>
+            <div class="agent-line">The next step for us today is to secure your benefits by including the payment information. We do all of our program payments using a debit card &mdash;</div>
+            <div class="important-note"><strong>IMPORTANT:</strong> NOTHING WILL BE CHARGED UNTIL THAT FIRST PAYMENT DATE WE SELECTED OF <span class="placeholder">(____)</span>.</div>
+            <div class="agent-line">Perfect, and is it just your first and last name on the card or is there a middle initial listed?</div>
+            <div class="agent-line">Perfect, and is the billing address on the card the same as your mailing address?</div>
+            <div class="agent-line">And go ahead with your 16 digit card number whenever you're ready...</div>
+            <div class="agent-line">And expiration, and CVV.</div>
+          </div>
+        </div>
+
+        <!-- Main Section 13: E-Sign & Documents -->
+        <div class="collapsible-section" id="main-esign">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            E-Sign &amp; Documents <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="important-note"><strong>IMPORTANT:</strong> Before moving forward, go to the <a href="http://ironwoodlaw-agent-dashboard.s3-website-us-west-2.amazonaws.com/" target="_blank" style="color:var(--accent); font-weight:700;">ILG Agent Dashboard</a> and make sure there is an Account Advisor available before going through the next process. Slack whatever Account Advisor is available and let them know you've got a call coming in in a minute to confirm.<br><br>If no one is available, ask the customer what's a good time for them to receive a call back &mdash; they can call them shortly, within the hour.</div>
+            <div class="agent-line">Great, so we will move onto one of the last steps for us today. As promised, I have your E-Sign documents for you.</div>
+            <div class="agent-line">Allow me one moment to get these generated. It will be coming from <strong>Horizon Financial Services</strong> and the subject will say <strong>&ldquo;Action Required, Review Your Enrollment.&rdquo;</strong></div>
+            <div class="agent-line">Have you ever done an electronic signature before? Perfect!</div>
+            <div class="stage-direction">Send out docs, walk them through them.</div>
+            <div class="important-note"><strong>IMPORTANT:</strong> Make sure the client knows that if they have any automatic payments, they need to make sure those get stopped. This is where we send them the <strong>ACH Revocation Form</strong> and instructions if they have installment loans that are being debited directly. It's already set up as an email template in Communications called <strong>ACH Revocation Instructions</strong>.</div>
+            <div class="reminder-note"><strong>REMINDER:</strong> Let the client know that after they're done signing, it's going to ask them to create a password &mdash; that's where their portal lives.</div>
+            <div class="agent-line">After docs are signed, the last step is to introduce you to your account manager (Financial Concierge) and then we go over a quick compliance check list that should not take more than a few more minutes.</div>
+            <div class="reminder-note"><strong>REMINDER:</strong> Be sure to give them your contact information as well. Let them know you will be texting them your info along with sending a breakdown email of the numbers and program. Go to Communications &rarr; Send Email and send the <strong>ILG Program Offer Breakdown &ndash; Approval</strong> template (found at the bottom of the email template list).</div>
+            <div class="stage-direction">If they don't have additional questions, let them know you're going to place them on a brief hold and get them transferred over to your account management with ILG.</div>
+          </div>
+        </div>
+
+        <!-- Main Section 14: Transfer to ILG -->
+        <div class="collapsible-section" id="main-transfer">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            Transfer to ILG <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="important-note"><strong>HOW TO TRANSFER TO ILG:</strong></div>
+            <ol class="esign-steps">
+              <li>Add call</li>
+              <li>Type 50 then call</li>
+              <li>Once ILG agent picks up, give them file details</li>
+              <li>When ready to blind transfer &mdash; merge the 2 calls</li>
+              <li>Last step: click attended call (the 2 arrows pointing to the right)</li>
+            </ol>
+            <div style="margin-top:15px; padding:15px; text-align:center; background:#E8F0F8; border-radius:8px; font-size:15px; color:#1B3A5C;">
+              <strong style="display:block; font-size:17px; margin-bottom:6px;">Ironwood Law Group</strong>
+              Customer Service Number: <strong>(800) 425-7439</strong><br>
+              Customer Service Email: <strong>support@ironwoodlawgroup.com</strong><br>
+              <a href="https://ironwoodlawgroup.com/" target="_blank" style="color:#2E75B6;">https://ironwoodlawgroup.com/</a>
+            </div>
+            <div class="reminder-note"><strong>REMINDER:</strong> Go to Slack and enter your deal into your daily deal group. This is your bragging rights!</div>
+          </div>
+        </div>
+
+        <!-- Main Section 15: Compliance Checklist -->
+        <div class="collapsible-section" id="main-compliance">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            Compliance Checklist <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="important-note" style="background:#FFF8E1; border-left-color:#F0C040;"><strong style="color:#C0392B;">ATTENTION:</strong> <strong style="color:#B8860B;">Understand ALL of these questions. This is what the Account Executive is going to ask your client when you're done with your sale. Knowing these ensures you're preparing the client properly throughout the call and not promising anything you shouldn't be.</strong></div>
+            <div class="stage-direction">ILG Account Manager will go over these questions with your client:</div>
+            <div class="agent-line"><strong>AM Script:</strong> I'm going to ask a few quick yes-or-no questions just to make sure everything is clear. If anything needs clarification, just let me know.</div>
+            <ol class="qc-list">
+              <li>Do you understand that this program is <strong>not a loan</strong> and we are not lending you money?</li>
+              <li>Do you understand that this is <strong>not debt consolidation or traditional debt settlement</strong>, and we are not taking out new loans to pay off your debts?</li>
+              <li>Do you understand that your payments go toward <strong>attorney fees for legal representation</strong> and the dispute process?</li>
+              <li>Do you understand that in order for our team to begin disputing your accounts, those creditors typically stop receiving payments and the accounts may go into collections?</li>
+              <li>Do you understand that during the first few months you may receive collection calls, and that this is a normal part of the process?
+                <div class="reminder-note" style="margin-top:8px;"><strong>SCRIPT FOR CLIENT:</strong> "I have retained legal representation. Please direct any communication to Ironwood at 800-425-7439." Then politely hang up. Many clients also choose to block those numbers.</div>
+              </li>
+              <li>Do you understand that this process typically takes about <strong>18&ndash;24 months</strong> depending on the accounts involved?</li>
+              <li>Do you understand that if you receive any legal notices or lawsuits, you must <strong>send those to us immediately</strong> so we can assist?</li>
+              <li>Do you understand that if any enrolled debt is secured by collateral, such as a vehicle, the lender may have the right to repossess that collateral?</li>
+              <li>Do you understand that <strong>stopping automatic payments</strong> to enrolled creditors is important so it does not interfere with the dispute process?</li>
+              <li>And finally &mdash; do you understand that this program works best as a <strong>partnership</strong>, meaning staying in communication with us and sending documents when requested is important for success?</li>
+            </ol>
+          </div>
+        </div>
+
+        </div><!-- phase-main-content -->
+      </div><!-- /script-main -->
+
+      <!-- ====================================== -->
+      <!-- SCRIPT VIEW — RVM -->
+      <!-- ====================================== -->
+      <div id="script-rvm" class="tab-content">
+        <div class="phase-divider" id="rvm-phase" onclick="togglePhase('rvm')">
+          RVM SCRIPT <span class="phase-chevron">&#9660;</span>
+          <div class="phase-sub">West Coast Enrollment Center | The Doc Pros</div>
+        </div>
+        <div class="phase-index" id="phase-rvm-index">
+          <a href="#rvm-open" onclick="expandAndScroll('rvm','rvm-open')">1. Open</a>
+          <a href="#rvm-qualify" onclick="expandAndScroll('rvm','rvm-qualify')">2. Qualify</a>
+          <a href="#rvm-basic-info" onclick="expandAndScroll('rvm','rvm-basic-info')">3. Basic Info</a>
+          <a href="#rvm-probe" onclick="expandAndScroll('rvm','rvm-probe')">4. Probe</a>
+          <a href="#rvm-debt" onclick="expandAndScroll('rvm','rvm-debt')">5. Debt Discussion</a>
+          <a href="#rvm-commit" onclick="expandAndScroll('rvm','rvm-commit')">6. Commitment</a>
+          <a href="#rvm-underwriting" onclick="expandAndScroll('rvm','rvm-underwriting')">7. Underwriting</a>
+          <a href="#rvm-how-works" onclick="expandAndScroll('rvm','rvm-how-works')">8. How It Works</a>
+          <a href="#rvm-numbers" onclick="expandAndScroll('rvm','rvm-numbers')">9. Numbers</a>
+          <a href="#rvm-landing" onclick="expandAndScroll('rvm','rvm-landing')">10. Soft Landing</a>
+          <a href="#rvm-close" onclick="expandAndScroll('rvm','rvm-close')">11. Close</a>
+          <a href="#rvm-esign" onclick="expandAndScroll('rvm','rvm-esign')">E-Sign</a>
+          <a href="#rvm-transfer" onclick="expandAndScroll('rvm','rvm-transfer')">Transfer</a>
+          <a href="#rvm-compliance" onclick="expandAndScroll('rvm','rvm-compliance')">Compliance</a>
+        </div>
+        <div class="phase-content" id="phase-rvm-content">
+
+        <!-- RVM Step 1: Open -->
+        <div class="collapsible-section" id="rvm-open">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            STEP 1: OPEN <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">West Coast Enrollment, this is <span class="blank">[NAME]</span>! How can I help you?</div>
+            <div class="agent-line">Are you calling about the debt hardship program?</div>
+            <div class="important-note"><strong>If the client asks "What company is this?"</strong> &mdash; It's West Coast Enrollment.<br><strong>If they ask for the website:</strong> <a href="https://westcoastenrollmentcenter.com" target="_blank" style="color:var(--important-border);font-weight:600;">westcoastenrollmentcenter.com</a></div>
+            <div class="stage-direction">If they ask why they received the call:</div>
+            <div class="agent-line">Sure, not a problem. From what I can tell, it looks like your credit bureau &mdash; Equifax &mdash; labeled it as a financial hardship. They asked a law firm to reach out and offer assistance. That's the purpose of my call today. <span class="optional-tag">If Asked</span></div>
+          </div>
+        </div>
+
+        <!-- RVM Step 2: Qualify -->
+        <div class="collapsible-section" id="rvm-qualify">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            STEP 2: QUALIFY <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="important-note"><strong>Goal: Under 2 minutes.</strong> Qualify on three factors: Type of Debt, Total Amount, and Income Source.</div>
+            <div class="agent-line"><strong>1.</strong> What type of debts are causing your hardship? Credit cards and loans &mdash; or something else? <em>(Personal loans? Collections? Payday loans? Cash advances? Vehicle repossession?)</em></div>
+            <div class="agent-line"><strong>2.</strong> Do you owe more than $6,000 total?</div>
+            <div class="agent-line"><strong>3.</strong> Are you currently employed or do you have a household income source? <em>(SSI, SSDI, unemployment?)</em></div>
+            <div class="crm-note">&#128204; If they say "No" to income: "How are you currently paying your bills?"</div>
+            <div class="agent-line">Perfect, it sounds like you might be eligible for one of our short-term hardship programs. It’ll only take a few minutes to see if we can get you qualified &mdash; I just need some basic information. Does that sound good?</div>
+          </div>
+        </div>
+
+        <!-- RVM Step 3: Basic Info -->
+        <div class="collapsible-section" id="rvm-basic-info">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            STEP 3: COLLECT BASIC INFO <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="stage-direction">Collect: Full Name, Callback Number, Date of Birth, Address.</div>
+            <div class="agent-line"><strong>1.</strong> Can I get the proper spelling of your first and last name?</div>
+            <div class="agent-line"><strong>2.</strong> In case we get disconnected, is this the best number to reach you?</div>
+            <div class="agent-line"><strong>3.</strong> For verification purposes, what is your date of birth?</div>
+            <div class="agent-line">The next step is to pull up a copy of your accounts and balances. We search using your name and address &mdash; that’s it. Have you been at your current address for more than 3 months? And what is your full street address?</div>
+          </div>
+        </div>
+
+        <!-- RVM Step 4: Probe for Pain -->
+        <div class="collapsible-section" id="rvm-probe">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            STEP 4: PROBE FOR PAIN <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="stage-direction">Build rapport. Understand their situation. Find their motivation.</div>
+            <div class="agent-line"><strong>1.</strong> Can you tell me about your current situation? What are you most trying to accomplish?</div>
+            <div class="agent-line"><strong>2.</strong> How much are you paying toward your debts each month &mdash; minimum payments, or more?</div>
+            <div class="agent-line"><strong>3.</strong> Are you seeing your balances go down at all?</div>
+            <div class="crm-note">&#128204; <strong>Put the customer on hold.</strong> Pull their debts, review quickly, then get back on the phone.</div>
+          </div>
+        </div>
+
+        <!-- RVM Step 5: Debt Discussion -->
+        <div class="collapsible-section" id="rvm-debt">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            STEP 5: DEBT DISCUSSION <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Great, I was able to locate everything. It looks like your current credit score is <span class="blank">[SCORE]</span>. I don’t mention this to beat you up &mdash; I actually want to point out a silver lining. Clients who come to me with a high score, we have to tread carefully. In your case, since the damage is already done, we can power straight through and knock these debts off the report &mdash; leaving you debt-free with a higher score faster than most clients. Let me go through these one at a time.</div>
+            <div class="crm-note">&#128204; Go over each creditor name, balance, status, delinquent marks, and utilization %. <strong>Go through these slowly.</strong> You’re painting the picture of their situation back to them &mdash; let them feel heard. Be thorough &mdash; clients want to know you’re listening.</div>
+            <div class="agent-line">So it looks like you have <span class="blank">[#]</span> accounts with a combined balance of <span class="blank">[$TOTAL]</span>.</div>
+          </div>
+        </div>
+
+        <!-- RVM Step 6: Commitment & Goals -->
+        <div class="collapsible-section" id="rvm-commit">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            STEP 6: COMMITMENT &amp; GOALS <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Before I submit for approval, I like to ask every client if there were any specific goals for today. In many cases, a specific event sparked their interest in becoming debt-free with a high score. Anything specific &mdash; are you working toward a purchase? A goal you’re trying to achieve? Or is this more about recovering and rebuilding?</div>
+            <div class="agent-line">And do you have a timeframe in mind for that goal?</div>
+            <div class="crm-note">&#128204; <strong>This question determines program length.</strong> If they say they want to buy a house in 2 years, don’t put them in a 36-month program &mdash; keep it tight so they hit their goal. If they’re more focused on lowering their overall monthly payment and less concerned about a specific timeline, that’s when you stretch it to 36 months to keep the payment comfortable. Match the term to their priority.</div>
+            <h3 class="sub-heading">Income &amp; Hardship Discussion</h3>
+            <div class="agent-line">To make sure I can get you approved for the most benefits, I need to go over your income. How much are you currently bringing home per month after taxes?</div>
+            <div class="agent-line">Do you have any other hardships &mdash; loss of income, unexpected bills, health issues?</div>
+            <div class="agent-line">And how about savings? Do you have any emergency savings set aside, or has that been depleted?</div>
+            <div class="crm-note">&#128204; <strong>CRM:</strong> Enter hardship description in CRM.</div>
+          </div>
+        </div>
+
+        <!-- RVM Step 7: Underwriting Hold -->
+        <div class="collapsible-section" id="rvm-underwriting">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            STEP 7: UNDERWRITING HOLD <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Perfect, that's all the information I need. The next step is to submit your file to our underwriting department for approval. If you're approved, I'll help you enroll today. If you're denied for any reason, I'll tell you exactly why.</div>
+            <div class="agent-line">I'm going to put you on a brief 2&ndash;3 minute hold. While you wait, grab a pen and paper &mdash; when I come back, we'll go over all your approval details together. Sound good? Great, please hold!</div>
+            <div class="crm-note">&#128204; <strong>While on hold:</strong> Go to Enroll, enroll the client, and build their payment schedule. Make sure you save the Owe/Pay/Save numbers so when you deliver them, it rolls right off your tongue.</div>
+          </div>
+        </div>
+
+        <!-- RVM Step 8: How It Works -->
+        <div class="collapsible-section" id="rvm-how-works">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            STEP 8: HOW IT WORKS <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Hello <span class="blank">[NAME]</span>, are you still with me? Great &mdash; I have some good news! My underwriting department was able to get ALL of your debts approved for the program. <strong>Congratulations!</strong> Do you have your pen and paper?</div>
+            <div class="stage-direction">Have the client write down the program name, then two key words.</div>
+            <div class="agent-line">Great! First, I want you to write down the name of the program you’ve been approved for &mdash; <strong>&ldquo;DEBT VALIDATION.&rdquo;</strong></div>
+            <div class="important-note"><strong>Slow down... this is the meat and potatoes!</strong></div>
+            <div class="agent-line">Now I have 2 words for you to write down as bullet points, and then I’ll come back to what they mean. The 1st word is <strong>&ldquo;Validate&rdquo;</strong> and the 2nd word is <strong>&ldquo;Update.&rdquo;</strong></div>
+            <h3 class="sub-heading">Explaining &ldquo;Validate&rdquo;</h3>
+            <div class="agent-line">I want to take a moment to explain that first word &ldquo;Validate&rdquo; &mdash; because this is going to do the heavy lifting for you with the types of debt you have. Your debts all have a few things in common: they’re private, unsecured, and not tied to any collateral.</div>
+            <div class="agent-line">To properly explain validation, I want to touch on two laws that are really the foundation of the entire program &mdash; specifically the <strong>Fair Credit Reporting Act</strong> and the <strong>Fair Debt Collection Practices Act.</strong></div>
+            <div class="agent-line">These laws outline what a creditor can and cannot do when collecting a debt from a borrower. At their core, these laws are designed to prevent false and inaccurate reporting &mdash; but they’re <em>also</em> the exact laws that define what a company needs to have in order to even prove a debt is owed in the first place.</div>
+            <div class="agent-line">The way they prove it is through what’s called <strong>triple-verified debt</strong> &mdash; they need your date of birth, your Social Security number, and the original signed contract. Nothing out of the ordinary &mdash; that’s the exact information used to open these accounts to begin with.</div>
+            <div class="agent-line">But what most people don’t realize is that when a debt is sold or transferred in any way, there are multiple privacy laws in place that prevent most of that information from carrying over.</div>
+            <div class="agent-line">The obvious one is your Social &mdash; nobody can sell your Social Security number for profit. And <em>you</em> would know better than anyone that after a debt was sold, you never sat down and signed any new paperwork, agreements, or contracts with the third-party collector. That’s already two of the three required proof elements missing.</div>
+            <div class="agent-line"><strong>This is where we step in.</strong> We are partnered with <strong>Ironwood Law Group</strong>. We demand legal proof from these creditors &mdash; proof we know they won’t have. Our attorneys send Cease and Desist letters to stop all collection attempts while we work on your behalf.</div>
+            <div class="agent-line">Once we prove the debt invalid, it becomes uncollectable, and we request full removal of the tradeline from your credit report. Not just the balance &mdash; the entire history of delinquency is expunged. So no one in the future can see you even had these debts, let alone didn’t pay them back in full.</div>
+            <div class="agent-line">So this is a true credit report RESET. Does that make sense?</div>
+            <h3 class="sub-heading">Explaining &ldquo;Update&rdquo;</h3>
+            <div class="agent-line">The second step is a Credit Report Update. Any 30, 60, or 90-day late marks still remaining after Step 1 will be removed as well. This clears the way for a higher score.</div>
+            <div class="agent-line">These are the two major steps on your path to becoming completely debt-free with a high credit score.</div>
+            <div class="crm-note">&#128204; *** If client has accounts still current with original creditors, add the &ldquo;Strategic Charge-Off&rdquo; explanation below: ***</div>
+            <div class="crm-note">&#128204; <strong>Strategic Charge-Off (Read if accounts are still active/current):</strong><br><br>Now, that example was based on collection accounts. The only difference between collection accounts and your debts is that yours are still with the original creditor. Meaning, they still have your original signed contract. Not a problem &mdash; there’s just one additional step our attorneys will start off with, which is called a <strong>strategic charge-off</strong>.<br><br>Our attorneys will force the debt to transfer, which will cause the loss of information to occur. This will allow us to validate and expunge these accounts the exact same way as if they were collection accounts.<br><br>Point being, these will all be handled in the same manner. Name, Account Number, Late Marks, and Balance &mdash; removed. Leaving you debt-free with a high score!</div>
+          </div>
+        </div>
+
+        <!-- RVM Step 9: Present the Numbers -->
+        <div class="collapsible-section" id="rvm-numbers">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            STEP 9: PRESENT THE NUMBERS <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">Now I have a few numbers I want you to write down, and then I’ll come back to what those mean.</div>
+            <div class="crm-note">&#128204; <strong>Just give them the raw numbers &mdash; don’t say Owe, Pay, or Save yet.</strong> Let them write them down first, then come back and explain each one.</div>
+            <div class="agent-line">The first number is <span class="blank">[$___]</span>. The second number is <span class="blank">[$___]</span>. And the third number is <span class="blank">[$___]</span>. Got those down?</div>
+            <div class="pro-tip-box"><strong>&#9733; PRO TIP &mdash; Owe / Pay / Save</strong><br><strong>OWE</strong> &ndash; The total balance including interest<br><strong>PAY</strong> &ndash; The flat-fee total they’ll pay in the program<br><strong>SAVE</strong> &ndash; The difference (OWE minus PAY)<br><br><em>Example: Owe $20,000 &bull; Pay $7,000 &bull; Save $13,000</em></div>
+            <h3 class="sub-heading">Now Explain the Numbers</h3>
+            <div class="agent-line">Okay, so the first number is everything you currently owe combined with interest &mdash; you can label that <strong>&ldquo;OWE.&rdquo;</strong></div>
+            <div class="agent-line">Now the good news: because you’ve been approved for debt validation, you’ll only pay back that second number &mdash; label that <strong>&ldquo;PAY.&rdquo;</strong> When I say total payback, I mean <strong>TOTAL payback</strong> &mdash; fees, legal retainer, and repayment all rolled into one flat fee. No interest, no hidden charges.</div>
+            <div class="agent-line">Subtract those two and you get your savings &mdash; label that <strong>&ldquo;SAVE.&rdquo;</strong> Do those three numbers make sense?</div>
+            <h3 class="sub-heading">Payment Schedule</h3>
+            <div class="agent-line">Now on your own, these debts could take 6&ndash;10 years to pay off in full because of the interest and fees stacking up. The good news is, through this program your payment would be $<span class="blank">[AMOUNT]</span> a month for <span class="blank">[X]</span> months.</div>
+            <div class="agent-line">And just to be clear &mdash; that one payment replaces any and all payments you’re currently making to these accounts. You won’t be paying those anymore. This is your only payment &mdash; it’s flat, it covers everything, and there are no surprises.</div>
+          </div>
+        </div>
+
+        <!-- RVM Step 10: Soft Landing -->
+        <div class="collapsible-section" id="rvm-landing">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            STEP 10: SOFT LANDING <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">There’s only one requirement from you moving forward. The same privacy laws that protect your information also prevent us from redirecting your creditor mail directly to us. So when creditor letters arrive in your mailbox, your only job is to photograph them and send them to us via email, text, or fax. I’ll give you all those contact details at the end of the call.</div>
+            <div class="important-note"><strong>Those letters are your golden ticket. The sooner you send them in, the faster we complete the program.</strong></div>
+          </div>
+        </div>
+
+        <!-- RVM Step 11: Close & Enroll -->
+        <div class="collapsible-section" id="rvm-close">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            STEP 11: CLOSE &amp; ENROLL <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="agent-line">If those numbers make sense, I can get you enrolled today &mdash; which activates your full legal coverage immediately. From there, we’ll structure your program and pick out whatever payment dates work best for you. The sooner we get started, the sooner the attorneys go to work and these balances stop growing. Sound good? Let’s do it!</div>
+            <div class="reminder-note">&#128204; <strong>Reminder:</strong> Use the client’s &ldquo;Pain&rdquo; and &ldquo;Goals&rdquo; from earlier if you need extra motivation to cross the finish line.</div>
+            <h3 class="sub-heading">Confirm Details</h3>
+            <div class="agent-line"><strong>1.</strong> Confirm address, income, credit score, and goals from earlier in the call.</div>
+            <div class="agent-line"><strong>2.</strong> Preferred callback time: Morning, Afternoon, or Evening?</div>
+            <div class="agent-line"><strong>3.</strong> Best email address for documents?</div>
+            <h3 class="sub-heading">Select Start Date</h3>
+            <div class="agent-line">Your payment is what kicks off your legal protection and puts the attorneys to work. Every day we wait, these balances keep climbing. When’s the soonest we can get that first payment going for you?</div>
+            <div class="crm-note">&#128204; <strong>If they can’t start this week:</strong> Pull up the calendar together. Ask about their next pay date, direct deposit vs. paper check, and any competing bills. Payments draft at 6:00 AM Eastern.</div>
+            <div class="crm-note">&#128204; <strong>If they’re hesitant on the date:</strong> Ask them directly &mdash; &ldquo;Is it more of a timing thing, or is the monthly amount the concern?&rdquo; If it’s affordability, offer to stretch the term to bring the payment down so they can start sooner and stay successful. We want them enrolled sooner rather than later &mdash; a lower payment they can actually make beats a higher one they keep pushing off.</div>
+            <div class="crm-note">&#128204; <strong>Maximum start date: 16 calendar days from today.</strong> Exception: clients on a fixed income (retirement, disability, SSI) &mdash; work with their payment schedule.</div>
+            <h3 class="sub-heading">Collect Payment Information</h3>
+            <div class="agent-line">We process all program payments by debit card. <strong>NOTHING will be charged until your first scheduled payment of <span class="blank">[$AMOUNT]</span> on <span class="blank">[DATE]</span>.</strong></div>
+            <div class="agent-line"><strong>1.</strong> First and last name on card &mdash; middle initial if listed?</div>
+            <div class="agent-line"><strong>2.</strong> Is the billing address the same as your mailing address?</div>
+            <div class="agent-line"><strong>3.</strong> 16-digit card number</div>
+            <div class="agent-line"><strong>4.</strong> Expiration date</div>
+            <div class="agent-line"><strong>5.</strong> CVV</div>
+          </div>
+        </div>
+
+        <!-- RVM E-Sign & Documents -->
+        <div class="collapsible-section" id="rvm-esign">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            E-Sign &amp; Documents <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="important-note"><strong>IMPORTANT:</strong> Before moving forward, go to the <a href="http://ironwoodlaw-agent-dashboard.s3-website-us-west-2.amazonaws.com/" target="_blank" style="color:var(--accent); font-weight:700;">ILG Agent Dashboard</a> and make sure there is an Account Advisor available before going through the next process. Slack whatever Account Advisor is available and let them know you’ve got a call coming in in a minute to confirm.<br><br>If no one is available, ask the customer what’s a good time for them to receive a call back &mdash; they can call them shortly, within the hour.</div>
+            <div class="agent-line">Great, so we will move onto one of the last steps for us today. As promised, I have your E-Sign documents for you.</div>
+            <div class="agent-line">Allow me one moment to get these generated. It will be coming from <strong>Horizon Financial Services</strong> and the subject will say <strong>&ldquo;Action Required, Review Your Enrollment.&rdquo;</strong></div>
+            <div class="agent-line">Have you ever done an electronic signature before? Perfect!</div>
+            <div class="stage-direction">Send out docs, walk them through them.</div>
+            <div class="important-note"><strong>IMPORTANT:</strong> Make sure the client knows that if they have any automatic payments, they need to make sure those get stopped. This is where we send them the <strong>ACH Revocation Form</strong> and instructions if they have installment loans that are being debited directly. It’s already set up as an email template in Communications called <strong>ACH Revocation Instructions</strong>.</div>
+            <div class="reminder-note"><strong>REMINDER:</strong> Let the client know that after they’re done signing, it’s going to ask them to create a password &mdash; that’s where their portal lives.</div>
+            <div class="agent-line">After docs are signed, the last step is to introduce you to your account manager (Financial Concierge) and then we go over a quick compliance check list that should not take more than a few more minutes.</div>
+            <div class="reminder-note"><strong>REMINDER:</strong> Be sure to give them your contact information as well. Let them know you will be texting them your info along with sending a breakdown email of the numbers and program. Go to Communications &rarr; Send Email and send the <strong>ILG Program Offer Breakdown &ndash; Approval</strong> template (found at the bottom of the email template list).</div>
+            <div class="stage-direction">If they don’t have additional questions, let them know you’re going to place them on a brief hold and get them transferred over to your account management with ILG.</div>
+          </div>
+        </div>
+
+        <!-- RVM Transfer to ILG -->
+        <div class="collapsible-section" id="rvm-transfer">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            Transfer to ILG <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="important-note"><strong>HOW TO TRANSFER TO ILG:</strong></div>
+            <ol class="esign-steps">
+              <li>Add call</li>
+              <li>Type 50 then call</li>
+              <li>Once ILG agent picks up, give them file details</li>
+              <li>When ready to blind transfer &mdash; merge the 2 calls</li>
+              <li>Last step: click attended call (the 2 arrows pointing to the right)</li>
+            </ol>
+            <div style="margin-top:15px; padding:15px; text-align:center; background:#E8F0F8; border-radius:8px; font-size:15px; color:#1B3A5C;">
+              <strong style="display:block; font-size:17px; margin-bottom:6px;">Ironwood Law Group</strong>
+              Customer Service Number: <strong>(800) 425-7439</strong><br>
+              Customer Service Email: <strong>support@ironwoodlawgroup.com</strong><br>
+              <a href="https://ironwoodlawgroup.com/" target="_blank" style="color:#2E75B6;">https://ironwoodlawgroup.com/</a>
+            </div>
+            <div class="reminder-note"><strong>REMINDER:</strong> Go to Slack and enter your deal into your daily deal group. This is your bragging rights!</div>
+          </div>
+        </div>
+
+        <!-- RVM Compliance Checklist -->
+        <div class="collapsible-section" id="rvm-compliance">
+          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+            Compliance Checklist <span class="chevron">&#9660;</span>
+          </button>
+          <div class="section-content">
+            <div class="important-note" style="background:#FFF8E1; border-left-color:#F0C040;"><strong style="color:#C0392B;">ATTENTION:</strong> <strong style="color:#B8860B;">Understand ALL of these questions. This is what the Account Executive is going to ask your client when you’re done with your sale. Knowing these ensures you’re preparing the client properly throughout the call and not promising anything you shouldn’t be.</strong></div>
+            <div class="stage-direction">ILG Account Manager will go over these questions with your client:</div>
+            <div class="agent-line"><strong>AM Script:</strong> I’m going to ask a few quick yes-or-no questions just to make sure everything is clear. If anything needs clarification, just let me know.</div>
+            <ol class="qc-list">
+              <li>Do you understand that this program is <strong>not a loan</strong> and we are not lending you money?</li>
+              <li>Do you understand that this is <strong>not debt consolidation or traditional debt settlement</strong>, and we are not taking out new loans to pay off your debts?</li>
+              <li>Do you understand that your payments go toward <strong>attorney fees for legal representation</strong> and the dispute process?</li>
+              <li>Do you understand that in order for our team to begin disputing your accounts, those creditors typically stop receiving payments and the accounts may go into collections?</li>
+              <li>Do you understand that during the first few months you may receive collection calls, and that this is a normal part of the process?
+                <div class="reminder-note" style="margin-top:8px;"><strong>SCRIPT FOR CLIENT:</strong> &ldquo;I have retained legal representation. Please direct any communication to Ironwood at 800-425-7439.&rdquo; Then politely hang up. Many clients also choose to block those numbers.</div>
+              </li>
+              <li>Do you understand that this process typically takes about <strong>18&ndash;24 months</strong> depending on the accounts involved?</li>
+              <li>Do you understand that if you receive any legal notices or lawsuits, you must <strong>send those to us immediately</strong> so we can assist?</li>
+              <li>Do you understand that if any enrolled debt is secured by collateral, such as a vehicle, the lender may have the right to repossess that collateral?</li>
+              <li>Do you understand that <strong>stopping automatic payments</strong> to enrolled creditors is important so it does not interfere with the dispute process?</li>
+              <li>And finally &mdash; do you understand that this program works best as a <strong>partnership</strong>, meaning staying in communication with us and sending documents when requested is important for success?</li>
+            </ol>
+          </div>
+        </div>
+
+        </div><!-- /phase-rvm-content -->
+
+      </div>
+
+      <div id="rebuttals" class="tab-content">
+        <div class="section-title">Common Rebuttals</div>
+        <div class="section-subtitle">Click any rebuttal to expand the response script</div>
+        <div class="search-box">
+          <span class="search-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+          <input type="text" id="rebuttalSearch" placeholder="Search rebuttals..." oninput="filterRebuttals()">
+        </div>
+        <div id="rebuttalList">
+
+          <div class="rebuttal-card">
+            <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+              <span class="rebuttal-title">"You don't pay off my debt?"</span>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="rebuttal-body">
+              <div class="script-line say">The payments you're making don't go directly to your creditors. Instead, they go toward your validation program and your monthly legal coverage.</div>
+              <div class="script-line say">That's important because this program is what does the work of legally disputing and eliminating your debts.</div>
+              <div class="script-line say">Think of it as a chain of command — your payments fund the program, and the program resolves the debt on your behalf.</div>
+              <div class="script-line say">This isn't a traditional debt settlement where you just throw money at balances. It's a structured legal process that disputes the debts and gets them resolved right away.</div>
+              <div class="script-line say">Your debts wouldn't just disappear on their own — it's because of this program, and that's exactly what you're paying for.</div>
+            </div>
+          </div>
+
+          <div class="rebuttal-card">
+            <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+              <span class="rebuttal-title">"I don't feel right about not paying my debts"</span>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="rebuttal-body">
+              <div class="script-line say">I completely understand and if you can pay your debts off, you absolutely should. But let's look at the numbers. How long have you been paying on these?</div>
+              <div class="script-line say">How much do you pay each month? (Multiply the payment times the number of months they have been paying) That's $XXXX you have paid already.</div>
+              <div class="script-line instruction">If more than the balance: "You have fulfilled your obligation so why is it right for the credit card companies to keep taking your money when the amount borrowed has been paid back?"</div>
+              <div class="script-line instruction">If less: "These programs are designed for people in financial hardship."</div>
+              <div class="script-line say">These credit card companies will still collect what's owed through insurance and tax incentives when they write it off. They make money again when they sell it to a 3rd party collector.</div>
+              <div class="script-line say">The credit card companies will be fine. They will still be a multi-billion dollar companies with or without your debts.</div>
+              <div class="script-line say" style="font-weight:700;">Remember, this is your financial situation we're talking about. Not theirs.</div>
+            </div>
+          </div>
+
+          <div class="rebuttal-card">
+            <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+              <span class="rebuttal-title">"Will I be sued?"</span>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="rebuttal-body">
+              <div class="script-line say">It typically doesn't get to that point when attorneys are involved.</div>
+              <div class="script-line say">However, if that happens, you'll have full legal representation and defense included.</div>
+              <div class="script-line say">The attorneys will respond on your behalf, file all necessary paperwork, fedex any appropriate documents, and if necessary litigate on your behalf.</div>
+              <div class="script-line tip" style="margin-top:12px;"><strong>What happens if debt validation doesn't work?</strong></div>
+              <div class="script-line say">Even in the rare case we have to settle an account, the law firm will make sure it's still completely removed from your credit report.</div>
+              <div class="script-line tip"><strong>What happens in a lawsuit?</strong></div>
+              <div class="script-line say">The Negotiation can start pre-emptively to avoid it from happening, with our law firm which is an attorney's office.</div>
+              <div class="script-line tip" style="margin-top:12px;"><strong>Hot Button Phrases:</strong></div>
+              <div class="script-line say">Every one of your creditors get a notice of disputes.</div>
+              <div class="script-line say" style="font-weight:700;">The objective is to get you back to lendability and to remove those accounts as if they never existed!</div>
+              <div class="script-line say">With this Program there is 0 interest.</div>
+              <div class="script-line say">If any of the credits call you or break any regulations, the law firm can actually sue them and in some cases has won clients upwards of $5,000+.</div>
+            </div>
+          </div>
+
+          <div class="rebuttal-card">
+            <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+              <span class="rebuttal-title">"How do I know this will actually work?"</span>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="rebuttal-body">
+              <div class="script-line say">We only take on accounts that we have had success with for over 10 years — for example if you had a secured debt or certain creditors or credit unions — we would NOT enroll in it.</div>
+              <div class="script-line say">We only enroll accounts this WORKS for.</div>
+              <div class="script-line say">Also — you're on a monthly plan — each month that goes by (AND you are sending in collection letters) you will see the proof in the pudding — mail hitting your mailbox from creditors, 3rd parties, credit bureaus proving we are doing the work we promise to do.</div>
+            </div>
+          </div>
+
+          <div class="rebuttal-card">
+            <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+              <span class="rebuttal-title">"This sounds too good to be true"</span>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="rebuttal-body">
+              <div class="script-line say">You probably haven't heard of this program before because you haven't been in this situation before.</div>
+              <div class="script-line say">However, there are many consumer protection laws in place, such as the Fair Debt Collections Practices Act, the Fair Credit Billing Act, the Fair Credit Reporting Act, and most recently the Credit Card Act of 2009.</div>
+              <div class="script-line say">Do you remember when the banking crisis occurred? That was when more legislation was enacted to protect consumers like you from predatory lending and holding the creditors and banks accountable for their communication with you, keeping accurate records, and reporting correctly to the credit bureaus, which they misreport 80% of the time.</div>
+              <div class="script-line say">(The Doc Pros) and the law firm specializes in these laws, successfully disputing and resolving debts. This outcome typically results with the tradeline removed from your credit reports, like it never happened.</div>
+            </div>
+          </div>
+
+          <div class="rebuttal-card">
+            <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+              <span class="rebuttal-title">"I'm maxed out but I'm scared to fall behind"</span>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="rebuttal-body">
+              <div class="script-line say">I completely understand your concern — nobody wants to fall behind. But here's the part nobody tells you:</div>
+              <div class="script-line say" style="font-weight:700;">Right now you're already paying as if you're behind — just without getting the benefit of the reset.</div>
+              <div class="script-line say">You're over 80–100% utilization. Your minimum payments barely touch principal. Your score is stuck or dropping. And you're one emergency away from a real default.</div>
+              <div class="script-line say">If what you're doing was working, the balances would be going down. But the interest keeps resetting every month. So clients in your situation end up stuck for 5–12 years paying minimums and never getting ahead.</div>
+              <div class="script-line say">Allowing accounts to move to collections doesn't "hurt you more" — it actually creates leverage. When it's charged off or with a 3rd-party, the burden shifts, paperwork changes hands, chain-of-title gets sloppy, and that's where disputes work in your favor. This is why the biggest improvements for clients happen after that transition — not before.</div>
+              <div class="script-line say">Your score can recover much faster with a structured dispute program than by paying it down. The balances get challenged, the negative accounts can be deleted, utilization drops, score rebounds, and you get back into lending territory quicker. It's not the late payments that tank people long-term — it's the years of maxed-out cards.</div>
+              <div class="script-line say">The temporary dip is exactly what unlocks the long-term recovery. You're choosing between a short, controlled step back — or dragging the problem out for another 5–10 years. One gets you back to a 650–700 range faster, the other keeps you stuck.</div>
+              <div class="script-line tip" style="margin-top:12px;"><strong>Short Version (for live calls):</strong></div>
+              <div class="script-line say">"I get it — nobody likes missing payments. But right now, you're maxed out, your score is already suppressed, and the banks aren't giving you credit anyway. What the program does is turn the situation into an advantage by challenging the debt once it moves out of the original creditor's hands. This is the fastest way to reset your utilization, remove the negative accounts, and get you back to borrowing power. Staying current keeps you stressed for years — strategically stepping back gets you ahead faster."</div>
+            </div>
+          </div>
+
+          <div class="rebuttal-card">
+            <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+              <span class="rebuttal-title">"I'm not interested in a program"</span>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="rebuttal-body">
+              <div class="script-line say">Totally fair. But this is like nothing you've ever heard before. Give me 5 minutes, and I think you'll agree. Fair enough?</div>
+            </div>
+          </div>
+
+          <div class="rebuttal-card">
+            <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+              <span class="rebuttal-title">"Creditors are going to call me"</span>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="rebuttal-body">
+              <div class="script-line say">Yeah, they're gonna call. Good news — the law firm will instruct you exactly how to handle those calls. Either they'll stop the calls, or if they're violating your rights, they'll sue on your behalf at no cost to you. Sound good?</div>
+            </div>
+          </div>
+
+          <div class="rebuttal-card">
+            <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+              <span class="rebuttal-title">"I just need a loan" (Loan Rebuttal)</span>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="rebuttal-body">
+              <div class="script-line tip"><strong>Short, direct explanation (client-friendly):</strong></div>
+              <div class="script-line say">I get why a loan sounds like the solution — on the surface it feels like it fixes everything. The problem is, with your current credit score and utilization, a loan actually doesn't solve the core issue and often makes things worse.</div>
+              <div class="script-line tip"><strong>The logic (simple + undeniable):</strong></div>
+              <div class="script-line say">Right now your credit is being held down by high utilization and negative account activity. A loan doesn't remove those — it just reshuffles the debt.</div>
+              <div class="script-line say">In most cases: the interest rate is high, the payment is higher than what you're already doing, your utilization stays elevated, and your score barely moves, if it moves at all.</div>
+              <div class="script-line tip"><strong>The killer line (use this):</strong></div>
+              <div class="script-line say" style="font-weight:700;">A loan helps people with good credit get better terms — it doesn't fix damaged credit.</div>
+              <div class="script-line tip"><strong>Utilization reality check (very important):</strong></div>
+              <div class="script-line say">Even if you got approved today, lenders don't look at intent — they look at risk. High utilization tells the system you're already stretched, so adding another loan just flags more risk.</div>
+              <div class="script-line say">That's why people take loans and six months later ask, 'Why didn't my score go up?'</div>
+              <div class="script-line tip"><strong>Future-pacing consequence (NEPQ style):</strong></div>
+              <div class="script-line say">If nothing changes on the credit side and you just add another payment, how long do you think it takes before you're right back in the same position — just with more debt and less flexibility?</div>
+              <div class="script-line instruction">(pause — let them answer)</div>
+              <div class="script-line tip"><strong>Soft pivot to the real solution:</strong></div>
+              <div class="script-line say">The reason lenders say no right now isn't because you don't want to pay — it's because the credit profile itself needs repair first.</div>
+              <div class="script-line say">Once utilization is corrected and negative accounts are addressed, then a loan actually makes sense — because it's cheaper, easier to approve, and actually helps your score.</div>
+              <div class="script-line tip" style="margin-top:12px;"><strong>Analogies (pick the one that fits):</strong></div>
+              <div class="script-line say"><strong>Best overall:</strong> "Using a loan to fix bad credit is like putting premium gas in a car with a check-engine light on — it doesn't fix the problem, it just lets you drive a little longer before it breaks down again."</div>
+              <div class="script-line say"><strong>Street-level:</strong> "A loan on top of high utilization is like stacking another box on an already overloaded shelf — it doesn't strengthen it, it just makes the collapse happen faster."</div>
+              <div class="script-line say"><strong>Financial-minded:</strong> "A loan doesn't repair credit damage — it just changes the shape of the debt. Lenders don't reward that."</div>
+              <div class="script-line say"><strong>Emotional impact:</strong> "Taking a loan with high utilization is like taking painkillers for a broken bone — the pain feels better, but the injury never heals."</div>
+              <div class="script-line say"><strong>With pushback:</strong> "If loans fixed bad credit, lenders wouldn't care about utilization — but that's the first thing they look at."</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ====================================== -->
+      <!-- REFERENCE: CREDIT IMPACT -->
+      <!-- ====================================== -->
+      <div id="credit" class="tab-content">
+        <div class="section-title">How Is This Going To Affect My Credit?</div>
+        <div class="section-subtitle">Use the right version depending on the client's account status</div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header open" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">Accounts Current but High Utilization</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body open">
+            <div class="script-line say">That's a really good question — and I totally get why you'd ask that. Your credit is already being dragged down mainly by the high balances, not by missed payments. Utilization alone can drop a score a hundred points or more, so even though you're current, lenders still see you as high-risk right now.</div>
+            <div class="script-line say">What this program does is it helps you stop the bleeding — because if you keep paying minimums, your utilization never drops, and your score just stays stuck or even drops more the longer it stays that way.</div>
+            <div class="script-line say">Once those accounts are legally disputed, validated, and resolved, we will request that the entire trade line is removed from your Credit Report in an expungement.</div>
+            <div class="script-line say">What this means is, after everything is all said and done, not only is the debt balance itself not owed, but the FULL TRADELINE and all of your history on that account is COMPLETELY WIPED from your credit report.</div>
+            <div class="script-line say">So this will get you back to lendability within 18 months or less with a high credit score! (Most of our clients end up in the mid 700's)</div>
+          </div>
+        </div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">Behind on Everything / Low Score</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body">
+            <div class="script-line say">I completely understand your concern — but at this stage, your credit's already taken the hit. Those late payments and collections have already dropped your score, so continuing to pay on invalid or charged-off accounts won't rebuild it.</div>
+            <div class="script-line say">What actually helps now is removing the negative and rebuilding with new, positive data.</div>
+            <div class="script-line say">Our process is designed to legally dispute and invalidate those accounts that are hurting your score — and when they can't be validated, they get removed completely with a $0 balance. That's what helps open the door for rebuilding.</div>
+            <div class="script-line say">So instead of trying to fix credit on top of damaged debt, we clean up the foundation first — this helps get you back to lendability in the quickest way possible.</div>
+          </div>
+        </div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">Quick Reinforcement Lines</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body">
+            <div class="script-line tip"><strong>Credit at rock bottom:</strong> "You can't hurt what's already broken — but you can fix what's broken by forcing creditors to prove the debt is valid and removing inaccurate data."</div>
+            <div class="script-line tip"><strong>Credit rebound:</strong> "Once those negative items are disputed and validated, the tradelines that don't belong or can't be proven are deleted — and that's when your score starts to bounce back."</div>
+            <div class="script-line tip"><strong>Shift to action:</strong> "The only way out is through a structured, legal process — not by letting collectors keep reporting negative information and dragging it out another 3–7 years."</div>
+            <div class="script-line tip"><strong>Reset button:</strong> "Think of it like a reset button. We're not just putting a Band-Aid on your credit — we're removing the infection that's been causing the score to stay low in the first place."</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ====================================== -->
+      <!-- REFERENCE: PLAYBOOK -->
+      <!-- ====================================== -->
+      <div id="playbook" class="tab-content">
+        <div class="section-title">Sales Playbook</div>
+        <div class="section-subtitle">Quick reference guide & battle cards</div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header open" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">Initial Contact Checklist</span><span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body open">
+            <div class="script-line instruction">Stop payments/revoke phone consent – send all collection accounts over</div>
+            <div class="script-line instruction">Check if accounts are OLD – verify they have an email on file</div>
+            <div class="script-line instruction">Find out what days they get paid to tighten 1st payment date</div>
+          </div>
+        </div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">Cross-Collateralization Script</span><span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body">
+            <div class="script-line say">I want to quickly cover something important that protects your money while you're in the program — it's called cross-collateralization.</div>
+            <div class="script-line say">Since your checking account and credit card are with the same bank, once that card becomes past due, the bank has the right to pull money directly from your account to pay the balance. They don't ask — they just sweep the funds.</div>
+            <div class="script-line say">Because we're strategically allowing the account to fall behind so the validation process can work, we can't have your income going into a bank that can grab it.</div>
+            <div class="script-line say">So the safe move is: Open a new checking at a different bank, move direct deposit and bills there, leave the old account mostly empty so there's nothing to sweep.</div>
+            <div class="script-line say">This simply protects your money while we do our job on the debt.</div>
+          </div>
+        </div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">Debt Validation Timelines</span><span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body">
+            <table class="ref-table">
+              <tr><th>Account Type</th><th>Timeline</th></tr>
+              <tr><td>Already in Collections</td><td>90-120 days (if they send letters immediately)</td></tr>
+              <tr><td>Current Accounts</td><td>90-120 days til charge off + 90 days more = 180-210 days total</td></tr>
+            </table>
+            <div class="script-line tip"><strong>Bottom line:</strong> 6-12 months is realistic to dispute/invalidate all accounts</div>
+          </div>
+        </div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">Key Talk Tracks</span><span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body">
+            <div class="script-line tip"><strong>"Toxic Integrity" Reframe:</strong> "You're walking around with a pocket full of plastic that you can't use. If you swiped it right now, it would be declined. 'Toxic integrity' can sometimes keep people from making smart decisions. 'Do the right thing' sometimes means doing the smart thing."</div>
+            <div class="script-line tip"><strong>The Payment Problem:</strong> "It sounds like the issue isn't that you can't make payments... it's that the payments aren't solving the problem. Would you agree?"</div>
+            <div class="script-line tip"><strong>"Renting Your Bad Credit":</strong> "If you're carrying $20,000 in debt with a 600 score, you're basically renting your non-lendable credit score for $____ a month. Why keep paying to stay stuck when you could invest in fixing it?"</div>
+            <div class="script-line tip"><strong>Lendability:</strong> "By lendability, I mean being able to qualify for the best interest rates from reputable lenders — and staying away from anything predatory."</div>
+            <div class="script-line tip"><strong>Show Them The Math:</strong> Monthly payment × months = money wasted. Example: $700/mo × 36 months = $25,200 thrown out the door!</div>
+          </div>
+        </div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">Bullet Points: Why This Is Better Than Doing Nothing</span><span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body">
+            <div class="script-line say">If you are in a position where you're struggling with debt/maxed out and only making minimum payments… you're essentially "renting" your non-lendable credit score.</div>
+            <div class="script-line tip"><strong>Break down the math:</strong> They have 15k in debt, pay about $400/mo in mins for 2 years = $9,600 and balance is STILL 15K. In another 2 years: $19,200 paid and still same position. That's not progress — that's lighting your hard-earned money on fire!</div>
+            <div class="script-line say">If you're using all your income just to stay current — which is already keeping you from being lendable — what would you do if an emergency came up? How would you pay for it? That's exactly what this program gives you — payment relief and the ability to start saving right away.</div>
+          </div>
+        </div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">Why Paying Old Collections Can Backfire</span><span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body">
+            <div class="script-line tip"><strong>1. DLA Reset:</strong> Payment may reset the Date of Last Activity, making the account appear more recent. Newer negatives weigh more heavily.</div>
+            <div class="script-line tip"><strong>2. No Immediate Score Improvement:</strong> Paid collections stay on report for 7 years. Many models treat paid and unpaid similarly.</div>
+            <div class="script-line tip"><strong>3. Statute of Limitations Risk:</strong> Paying can restart the statute, allowing creditors to sue again.</div>
+            <div class="script-line tip"><strong>4. Cash Flow Strain:</strong> Lump sum payments reduce available funds for essentials.</div>
+            <div class="script-line tip"><strong>5. Neglecting Current Obligations:</strong> Focusing on old collections could divert resources from current bills.</div>
+          </div>
+        </div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">Loan Denial Transition Scripts</span><span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body">
+            <div class="script-line tip"><strong>Pre-Let Down:</strong></div>
+            <div class="script-line say">So we're just going to take a look at your loan options. My only concern is that you're currently at [___]% credit utilization — you're using almost all your available credit, and that's really pulling your score down. Right now your score is at [___]. My concern is you may not qualify for an interest rate that's really going to help you. But don't be discouraged — because of your situation, this qualifies as a financial hardship. We have a hardship program that might be more aligned with your goals.</div>
+            <div class="script-line tip"><strong>When Offers Are No Good:</strong></div>
+            <div class="script-line say">Unfortunately, the offers didn't come in as we had hoped. So what I'm going to do is tell you about some options that I think are going to work really well for you. Sound good?</div>
+            <div class="script-line tip"><strong>Why Loans Don't Fix The Problem:</strong></div>
+            <div class="script-line say">If you're already behind on unsecured debt and it's hitting your credit, another loan just adds fuel to the fire. It usually comes with high interest and short terms. What you need isn't more debt — it's a way to freeze the damage, stop collections, and actually repair your credit.</div>
+          </div>
+        </div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">Program Explanation Snippets</span><span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body">
+            <div class="script-line tip"><strong>What The Program Does:</strong></div>
+            <div class="script-line say">Goal: Get you back to lendability within 18-24 months and remove those accounts as if they never existed. After program completion, accounts show no derogatory remarks whatsoever.</div>
+            <div class="script-line tip"><strong>Key Benefits:</strong></div>
+            <div class="script-line say">Full service legal approach. Saving you significant money and interest. Taking over all communications with creditors/collectors. Single lower monthly payment that is interest-free. Attorneys stay with you throughout the entire process.</div>
+            <div class="script-line tip"><strong>Why Creditors Can't Validate:</strong></div>
+            <div class="script-line say">"Think of how many mergers, buyouts, and system changes these banks have been through. Getting the original signed agreements, interest calculations, disclosures, terms and conditions, notices of late fees — it's like looking for a needle on a 10,000-acre farm. They usually respond, but it's almost always incomplete."</div>
+          </div>
+        </div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">Discovery & Pain-Finding Questions</span><span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body">
+            <div class="script-line tip"><strong>Core Discovery:</strong></div>
+            <div class="script-line say">Do you plan on using your credit for any major purchase in the next 12-24 months?</div>
+            <div class="script-line say">How long have you been carrying these balances for?</div>
+            <div class="script-line say">Are you expecting any significant increase in your income over the next 2 years?</div>
+            <div class="script-line say">What options have you looked into to get the debt resolved?</div>
+            <div class="script-line say">Do you have any money in savings at this time?</div>
+            <div class="script-line instruction">(If no savings) When was the last time you were able to put money in savings? Would you say the debt is preventing that?</div>
+            <div class="script-line instruction">(If 40+) Do you have any money in retirement?</div>
+            <div class="script-line tip"><strong>Pain-Finding (Emotional Sale):</strong></div>
+            <div class="script-line say">How long has this been going on?</div>
+            <div class="script-line say">Are you at least able to keep up with basic expenses?</div>
+            <div class="script-line say">What are you going to do if it doesn't get better?</div>
+            <div class="script-line say">How is it affecting your family? How is it affecting your health?</div>
+            <div class="script-line tip"><strong>Soft Openers:</strong> "Just out of curiosity..." / "Help me understand..." / "Can you walk me through..." / "How do you see that affecting..." / "What happens if nothing changes?" / "Would it be helpful if..."</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ====================================== -->
+      <!-- REFERENCE: SETTLE VS VALIDATE -->
+      <!-- ====================================== -->
+      <div id="settlement" class="tab-content">
+        <div class="section-title">Debt Settlement vs. Debt Validation</div>
+        <div class="section-subtitle">Training Module — Help reps clearly explain how Debt Validation works, why it's legally stronger and financially safer than traditional settlement, and how it protects credit and cash flow better.</div>
+
+        <!-- 1. Big Picture -->
+        <h3 style="margin:24px 0 12px;font-size:16px;">1. The Big Picture: Both Are About Getting Out of Debt</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;">
+            <div style="font-weight:700;margin-bottom:12px;color:var(--red);">Debt Settlement:</div>
+            <div class="script-line tip" style="margin:6px 0;">Negotiates balances <em>after</em> a charge-off.</div>
+            <div class="script-line tip" style="margin:6px 0;">You stop paying creditors → accounts go late → credit score tanks.</div>
+            <div class="script-line tip" style="margin:6px 0;">A negotiator tries to settle accounts for less than owed (usually 40–60%).</div>
+            <div class="script-line tip" style="margin:6px 0;">You still pay income tax on forgiven amounts.</div>
+            <div class="script-line tip" style="margin:6px 0;">Credit remains damaged for years.</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;">
+            <div style="font-weight:700;margin-bottom:12px;color:var(--green);">Debt Validation / Dispute:</div>
+            <div class="script-line tip" style="margin:6px 0;">Uses <em>federal consumer protection laws</em> (FDCPA, FCRA, FCBA, etc.) to force collectors to <em>prove</em> a debt is valid and legally collectible.</div>
+            <div class="script-line tip" style="margin:6px 0;">If they cannot produce required documentation, the debt must be <strong>deleted or closed</strong> — not settled.</div>
+            <div class="script-line tip" style="margin:6px 0;">Focuses on disputing <em>legality</em>, not negotiating a payoff.</div>
+            <div class="script-line tip" style="margin:6px 0;">You keep more cash and protect your credit from new damage.</div>
+          </div>
+        </div>
+
+        <!-- 2. Financial Comparison -->
+        <h3 style="margin:24px 0 12px;font-size:16px;">2. Financial Comparison (Average Case)</h3>
+        <table class="ref-table">
+          <tr><th>Category</th><th>Debt Settlement</th><th>Debt Validation</th></tr>
+          <tr><td><strong>Total Savings</strong></td><td>40–50% off balances (but pay taxes on forgiven debt) Plus 25% to the settlement company (after all costs they pay back up to 100% of the debt they owed)</td><td>Often 60–80% savings, no tax liability</td></tr>
+          <tr><td><strong>Monthly Payment</strong></td><td>High, based on negotiated settlements</td><td>Low, based on legal service plan</td></tr>
+          <tr><td><strong>Credit Impact</strong></td><td>Severe – late payments and settlements reported</td><td>Minimal to moderate – disputed accounts may be removed</td></tr>
+          <tr><td><strong>Legal Protection</strong></td><td>None (can still be sued)</td><td>Strong – uses legal team and dispute process</td></tr>
+          <tr><td><strong>Timeline</strong></td><td>36–48 months average</td><td>6–18 months average depending on accounts</td></tr>
+        </table>
+
+        <!-- 3. Credit Restoration Advantage -->
+        <h3 style="margin:24px 0 12px;font-size:16px;">3. Credit Restoration Advantage</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;">
+            <div style="font-weight:700;margin-bottom:12px;color:var(--red);">Debt Settlement:</div>
+            <div class="script-line tip" style="margin:6px 0;">Leaves "settled for less than owed" marks.</div>
+            <div class="script-line tip" style="margin:6px 0;">Score usually drops 100–200 points.</div>
+            <div class="script-line tip" style="margin:6px 0;">Must rebuild from scratch after program.</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;">
+            <div style="font-weight:700;margin-bottom:12px;color:var(--green);">Debt Validation:</div>
+            <div class="script-line tip" style="margin:6px 0;">When debts are invalidated, the negative trade lines are disputed for removal.</div>
+            <div class="script-line tip" style="margin:6px 0;">Validated debts can be handled legally without settlements.</div>
+            <div class="script-line tip" style="margin:6px 0;">Goal: restore credit to 680–720+ within program completion.</div>
+          </div>
+        </div>
+
+        <!-- 4. Real-World Example -->
+        <h3 style="margin:24px 0 12px;font-size:16px;">4. Real-World Example</h3>
+        <div class="script-line tip"><strong>A client owes $20,000 across five credit cards.</strong><br><br>
+          <strong>Debt Settlement:</strong> pays ~$12,000–$14,000 + taxes → ends up costing ~$15,000 total, also 25% fees to the settlement company it could be up to $20,000 all in!<br><br>
+          <strong>Debt Validation:</strong> legal team disputes each account. Three are deleted, let's say two are verified and negotiated for $4,000 → total ~$6,000-$8,000 total payback.<br><br>
+          <strong style="color:var(--green);">Savings: $9,000 difference + credit rebound in under a year.</strong></div>
+
+        <!-- 5. Talking Points for Reps -->
+        <h3 style="margin:24px 0 12px;font-size:16px;">5. Talking Points for Reps</h3>
+        <div class="script-line say" style="margin:8px 0;">"We don't negotiate your debt — we challenge it legally."</div>
+        <div class="script-line say" style="margin:8px 0;">"Our goal isn't to settle — it's to remove what's not legally collectible."</div>
+        <div class="script-line say" style="margin:8px 0;">"You keep more money in your pocket and restore your credit faster."</div>
+        <div class="script-line say" style="margin:8px 0;">"Debt settlement focuses on paying; we focus on protecting."</div>
+        <div class="script-line say" style="margin:8px 0;">"We help you get your financial rights enforced under federal law."</div>
+
+        <!-- 6. Training Exercise / 60-Second Explanation -->
+        <h3 style="margin:24px 0 12px;font-size:16px;">6. Training Exercise — 60-Second Explanation</h3>
+        <div class="script-line instruction">Have each rep practice explaining the difference in under 60 seconds, using this framework:</div>
+        <div class="script-line say" style="margin-top:8px;">"Debt settlement tries to cut deals with creditors, but it wrecks your credit and you still pay taxes on the forgiven amount. Debt validation uses federal law to force collectors to prove a debt's legality. If they can't, it must be removed — not settled. That's how our clients keep more money and rebuild credit faster."</div>
+
+      </div>
+
+      <!-- ====================================== -->
+      <!-- REFERENCE: COLLECTIONS -->
+      <!-- ====================================== -->
+      <div id="collections" class="tab-content">
+        <div class="section-title">Collections — Why It Works</div>
+        <div class="section-subtitle">Walk the client through the collection lifecycle with certainty</div>
+
+        <div class="script-line say"><strong>(Absolute Certainty)</strong> Let's take your <span class="blank">CREDITOR</span> account for example. Soon after this account reaches late or non-payment status, <span class="blank">CREDITOR</span> is going to sell your account to a collections company. In doing so <span class="blank">CREDITOR</span> gets a tax break by writing off your debt as "uncollectable" and "charges it off" while at the same time selling it to a collections company.</div>
+
+        <div class="script-line say"><strong>(Absolute Certainty)</strong> <span class="blank">CREDITOR</span> takes their money, is now out of the picture and has sold your account for pennies on the dollar to the debt collector. This debt collector is now seeking to collect the full amount from you! Pretty good business deal for them especially when you consider the only thing they really bought was paper!</div>
+
+        <div class="script-line say"><strong>(Absolute Certainty)</strong> When they purchase your debt, they simply receive a spreadsheet with your contact info, account number and how much you owe. Their only goal is to make as much money off you as possible. Once the collections company has your info, you'll get a letter in the mail stating that they took over your debt and they are trying to collect on behalf of <span class="blank">CREDITOR</span>.</div>
+
+        <div class="script-line say"><strong>(Absolute Certainty)</strong> We know that all of the time that is not true because <span class="blank">CREDITOR</span> has already sold this debt to them, made their money, and is out of the picture. Once you get that letter, you simply forward it to us and allow our team to handle the dispute process on your behalf from A to Z.</div>
+
+        <div class="script-line say"><strong>(Reasonable Man)</strong> Pretty straightforward right?</div>
+
+        <div class="script-line important" style="margin-top:16px;">WAIT FOR AN ANSWER — BE PREPARED TO FILL IN ANY GAPS HERE.</div>
+
+      </div>
+
+      <!-- ====================================== -->
+      <!-- REFERENCE: NEPQ / SAVES -->
+      <!-- ====================================== -->
+      <div id="nepq" class="tab-content">
+        <div class="section-title">NEPQ Cancellation Saves</div>
+        <div class="section-subtitle">Neuro-Emotional Persuasion Questioning — use these to save cancellations</div>
+
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;">
+          <div style="font-weight:600;color:var(--text);margin-bottom:8px;">NEPQ Training Video — Jeremy Miner</div>
+          <div style="border-radius:6px;overflow:hidden;">
+            <iframe width="100%" height="180" src="https://www.youtube.com/embed/mDWUpuumAuo" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen style="border-radius:6px;"></iframe>
+          </div>
+          <div style="margin-top:8px;font-size:13px;"><a href="https://www.youtube.com/watch?v=mDWUpuumAuo" target="_blank" style="color:var(--accent);">▶ Open video in YouTube</a> (if embed doesn't load)</div>
+        </div>
+
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;">
+          <div class="script-line instruction" style="margin-bottom:8px;"><strong>What is NEPQ?</strong> NEPQ stands for Neuro-Emotional Persuasion Questioning — a sales methodology developed by Jeremy Miner. It's a modern, psychology-based selling framework built around asking the right questions rather than pitching or pushing.</div>
+          <div class="script-line instruction" style="margin-bottom:8px;"><strong>Key principles:</strong> Ask, don't tell — questions lead prospects to recognize their own pain. Neuro-emotional triggers — tap into emotional drivers behind buying decisions. Disarm defensiveness — avoids high-pressure tactics. Status quo disruption — creates urgency without aggression.</div>
+          <div class="script-line instruction"><strong>Question framework:</strong> 1) Connection questions — Build rapport. 2) Situation questions — Understand where they are now. 3) Problem awareness — Help them articulate pain. 4) Consequence questions — Explore what happens if nothing changes. 5) Solution questions — Guide them to envision a better outcome. 6) Commitment questions — Natural close based on their own reasoning.</div>
+        </div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header open" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">1. Revisit Emotional Pain (Current vs. Future State)</span><span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body open">
+            <div class="script-line say">"Out of curiosity, what was the main reason you enrolled in the first place? Was it more about wanting to stop the creditor pressure, or fixing your credit so you can borrow again?"</div>
+            <div class="script-line instruction">Let them respond</div>
+            <div class="script-line say">"Got it. So if you were to cancel now, do you feel like that would move you closer to the goal you originally had — or back to where things were before?"</div>
+          </div>
+        </div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">2. Problem Awareness + Fear of Future Pain</span><span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body">
+            <div class="script-line say">"I get it — making changes like this can feel risky. But just to clarify, if those accounts stay on your credit the way they are now… do you think they'll improve on their own — or possibly get worse over time?"</div>
+            <div class="script-line instruction">Let them acknowledge the reality</div>
+            <div class="script-line say">"Exactly. That's actually why people with lower credit scores benefit the most from this program — it gives you a legal way to clean up your report and finally move forward."</div>
+          </div>
+        </div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">3. Consequences of Doing Nothing</span><span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body">
+            <div class="script-line tip"><strong>If Current:</strong></div>
+            <div class="script-line say">"Let me ask you something — if nothing changes and those high balances stay where they are for the next 12 to 24 months, what does that mean for your credit and ability to qualify for anything new?"</div>
+            <div class="script-line instruction">Let them reflect</div>
+            <div class="script-line say">"Exactly. That's why people in your position benefit from this kind of legal strategy."</div>
+            <div class="script-line tip"><strong>If Behind:</strong></div>
+            <div class="script-line say">"If nothing changes, and those collections stay on your report for the next 12–24 months, what does that mean for you financially?"</div>
+            <div class="script-line say">"That's what we're trying to prevent by legally disputing and removing them now, instead of letting the damage drag out."</div>
+          </div>
+        </div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">4. Reframe Cancellation as Losing Progress</span><span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body">
+            <div class="script-line say">"You've already taken the first step most people never take — and your file is already in motion. If we stop now, we lose the progress, and you're right back where you started — except now with another delay. Is that something you're willing to risk just yet?"</div>
+          </div>
+        </div>
+
+        <div class="rebuttal-card">
+          <div class="rebuttal-header" onclick="toggleRebuttal(this)">
+            <span class="rebuttal-title">5. Rebuild Trust + Show Partnership</span><span class="chevron">▶</span>
+          </div>
+          <div class="rebuttal-body">
+            <div class="script-line say">"I totally respect your concern, and that tells me you're serious about your credit. But that's why we're not like traditional debt settlement — we don't negotiate; we use consumer law to challenge the debt altogether. Would it be okay if I walk you through how this actually protects your credit instead of hurting it?"</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ====================================== -->
+      <!-- TOOLS: CALCULATOR -->
+      <!-- ====================================== -->
+      <div id="calculator" class="tab-content">
+        <div class="section-title">Quick Calculators</div>
+        <div class="section-subtitle">Run numbers live on the call</div>
+
+        <!-- ALL INPUTS -->
+        <h3 style="margin:20px 0 12px;font-size:16px;">Enter Client Info</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="calc-card">
+            <label>Total Debt — Owe ($)</label>
+            <input type="number" id="calcOwe" placeholder="20000" oninput="updateAllCalcs()">
+          </div>
+          <div class="calc-card">
+            <label>Program Cost — Pay ($)</label>
+            <input type="number" id="calcPay" placeholder="7000" oninput="updateAllCalcs()">
+          </div>
+          <div class="calc-card">
+            <label>Current Monthly Payments ($)</label>
+            <input type="number" id="calcCurrentPay" placeholder="500" oninput="updateAllCalcs()">
+          </div>
+          <div class="calc-card">
+            <label>Term (months)</label>
+            <input type="number" id="calcMonths" placeholder="18" oninput="updateAllCalcs()">
+          </div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid var(--border);margin:24px 0;">
+
+        <!-- RESULTS: OWE / PAY / SAVE -->
+        <h3 style="margin:0 0 12px;font-size:16px;">Owe / Pay / Save</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:0 0 16px;">
+          <div class="calc-result">
+            <div class="label">OWE</div>
+            <div class="big-number" id="calcOweDisplay" style="color:var(--red);">$0</div>
+          </div>
+          <div class="calc-result" style="border-color:var(--accent);">
+            <div class="label">PAY</div>
+            <div class="big-number" id="calcPayDisplay" style="color:var(--accent);">$0</div>
+          </div>
+          <div class="calc-result" style="border-color:var(--green);">
+            <div class="label">SAVE</div>
+            <div class="big-number" id="calcSave" style="color:var(--green);">$0</div>
+            <div class="label" id="calcPercent" style="margin-top:4px"></div>
+          </div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid var(--border);margin:24px 0;">
+
+        <!-- RESULTS: MONTHLY PAYMENT COMPARISON -->
+        <h3 style="margin:0 0 12px;font-size:16px;">Monthly Payment Comparison</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:0 0 16px;">
+          <div class="calc-result" style="border-color:var(--red);">
+            <div class="label">OLD PAYMENT</div>
+            <div class="big-number" id="calcOldPayment" style="color:var(--red);">$0</div>
+            <div class="label" style="margin-top:4px;color:var(--text-muted);">per month now</div>
+          </div>
+          <div class="calc-result" style="border-color:var(--green);">
+            <div class="label">NEW PAYMENT</div>
+            <div class="big-number" id="calcMonthly" style="color:var(--green);">$0</div>
+            <div class="label" id="calcMonthlyNote" style="margin-top:4px;color:var(--text-muted);"></div>
+          </div>
+          <div class="calc-result" style="border-color:var(--accent);">
+            <div class="label">MONTHLY SAVINGS</div>
+            <div class="big-number" id="calcMonthlySavings" style="color:var(--accent);">$0</div>
+            <div class="label" id="calcMonthlySavingsNote" style="margin-top:4px;"></div>
+          </div>
+        </div>
+        <div class="calc-result" style="border-color:var(--green);margin:0 0 12px;">
+          <div class="label">MONTHLY PAYMENT SAVINGS</div>
+          <div class="big-number" id="calcTotalSavingsOverTime" style="color:var(--green);">$0</div>
+          <div class="label" id="calcTotalSavingsNote" style="margin-top:4px;"></div>
+        </div>
+        <div class="calc-result" style="border-color:var(--accent);margin:0 0 16px;">
+          <div class="label">TOTAL SAVINGS (PROGRAM + MONTHLY)</div>
+          <div class="big-number" id="calcGrandTotal" style="color:var(--accent);">$0</div>
+          <div class="label" id="calcGrandTotalNote" style="margin-top:4px;"></div>
+        </div>
+
+        <h3 style="margin:28px 0 12px;font-size:16px;">"Show Them The Math" — Money Wasted Calculator</h3>
+        <div class="calc-grid">
+          <div class="calc-card">
+            <label>Monthly Min Payment ($)</label>
+            <input type="number" id="calcMinPay" placeholder="500" oninput="updateWastedCalc()">
+          </div>
+          <div class="calc-card">
+            <label>Months Paying</label>
+            <input type="number" id="calcMonthsPaying" placeholder="36" oninput="updateWastedCalc()">
+          </div>
+        </div>
+        <div class="calc-result" style="border-color:var(--red);">
+          <div class="label">MONEY ALREADY THROWN AWAY</div>
+          <div class="big-number" id="calcWasted" style="color:var(--red);">$0</div>
+          <div class="label" id="calcWastedNote" style="margin-top:4px;color:var(--red);"></div>
+        </div>
+
+        <h3 style="margin:28px 0 12px;font-size:16px;">Credit Score → Loan Terms Reference</h3>
+        <table class="ref-table">
+          <tr><th>Credit Score</th><th>Loan Amount</th><th>APR</th><th>&lt; 10% APR?</th></tr>
+          <tr><td>800-850</td><td>$35,000 - $50,000+</td><td>3% - 5%</td><td style="color:var(--green);">Very High</td></tr>
+          <tr><td>740-799</td><td>$20,000 - $35,000</td><td>3% - 8%</td><td style="color:var(--green);">High</td></tr>
+          <tr><td>670-739</td><td>$10,000 - $20,000</td><td>6% - 15%</td><td style="color:var(--yellow);">Moderate</td></tr>
+          <tr><td>580-669</td><td>$5,000 - $10,000</td><td>10% - 25%</td><td style="color:var(--red);">Unlikely</td></tr>
+          <tr><td>300-579</td><td>$1,000 - $5,000</td><td>15% - 36%</td><td style="color:var(--red);">None</td></tr>
+        </table>
+
+        <h3 style="margin:28px 0 12px;font-size:16px;">Debt Payment Comparison</h3>
+        <table class="ref-table">
+          <tr><th>Total Debt</th><th>CC Min (2.5%)</th><th>Loan (36mo @ 15%)</th></tr>
+          <tr><td>$10,000</td><td>$250/mo</td><td>~$346/mo</td></tr>
+          <tr><td>$20,000</td><td>$500/mo</td><td>~$692/mo</td></tr>
+          <tr><td>$30,000</td><td>$750/mo</td><td>~$1,038/mo</td></tr>
+          <tr><td>$40,000</td><td>$1,000/mo</td><td>~$1,384/mo</td></tr>
+          <tr><td>$50,000</td><td>$1,250/mo</td><td>~$1,730/mo</td></tr>
+          <tr><td>$60,000</td><td>$1,500/mo</td><td>~$2,076/mo</td></tr>
+          <tr><td>$70,000</td><td>$1,750/mo</td><td>~$2,422/mo</td></tr>
+          <tr><td>$80,000</td><td>$2,000/mo</td><td>~$2,768/mo</td></tr>
+        </table>
+
+      </div>
+
+      <!-- ====================================== -->
+      <!-- TOOLS: CREDITOR CODES -->
+      <!-- ====================================== -->
+      <div id="creditor-codes" class="tab-content">
+        <div class="section-title">Creditor Abbreviations</div>
+        <div class="section-subtitle">Quick lookup for credit report abbreviations</div>
+        <div class="search-box">
+          <span class="search-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+          <input type="text" id="creditorSearch" placeholder="Search creditors..." oninput="filterCreditors()">
+        </div>
+        <div id="creditorTables">
+          <h3 style="margin:20px 0 8px;font-size:15px;">Major Banks</h3>
+          <table class="ref-table creditor-table">
+            <tr><th>Common Name</th><th>Credit Report Abbreviation</th></tr>
+            <tr><td>Chase Bank</td><td>JPMCB (JPMorgan Chase Bank)</td></tr>
+            <tr><td>Bank of America</td><td>BOA</td></tr>
+            <tr><td>Wells Fargo</td><td>WFDS, WFB, WF BANK NA</td></tr>
+            <tr><td>Citibank</td><td>CBNA, CITIBANK NA</td></tr>
+            <tr><td>Capital One</td><td>CAP1, CAPITAL ONE, CAP1/BSTBY, CAP1/WMT</td></tr>
+            <tr><td>U.S. Bank</td><td>USB, US BANK, USBANK</td></tr>
+            <tr><td>PNC Bank</td><td>PNC BANK, PNCB</td></tr>
+            <tr><td>TD Bank</td><td>TDBANK, TDBA, TD RETAIL CARD SVCS</td></tr>
+            <tr><td>Discover</td><td>DSCBR, DISCOVER FIN SVCS, DFS/BANK</td></tr>
+            <tr><td>American Express</td><td>AMEX, AMERICAN EXPRESS NATL BANK</td></tr>
+            <tr><td>Synchrony Bank</td><td>SYNCB, SYNCB/CARECR, SYNCB/AMAZON, SYNCB/LOWES, SYNCB/WALMART</td></tr>
+            <tr><td>Barclays Bank</td><td>BARCLAYS BANK DELAWARE</td></tr>
+            <tr><td>Ally Bank</td><td>ALLY, ALLY FINANCIAL, ALLY BANK AUTO</td></tr>
+            <tr><td>Regions Bank</td><td>REGIONS, REGIONS BANK</td></tr>
+            <tr><td>Fifth Third Bank</td><td>53BANK, FIFTH THIRD BANK</td></tr>
+          </table>
+
+          <h3 style="margin:28px 0 8px;font-size:15px;">Retail Credit Cards</h3>
+          <table class="ref-table creditor-table">
+            <tr><th>Retailer</th><th>Appears As</th></tr>
+            <tr><td>Macy's</td><td>DSNB MACYS</td></tr>
+            <tr><td>Kohl's</td><td>CAP1/KOHLS</td></tr>
+            <tr><td>Target</td><td>TD BANK USA/TD, TGT/TD</td></tr>
+            <tr><td>Walmart</td><td>CAP1/WMT, SYNCB/WALMART</td></tr>
+            <tr><td>Lowe's</td><td>SYNCB/LOWES</td></tr>
+            <tr><td>Home Depot</td><td>CBNA/HOMEDEP, THD/CBNA</td></tr>
+            <tr><td>Best Buy</td><td>CBNA/BSTBY, CAP1/BSTBY</td></tr>
+            <tr><td>Amazon</td><td>SYNCB/AMAZON, AMAZON/CBNA</td></tr>
+            <tr><td>JCPenney</td><td>SYNCB/JCP, JCP/CBNA</td></tr>
+            <tr><td>Victoria's Secret</td><td>COMENITYBANK/VS, CB/VS</td></tr>
+            <tr><td>Wayfair</td><td>CB/WAYFAIR, COMENITY/WAYFAIR</td></tr>
+          </table>
+
+          <h3 style="margin:28px 0 8px;font-size:15px;">Auto Lenders</h3>
+          <table class="ref-table creditor-table">
+            <tr><th>Lender</th><th>Appears As</th></tr>
+            <tr><td>Ally Financial</td><td>ALLY FINANCIAL, ALLY BANK AUTO</td></tr>
+            <tr><td>Capital One Auto</td><td>CAP1 AUTO, CAPITAL ONE AUTO FIN</td></tr>
+            <tr><td>Toyota Financial</td><td>TOYOTA MTR CR, TOYOTA FIN SERV</td></tr>
+            <tr><td>Honda Financial</td><td>HONDA FIN, AMERICAN HONDA FIN</td></tr>
+            <tr><td>Ford Credit</td><td>FORD MOTOR CR, FORD CREDIT</td></tr>
+            <tr><td>GM Financial</td><td>GM FINANCIAL, AMERICREDIT</td></tr>
+            <tr><td>Santander Consumer USA</td><td>SANTANDER CONSUMER USA, CHRYS CLR</td></tr>
+            <tr><td>Wells Fargo Auto</td><td>WFDS</td></tr>
+          </table>
+
+          <h3 style="margin:28px 0 8px;font-size:15px;">Smaller Banks & Finance Companies</h3>
+          <table class="ref-table creditor-table">
+            <tr><th>Lender</th><th>Appears As</th></tr>
+            <tr><td>The Bank of Missouri</td><td>TBOM</td></tr>
+            <tr><td>First Premier Bank</td><td>FPB, FIRST PREMIER BANK</td></tr>
+            <tr><td>Credit One Bank</td><td>CREDIT ONE BANK NA, C1 BANK</td></tr>
+            <tr><td>Merrick Bank</td><td>MERRICK BANK, MERRICK BK</td></tr>
+            <tr><td>WebBank</td><td>WEBBANK, WEBBANK/GETTINGTON, WEBBANK/FINGERHUT</td></tr>
+            <tr><td>OneMain Financial</td><td>ONEMAIN FIN, ONEMAIN CONSUMER</td></tr>
+            <tr><td>LendingClub</td><td>LENDINGCLUB BANK, LC BANK</td></tr>
+            <tr><td>Prosper</td><td>PROSPER FUNDING LLC</td></tr>
+            <tr><td>Avant</td><td>AVANT LLC, AVANT/WEBBANK</td></tr>
+            <tr><td>Upgrade</td><td>UPGRADE INC/WEBBANK</td></tr>
+            <tr><td>Mission Lane</td><td>MISSIONLANE/TBOM</td></tr>
+            <tr><td>Fortiva</td><td>FORTIVA/CFNA, FORTIVA RETAIL CREDIT</td></tr>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- ====================================== -->
+      <!-- TOOLS: LAWS REFERENCE -->
+      <!-- ====================================== -->
+      <div id="laws" class="tab-content">
+        <div class="section-title">Consumer Protection Laws</div>
+        <div class="section-subtitle">Reference these when educating clients</div>
+        <table class="ref-table">
+          <tr><th>Law</th><th>What It Does</th></tr>
+          <tr><td><strong>FDCPA</strong></td><td>Consumers can ask for debt collector ID and proper debt validation</td></tr>
+          <tr><td><strong>FCRA</strong></td><td>Consumers can review and dispute inaccurate credit reports</td></tr>
+          <tr><td><strong>Credit Card Act 2009</strong></td><td>Establishes transparent and fair credit practices</td></tr>
+          <tr><td><strong>TILA</strong></td><td>Requires standardized disclosure of loan terms and costs</td></tr>
+          <tr><td><strong>Right to Financial Privacy</strong></td><td>Protects confidentiality of financial records</td></tr>
+          <tr><td><strong>Unfair/Deceptive Practices</strong></td><td>Prohibits deceptive debt collection activities</td></tr>
+          <tr><td><strong>Fair Credit Billing Act</strong></td><td>Requires creditor identity disclosure before extending credit</td></tr>
+          <tr><td><strong>Equal Credit Opportunity</strong></td><td>Forbids discrimination in credit extension</td></tr>
+        </table>
+
+        <h3 style="margin:28px 0 12px;font-size:16px;">What We Request From Creditors (Under FCRA & TILA)</h3>
+        <div class="script-line tip" style="margin:8px 0;">1. Original signed loan agreement/promissory note</div>
+        <div class="script-line tip" style="margin:8px 0;">2. Complete itemized payment history with all charges, fees, interest, credits</div>
+        <div class="script-line tip" style="margin:8px 0;">3. Breakdown of principal, interest rate, and any term changes</div>
+        <div class="script-line tip" style="margin:8px 0;">4. Proof of legal right to collect (chain of ownership if sold)</div>
+        <div class="script-line tip" style="margin:8px 0;">5. Copies of all notices/disclosures provided under federal lending laws</div>
+
+        <div class="script-line say" style="margin-top:20px;">"Think of how many mergers, buyouts, and system changes these banks have been through. Getting the original signed agreements, interest calculations, disclosures, terms and conditions, notices of late fees — it's like looking for a needle on a 10,000-acre farm. They usually respond, but it's almost always incomplete."</div>
+
+      </div>
+
+      <!-- ====================================== -->
+      <!-- TOOLS: DEBT CHEAT SHEET -->
+      <!-- ====================================== -->
+      <div id="debt-sheet" class="tab-content">
+        <h2 class="section-title">Debt Type Cheat Sheet & Codes</h2>
+        <div class="section-subtitle">Quick reference for reading credit report codes and deciding what to enroll.</div>
+
+        <div style="margin-top:16px;">
+          <h3 style="color:var(--blue);margin-bottom:12px;">Credit Report Codes</h3>
+          <div class="script-line instruction" style="margin-bottom:10px;"><strong>INST</strong> — INSTALLMENT LOAN — Always ask: <strong>What is this? What is it SECURED TO?</strong> — if anything</div>
+          <div class="script-line instruction" style="margin-bottom:10px;"><strong>OPEN</strong> — Treat same as INST — always ask: <strong>What is this? What is it SECURED TO?</strong></div>
+          <div class="script-line instruction" style="margin-bottom:10px;"><strong>AUTO</strong> — Car must be REPO'd or completely totaled — <span style="text-decoration:underline;">watch for <strong>J</strong>oint</span> borrowers attached!</div>
+          <div class="script-line instruction" style="margin-bottom:10px;"><strong>REV</strong> — Revolving Credit Card / Line of Credit — always good but <span style="text-decoration:underline;">watch for <strong>A</strong>uthorized</span> User!</div>
+          <div class="script-line instruction" style="margin-bottom:10px;"><strong>COLL</strong> — Collection account — always good</div>
+          <div class="script-line important" style="margin-bottom:10px;"><strong>MTG / EDU</strong> — Mortgage and Student Loan — <strong>DON'T enroll EVER</strong></div>
+        </div>
+
+        <div style="margin-top:24px;">
+          <h3 style="color:var(--blue);margin-bottom:12px;">Borrower Type Codes</h3>
+          <div class="script-line say" style="margin-bottom:10px;"><strong>B | B</strong> — Borrower / Borrower = just the client's debt. Good to go.</div>
+          <div class="script-line instruction" style="margin-bottom:10px;"><strong>J | B</strong> — JOINT Borrower = there is a joint borrower attached to the debt. <strong>"Who is it?"</strong> Spouse or family member — they must be on board for the "Storm" (their credit will be affected too!). If joint borrower is on board, include their Name + Number + DOB in Co-Applicant Section. <strong>ONLY if the account is already IN Collections — no worries if client doesn't want to include them.</strong></div>
+          <div class="script-line instruction" style="margin-bottom:10px;">If spouse/family member wants to be included — ask if they have any Personal Debt. Include it to increase fees — and they also get the CREDIT UPDATE step included for FREE!</div>
+          <div class="script-line important" style="margin-bottom:10px;"><strong>A | B</strong> — Client is just an AUTHORIZED USER on this credit card — do <strong>NOT</strong> include, not theirs!</div>
+        </div>
+
+        <div style="margin-top:24px;">
+          <h3 style="color:var(--blue);margin-bottom:12px;">Installment Loan Rules</h3>
+          <div class="script-line instruction" style="margin-bottom:10px;"><strong>INST</strong> on Credit Report — "WHAT IS THIS DEBT?" "WHAT IS IT SECURED TO?" A lot of these ARE secured — to a car, home improvement loan, tractor, etc. — we cannot include. But SOME are unsecured. <strong>Always ask: WHAT IS IT / SECURED TO?</strong></div>
+        </div>
+
+        <div style="margin-top:24px;">
+          <h3 style="color:var(--blue);margin-bottom:12px;">Credit Union Rules</h3>
+          <div class="script-line say" style="margin-bottom:10px;"><strong>A)</strong> A <u>credit card</u> from a credit union <strong style="color:var(--green);">is GOOD</strong> — ALL DAY, RUN IT</div>
+          <div class="script-line important" style="margin-bottom:10px;"><strong>B)</strong> A <u>personal loan or installment loan</u> from a credit union <strong>is BAD</strong> — Exclude</div>
+        </div>
+
+        <div style="margin-top:24px;">
+          <h3 style="color:var(--blue);margin-bottom:12px;">Secured vs Unsecured</h3>
+          <div class="script-line important" style="margin-bottom:10px;">You ALWAYS HAVE TO ASK — don't rely on what it says on the credit report. It is sometimes listed as UNSECURED but is actually SECURED. You have to ask! Never ever try to push through a debt that is secured to an asset — client will be SUED, ASSET taken, and client will be pissed off you lied to them.</div>
+          <div class="script-line important" style="margin-bottom:10px;"><strong>Do NOT Enroll "CHIME" or Secured REV's or Credit Builders</strong></div>
+        </div>
+
+      </div>
+
+    </div><!-- content-scroll -->
+  </div><!-- main-content -->
+</div><!-- container -->
+
+<script>
+// Scroll position memory
+let scrollPositions = {};
+let activeTab = 'script-app';
+
+function showTab(tabId) {
+  // Save scroll position
+  const contentScroll = document.querySelector('.content-scroll');
+  scrollPositions[activeTab] = contentScroll.scrollTop;
+
+  // Hide all tabs
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+  // Show selected tab
+  document.getElementById(tabId).classList.add('active');
+
+  // Update sidebar buttons
+  document.querySelectorAll('.sidebar button[data-tab]').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector(`[data-tab="${tabId}"]`);
+  if (btn) btn.classList.add('active');
+
+  // Show/hide sub-navs
+  document.querySelectorAll('.sidebar .sub-nav').forEach(s => s.style.display = 'none');
+  if (tabId === 'script-app') {
+    document.getElementById('appSubNav').style.display = 'block';
+  } else if (tabId === 'script-main') {
+    document.getElementById('mainSubNav').style.display = 'block';
+  } else if (tabId === 'script-rvm') {
+    document.getElementById('rvmSubNav').style.display = 'block';
+  } else if (tabId === 'rebuttals') {
+    document.getElementById('rebuttalsSubNav').style.display = 'block';
+  } else if (tabId === 'credit') {
+    document.getElementById('creditSubNav').style.display = 'block';
+  } else if (tabId === 'playbook') {
+    document.getElementById('playbookSubNav').style.display = 'block';
+  } else if (tabId === 'nepq') {
+    document.getElementById('nepqSubNav').style.display = 'block';
+  }
+
+  // Update dynamic header
+  if (btn) {
+    const spanText = btn.querySelector('span:last-child');
+    document.getElementById('dynamic-title').textContent = spanText ? spanText.textContent : tabId;
+  }
+
+  activeTab = tabId;
+
+  // Restore scroll position
+  setTimeout(() => {
+    contentScroll.scrollTop = scrollPositions[tabId] || 0;
+  }, 0);
+}
+
+function jumpToPhase(tabId, sectionId) {
+  // Make sure we're on the right tab
+  if (activeTab !== tabId) showTab(tabId);
+
+  // Expand the phase if collapsed
+  let phasePrefix;
+  if (tabId === 'script-app') phasePrefix = 'app';
+  else if (tabId === 'script-main') phasePrefix = 'main';
+  else if (tabId === 'script-rvm') phasePrefix = 'rvm';
+
+  const content = document.getElementById('phase-' + phasePrefix + '-content');
+  if (content && content.classList.contains('phase-hidden')) {
+    togglePhase(phasePrefix);
+    setTimeout(() => {
+      document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 350);
+  } else {
+    document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function jumpToCard(tabId, index) {
+  if (activeTab !== tabId) showTab(tabId);
+  setTimeout(() => {
+    const cards = document.querySelectorAll('#' + tabId + ' .rebuttal-card');
+    if (cards[index]) cards[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
+}
+
+// Toggle section expansion
+function toggleSection(btn) {
+  const content = btn.nextElementSibling;
+  const expanded = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', !expanded);
+  if (expanded) {
+    content.style.maxHeight = content.scrollHeight + 'px';
+    requestAnimationFrame(() => { content.classList.add('collapsed'); content.style.maxHeight = '0'; });
+  } else {
+    content.classList.remove('collapsed');
+    content.style.maxHeight = content.scrollHeight + 'px';
+    content.addEventListener('transitionend', () => { content.style.maxHeight = 'none'; }, { once: true });
+  }
+}
+
+// Toggle phase (DM Application/Call/Direct Mail Script)
+function togglePhase(phase) {
+  const content = document.getElementById('phase-' + phase + '-content');
+  const index = document.getElementById('phase-' + phase + '-index');
+  const divider = document.getElementById(phase + '-phase');
+  const isHidden = content.classList.contains('phase-hidden');
+
+  if (isHidden) {
+    // Expand
+    content.classList.remove('phase-hidden');
+    content.style.maxHeight = content.scrollHeight + 'px';
+    content.addEventListener('transitionend', () => { content.style.maxHeight = 'none'; }, { once: true });
+    divider.classList.remove('phase-collapsed');
+    if (index) index.classList.remove('phase-index-hidden');
+  } else {
+    // Collapse
+    content.style.maxHeight = content.scrollHeight + 'px';
+    requestAnimationFrame(() => { content.classList.add('phase-hidden'); content.style.maxHeight = '0'; });
+    divider.classList.add('phase-collapsed');
+    if (index) index.classList.add('phase-index-hidden');
+  }
+}
+
+// Click an index link: ensure phase is expanded, then scroll to section
+function expandAndScroll(phase, sectionId) {
+  event.preventDefault();
+  const content = document.getElementById('phase-' + phase + '-content');
+  if (content.classList.contains('phase-hidden')) {
+    togglePhase(phase);
+    setTimeout(() => {
+      document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 350);
+  } else {
+    document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// Toggle rebuttal cards
+function toggleRebuttal(header) {
+  const body = header.nextElementSibling;
+  header.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+// Filter rebuttals by search
+function filterRebuttals() {
+  const searchTerm = document.getElementById('rebuttalSearch').value.toLowerCase();
+  const cards = document.querySelectorAll('#rebuttalList .rebuttal-card');
+
+  cards.forEach(card => {
+    const title = card.querySelector('.rebuttal-title').textContent.toLowerCase();
+    if (title.includes(searchTerm)) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+// Creditor search
+function filterCreditors() {
+  const q = document.getElementById('creditorSearch').value.toLowerCase();
+  document.querySelectorAll('.creditor-table tr').forEach(row => {
+    if (row.querySelector('th')) return;
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(q) ? '' : 'none';
+  });
+}
+
+// Unified calculator
+function updateAllCalcs() {
+  const owe = parseFloat(document.getElementById('calcOwe').value) || 0;
+  const pay = parseFloat(document.getElementById('calcPay').value) || 0;
+  const months = parseFloat(document.getElementById('calcMonths').value) || 0;
+  const currentPay = parseFloat(document.getElementById('calcCurrentPay').value) || 0;
+
+  // Section 1: Owe / Pay / Save
+  const save = owe - pay;
+  document.getElementById('calcOweDisplay').textContent = owe > 0 ? '$' + owe.toLocaleString() : '$0';
+  document.getElementById('calcPayDisplay').textContent = pay > 0 ? '$' + pay.toLocaleString() : '$0';
+  document.getElementById('calcSave').textContent = '$' + save.toLocaleString();
+  document.getElementById('calcPercent').textContent = owe > 0 ? Math.round((save / owe) * 100) + '% savings' : '';
+
+  // Section 2: Old Payment / New Payment / Savings
+  document.getElementById('calcOldPayment').textContent = currentPay > 0 ? '$' + currentPay.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) : '$0';
+
+  if (months > 0 && pay > 0) {
+    const monthly = pay / months;
+    document.getElementById('calcMonthly').textContent = '$' + monthly.toFixed(2);
+    document.getElementById('calcMonthlyNote').textContent = months + ' month program';
+
+    if (currentPay > 0) {
+      const monthlySavings = currentPay - monthly;
+      const totalSaved = monthlySavings * months;
+
+      document.getElementById('calcMonthlySavings').textContent = '$' + monthlySavings.toFixed(2);
+      document.getElementById('calcMonthlySavings').style.color = monthlySavings > 0 ? 'var(--accent)' : 'var(--red)';
+      document.getElementById('calcMonthlySavingsNote').textContent = monthlySavings > 0
+        ? 'saved per month'
+        : 'more per month';
+      document.getElementById('calcMonthlySavingsNote').style.color = monthlySavings > 0 ? 'var(--accent)' : 'var(--red)';
+
+      document.getElementById('calcTotalSavingsOverTime').textContent = '$' + totalSaved.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+      document.getElementById('calcTotalSavingsOverTime').style.color = totalSaved > 0 ? 'var(--green)' : 'var(--red)';
+      document.getElementById('calcTotalSavingsNote').textContent = totalSaved > 0
+        ? '$' + monthlySavings.toFixed(2) + '/mo x ' + months + ' months back in your pocket!'
+        : '';
+
+      // Grand total: program save + monthly payment savings
+      const grandTotal = save + totalSaved;
+      document.getElementById('calcGrandTotal').textContent = '$' + grandTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+      document.getElementById('calcGrandTotalNote').textContent = grandTotal > 0
+        ? '$' + save.toLocaleString() + ' program savings + $' + totalSaved.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + ' monthly savings'
+        : '';
+    } else {
+      document.getElementById('calcMonthlySavings').textContent = '$0';
+      document.getElementById('calcMonthlySavingsNote').textContent = '';
+      document.getElementById('calcTotalSavingsOverTime').textContent = '$0';
+      document.getElementById('calcTotalSavingsNote').textContent = '';
+      document.getElementById('calcGrandTotal').textContent = save > 0 ? '$' + save.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) : '$0';
+      document.getElementById('calcGrandTotalNote').textContent = save > 0 ? 'Program savings only' : '';
+    }
+  } else {
+    document.getElementById('calcMonthly').textContent = '$0';
+    document.getElementById('calcMonthlyNote').textContent = '';
+    document.getElementById('calcMonthlySavings').textContent = '$0';
+    document.getElementById('calcMonthlySavingsNote').textContent = '';
+    document.getElementById('calcTotalSavingsOverTime').textContent = '$0';
+    document.getElementById('calcTotalSavingsNote').textContent = '';
+    document.getElementById('calcGrandTotal').textContent = save > 0 ? '$' + save.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) : '$0';
+    document.getElementById('calcGrandTotalNote').textContent = save > 0 ? 'Program savings only' : '';
+  }
+}
+
+function updateWastedCalc() {
+  const minPay = parseFloat(document.getElementById('calcMinPay').value) || 0;
+  const months = parseFloat(document.getElementById('calcMonthsPaying').value) || 0;
+  const wasted = minPay * months;
+  document.getElementById('calcWasted').textContent = '$' + wasted.toLocaleString();
+  if (wasted > 0) {
+    document.getElementById('calcWastedNote').textContent = '"That\'s $' + wasted.toLocaleString() + ' thrown out the door!"';
+  }
+}
+
+// Set initial active state
+document.querySelector('[data-tab="script-app"]').classList.add('active');
+</script>
+
+</div><!-- end app-content -->
+
+<script>
+// Password gate - SHA-256 hash check
+async function checkPassword() {
+  const input = document.getElementById('gate-password');
+  const errorMsg = document.getElementById('gate-error');
+  const password = input.value;
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+  if (hashHex === 'c453ae7159f3503144078f9079427be3d110d88c3e061e66187d9b06cb2b87ac') {
+    document.getElementById('password-gate').style.display = 'none';
+    document.getElementById('app-content').style.display = 'block';
+    sessionStorage.setItem('hfs-auth', 'true');
+  } else {
+    input.classList.add('error');
+    errorMsg.style.display = 'block';
+    input.value = '';
+    input.focus();
+  }
+}
+
+// Check if already authenticated this session
+if (sessionStorage.getItem('hfs-auth') === 'true') {
+  document.getElementById('password-gate').style.display = 'none';
+  document.getElementById('app-content').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
