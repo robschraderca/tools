@@ -218,15 +218,10 @@
     background: transparent; cursor: pointer; text-align: left;
     font-size: 22px; font-weight: 700; color: var(--navy); font-family: inherit;
   }
-  .section-toggle:hover { color: var(--accent); }
-  .section-toggle .chevron {
-    font-size: 18px; transition: transform 0.2s; color: var(--accent); flex-shrink: 0; margin-left: 12px;
-  }
-  .section-toggle[aria-expanded="false"] .chevron { transform: rotate(-90deg); }
-  .section-toggle[aria-expanded="true"] .chevron { transform: rotate(0deg); }
+  .section-toggle { cursor: default; }
+  .section-toggle:hover { color: var(--navy); }
 
-  .section-content { overflow: hidden; transition: max-height 0.3s ease; }
-  .section-content.collapsed { max-height: 0 !important; }
+  .section-content { }
 
   h3.sub-heading {
     font-size: 17px; color: var(--accent); margin: 25px 0 10px;
@@ -586,8 +581,8 @@
 
         <!-- App Section 1: Outbound Form Filled -->
         <div class="collapsible-section" id="app-s1">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            1. Outbound Call — Form Filled (LM) <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            1. Outbound Call — Form Filled (LM)
           </button>
           <div class="section-content">
             <div class="agent-line">Hi, is this <span class="placeholder">[First Name]</span>? <em>(Pause for a response.)</em></div>
@@ -601,8 +596,8 @@
 
         <!-- App Section 2: Outbound Answer Connect -->
         <div class="collapsible-section" id="app-s2">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            2. Outbound Call — Answer Connect (AC) <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            2. Outbound Call — Answer Connect (AC)
           </button>
           <div class="section-content">
             <div class="agent-line">Hi, is this <span class="placeholder">[First Name]</span>? <em>(Pause for a response.)</em></div>
@@ -616,8 +611,8 @@
 
         <!-- App Section 3: Inbound Call -->
         <div class="collapsible-section" id="app-s3">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            3. Inbound Call <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            3. Inbound Call
           </button>
           <div class="section-content">
             <div class="agent-line">Thank you for calling Horizon Financial Services, this is <span class="placeholder">[Agent Name]</span>. Were you calling about the letter we sent you in the mail?</div>
@@ -633,8 +628,8 @@
 
         <!-- App Section 4: Verification & Info -->
         <div class="collapsible-section" id="app-s4">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            4. Verification &amp; Info Gathering <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            4. Verification &amp; Info Gathering
           </button>
           <div class="section-content">
             <div class="agent-line">Okay, I got your information pulled up and just to confirm — am I speaking with <span class="placeholder">[Caller's First and Last Name]</span>?</div>
@@ -655,8 +650,8 @@
 
         <!-- App Section 5: Loan Explanation -->
         <div class="collapsible-section" id="app-s5">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            5. Loan &amp; Application Explanation <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            5. Loan &amp; Application Explanation
           </button>
           <div class="section-content">
             <div class="agent-line">Great, <span class="placeholder">[Caller's Name]</span> — again, my name is <span class="placeholder">[Agent Name]</span>, and I'll be guiding you through this process today.</div>
@@ -668,8 +663,8 @@
 
         <!-- App Section 6: Application Questions -->
         <div class="collapsible-section" id="app-s6">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            6. Application Questions <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            6. Application Questions
           </button>
           <div class="section-content">
             <div class="agent-line">What loan amount are you looking to get approved for today?</div>
@@ -696,8 +691,8 @@
 
         <!-- App Section 7: Soft Credit Pull -->
         <div class="collapsible-section" id="app-s7">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            7. Soft Credit Pull &amp; File Submission <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            7. Soft Credit Pull &amp; File Submission
           </button>
           <div class="section-content">
             <div class="agent-line">Okay thank you for that and we're almost done here. The last step is a soft pull on your credit. It won't show up as a hard inquiry or impact your score — it just gives us what we need to verify your accounts.</div>
@@ -719,8 +714,8 @@
 
         <!-- App Section 8: Apper to Agent Transition -->
         <div class="collapsible-section" id="app-s8">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            8. Apper to Agent Transition <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            8. Apper to Agent Transition
           </button>
           <div class="section-content">
             <div class="important-note"><strong>IMPORTANT:</strong> While the client is on hold, review the credit report. Make sure all the right accounts are included and nothing is missing before you move on.</div>
@@ -730,8 +725,8 @@
 
         <!-- App Section 9: Live Transfer -->
         <div class="collapsible-section" id="app-s9">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            9. Live Transfer to Senior Advisor <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            9. Live Transfer to Senior Advisor
           </button>
           <div class="section-content">
             <div class="agent-line">Okay, you're all set. Thanks for going through the initial steps with us — I'm going to transfer you to one of our Senior Financial Advisors to go over the final approval details with you.</div>
@@ -749,8 +744,8 @@
 
         <!-- App Section 10: Callback / Appointment -->
         <div class="collapsible-section" id="app-s10">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            10. Call Back / Appointment Set <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            10. Call Back / Appointment Set
           </button>
           <div class="section-content">
             <div class="agent-line">Okay, you're all set. Your financial advisor will be calling you back within 2 hours or less to go over your loan application from a <strong>"949 area code"</strong> — They will be texting you prior to calling you as well.</div>
@@ -763,8 +758,8 @@
 
         <!-- App Section 11: Spouse Calling -->
         <div class="collapsible-section" id="app-s11">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            11. Spouse Calling <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            11. Spouse Calling
           </button>
           <div class="section-content">
             <div class="agent-line">Are you calling on behalf of your spouse?</div>
@@ -779,8 +774,8 @@
 
         <!-- App Section 12: Motion CRM Steps -->
         <div class="collapsible-section" id="app-s12">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            12. Motion CRM Steps <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            12. Motion CRM Steps
           </button>
           <div class="section-content">
             <div class="crm-note"><strong>CRM NOTE — Post-Call Steps:</strong>
@@ -827,8 +822,8 @@
 
         <!-- Main Section 1: Pre-Call Setup -->
         <div class="collapsible-section" id="main-pre-call">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            Pre-Call Setup <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            Pre-Call Setup
           </button>
           <div class="section-content">
             <div class="crm-note"><strong>CRM/SYSTEM NOTE:</strong> Have Motion pulled up, looking at the "Debts" tab after verifying debt &mdash; push over to Continue Enrollment</div>
@@ -838,8 +833,8 @@
 
         <!-- Main Section 2: Opening -->
         <div class="collapsible-section" id="main-opening">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            Opening <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            Opening
           </button>
           <div class="section-content">
             <div class="stage-direction"><strong>Tone:</strong> Absolute Certainty, Presupposing Tone</div>
@@ -850,8 +845,8 @@
 
         <!-- Main Section 3: Debt Overview & Goals -->
         <div class="collapsible-section" id="main-debt-overview">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            Debt Overview &amp; Goals <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            Debt Overview &amp; Goals
           </button>
           <div class="section-content">
             <div class="agent-line">I see you have about <span class="placeholder">$______</span> in total unsecured debt and are paying <span class="placeholder">$______</span> per month &mdash; is that correct? What is it you're looking to accomplish? Is it to get a lower payment? Lower interest? Or perhaps both?</div>
@@ -863,8 +858,8 @@
 
         <!-- Main Section 4: Discovery Questions -->
         <div class="collapsible-section" id="main-discovery">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            Discovery Questions <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            Discovery Questions
           </button>
           <div class="section-content">
             <h4 class="subsection-title">Situational Questions (Where are they now?)</h4>
@@ -888,8 +883,8 @@
 
         <!-- Main Section 5: Empathy Bridge -->
         <div class="collapsible-section" id="main-empathy">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            Empathy Bridge <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            Empathy Bridge
           </button>
           <div class="section-content">
             <div class="agent-line">Thank you for sharing that with me... unfortunately you're not alone. <span class="crm-inline">(Preacher)</span> Millions of Americans live paycheck to paycheck, and it only takes one thing to really put us behind. What many people don't realize is that these creditors prey on consumers. With the high interest rates and payments, they get us to a point that we can only afford minimum payments. Then we are one hardship away from falling behind. <span class="crm-inline">(I Care)</span> These same creditors are usually the last ones to help you once you start to struggle. <span class="crm-inline">(Reasonable Man)</span> Am I right? <span class="stage-direction">PAUSE</span></div>
@@ -898,8 +893,8 @@
 
         <!-- Main Section 6: Transition to EVVO + Options -->
         <div class="collapsible-section" id="main-transition">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            Transition to EVVO + Options <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            Transition to EVVO + Options
           </button>
           <div class="section-content">
             <div class="agent-line">So <span class="placeholder">FIRST NAME</span>, we are going to go ahead and go over all your options right now. The first option is a Debt Consolidation Loan. It will wrap up all your unsecured debt into one loan and one repayment. We are partnered with the largest lending network in the country, and they shop for the best real-time offers. Rates can start in the single digits.</div>
@@ -909,8 +904,8 @@
 
         <!-- Main Section 7: Loan Application -->
         <div class="collapsible-section" id="main-loan-app">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            Loan Application <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            Loan Application
           </button>
           <div class="section-content">
             <div class="agent-line">Are you in front of a computer or smartphone right now? Okay, great. I'll send you an email shortly. And the email we have on file is <span class="placeholder">____</span>. Is that correct? And just to confirm, the loan amount you were looking to get approved for today was about <span class="placeholder">$____</span>, correct?</div>
@@ -937,8 +932,8 @@
 
         <!-- Main Section 8: Loan Turndown Response -->
         <div class="collapsible-section" id="main-loan-turndown">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            Loan Turndown Response <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            Loan Turndown Response
           </button>
           <div class="section-content">
             <div class="agent-line">I just got that back and unfortunately no loan offers available at this time.</div>
@@ -951,8 +946,8 @@
 
         <!-- Main Section 9: Explanation of Debt Validation -->
         <div class="collapsible-section" id="main-debt-validation">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            Explanation of Debt Validation <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            Explanation of Debt Validation
           </button>
           <div class="section-content">
             <div class="important-note" style="background:#FFF8E1; border-left-color:#F0C040;"><strong style="color:#B8860B;">SLOW DOWN &mdash; this is the meat and potatoes!</strong></div>
@@ -977,8 +972,8 @@
 
         <!-- Main Section 10: How the Program Works -->
         <div class="collapsible-section" id="main-how-it-works">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            How the Program Works <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            How the Program Works
           </button>
           <div class="section-content">
             <div class="agent-line">They'll be moving your accounts through a legal process where your creditors are required to provide proof that your debt is valid and legally collectible. This process must follow a federal and state law called the <strong>FDCPA</strong> &mdash; which stands for the <strong>Fair Debt Collection Practices Act</strong>.</div>
@@ -1013,8 +1008,8 @@
 
         <!-- Main Section 11: Accounts Review -->
         <div class="collapsible-section" id="main-accounts-review">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            Accounts Review <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            Accounts Review
           </button>
           <div class="section-content">
             <div class="agent-line">Ok so the next thing I want to do is go over all the accounts together. Do you still have access to your email?</div>
@@ -1028,8 +1023,8 @@
 
         <!-- Main Section 12: Enrollment Steps -->
         <div class="collapsible-section" id="main-enrollment">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            Enrollment Steps <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            Enrollment Steps
           </button>
           <div class="section-content">
             <div class="agent-line">So, if you're ready to move forward, the next steps are really simple. The next step is to send you a set of documents to sign, are you familiar with electronic documents?</div>
@@ -1054,8 +1049,8 @@
 
         <!-- Main Section 13: E-Sign & Documents -->
         <div class="collapsible-section" id="main-esign">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            E-Sign &amp; Documents <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            E-Sign &amp; Documents
           </button>
           <div class="section-content">
             <div class="important-note"><strong>IMPORTANT:</strong> Before moving forward, go to the <a href="http://ironwoodlaw-agent-dashboard.s3-website-us-west-2.amazonaws.com/" target="_blank" style="color:var(--accent); font-weight:700;">ILG Agent Dashboard</a> and make sure there is an Account Advisor available before going through the next process. Slack whatever Account Advisor is available and let them know you've got a call coming in in a minute to confirm.<br><br>If no one is available, ask the customer what's a good time for them to receive a call back &mdash; they can call them shortly, within the hour.</div>
@@ -1073,8 +1068,8 @@
 
         <!-- Main Section 14: Transfer to ILG -->
         <div class="collapsible-section" id="main-transfer">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            Transfer to ILG <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            Transfer to ILG
           </button>
           <div class="section-content">
             <div class="important-note"><strong>HOW TO TRANSFER TO ILG:</strong></div>
@@ -1097,8 +1092,8 @@
 
         <!-- Main Section 15: Compliance Checklist -->
         <div class="collapsible-section" id="main-compliance">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            Compliance Checklist <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            Compliance Checklist
           </button>
           <div class="section-content">
             <div class="important-note" style="background:#FFF8E1; border-left-color:#F0C040;"><strong style="color:#C0392B;">ATTENTION:</strong> <strong style="color:#B8860B;">Understand ALL of these questions. This is what the Account Executive is going to ask your client when you're done with your sale. Knowing these ensures you're preparing the client properly throughout the call and not promising anything you shouldn't be.</strong></div>
@@ -1152,8 +1147,8 @@
 
         <!-- RVM Step 1: Open -->
         <div class="collapsible-section" id="rvm-open">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            STEP 1: OPEN <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            STEP 1: OPEN
           </button>
           <div class="section-content">
             <div class="agent-line">West Coast Enrollment, this is <span class="blank">[NAME]</span>! How can I help you?</div>
@@ -1166,8 +1161,8 @@
 
         <!-- RVM Step 2: Qualify -->
         <div class="collapsible-section" id="rvm-qualify">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            STEP 2: QUALIFY <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            STEP 2: QUALIFY
           </button>
           <div class="section-content">
             <div class="important-note"><strong>Goal: Under 2 minutes.</strong> Qualify on three factors: Type of Debt, Total Amount, and Income Source.</div>
@@ -1181,8 +1176,8 @@
 
         <!-- RVM Step 3: Basic Info -->
         <div class="collapsible-section" id="rvm-basic-info">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            STEP 3: COLLECT BASIC INFO <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            STEP 3: COLLECT BASIC INFO
           </button>
           <div class="section-content">
             <div class="stage-direction">Collect: Full Name, Callback Number, Email, Date of Birth, Address.</div>
@@ -1196,8 +1191,8 @@
 
         <!-- RVM Step 4: Probe for Pain -->
         <div class="collapsible-section" id="rvm-probe">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            STEP 4: PROBE FOR PAIN <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            STEP 4: PROBE FOR PAIN
           </button>
           <div class="section-content">
             <div class="stage-direction">Build rapport. Understand their situation. Find their motivation.</div>
@@ -1210,8 +1205,8 @@
 
         <!-- RVM Step 5: Debt Discussion -->
         <div class="collapsible-section" id="rvm-debt">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            STEP 5: DEBT DISCUSSION <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            STEP 5: DEBT DISCUSSION
           </button>
           <div class="section-content">
             <div class="agent-line">Great, I was able to locate everything. It looks like your current credit score is <span class="blank">[SCORE]</span>. I don’t mention this to beat you up &mdash; I actually want to point out a silver lining. Clients who come to me with a high score, we have to tread carefully. In your case, since the damage is already done, we can power straight through and knock these debts off the report &mdash; leaving you debt-free with a higher score faster than most clients. Let me go through these one at a time.</div>
@@ -1222,8 +1217,8 @@
 
         <!-- RVM Step 6: Commitment & Goals -->
         <div class="collapsible-section" id="rvm-commit">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            STEP 6: COMMITMENT &amp; GOALS <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            STEP 6: COMMITMENT &amp; GOALS
           </button>
           <div class="section-content">
             <div class="agent-line">Before I submit for approval, I like to ask every client if there were any specific goals for today. In many cases, a specific event sparked their interest in becoming debt-free with a high score. Anything specific &mdash; are you working toward a purchase? A goal you’re trying to achieve? Or is this more about recovering and rebuilding?</div>
@@ -1239,8 +1234,8 @@
 
         <!-- RVM Step 7: Underwriting Hold -->
         <div class="collapsible-section" id="rvm-underwriting">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            STEP 7: UNDERWRITING HOLD <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            STEP 7: UNDERWRITING HOLD
           </button>
           <div class="section-content">
             <div class="agent-line">Perfect, that's all the information I need. The next step is to submit your file to our underwriting department for approval. If you're approved, I'll help you enroll today. If you're denied for any reason, I'll tell you exactly why.</div>
@@ -1251,8 +1246,8 @@
 
         <!-- RVM Step 8: How It Works -->
         <div class="collapsible-section" id="rvm-how-works">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            STEP 8: HOW IT WORKS <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            STEP 8: HOW IT WORKS
           </button>
           <div class="section-content">
             <div class="agent-line">Hello <span class="blank">[NAME]</span>, are you still with me? Great &mdash; I have some good news! My underwriting department was able to get ALL of your debts approved for the program. <strong>Congratulations!</strong> Do you have your pen and paper?</div>
@@ -1279,8 +1274,8 @@
 
         <!-- RVM Step 9: Present the Numbers -->
         <div class="collapsible-section" id="rvm-numbers">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            STEP 9: PRESENT THE NUMBERS <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            STEP 9: PRESENT THE NUMBERS
           </button>
           <div class="section-content">
             <div class="agent-line">Now I have a few numbers I want you to write down, and then I’ll come back to what those mean.</div>
@@ -1299,8 +1294,8 @@
 
         <!-- RVM Step 10: Soft Landing -->
         <div class="collapsible-section" id="rvm-landing">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            STEP 10: SOFT LANDING <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            STEP 10: SOFT LANDING
           </button>
           <div class="section-content">
             <div class="agent-line">There’s only one requirement from you moving forward. The same privacy laws that protect your information also prevent us from redirecting your creditor mail directly to us. So when creditor letters arrive in your mailbox, your only job is to photograph them and send them to us via email or text. I’ll give you all those contact details at the end of the call.</div>
@@ -1310,8 +1305,8 @@
 
         <!-- RVM Step 11: Close & Enroll -->
         <div class="collapsible-section" id="rvm-close">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            STEP 11: CLOSE &amp; ENROLL <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            STEP 11: CLOSE &amp; ENROLL
           </button>
           <div class="section-content">
             <div class="agent-line">If those numbers make sense, I can get you enrolled today &mdash; which activates your full legal coverage immediately. From there, we’ll structure your program and pick out whatever payment dates work best for you. The sooner we get started, the sooner the attorneys go to work and these balances stop growing. Sound good? Let’s do it!</div>
@@ -1337,8 +1332,8 @@
 
         <!-- RVM E-Sign & Documents -->
         <div class="collapsible-section" id="rvm-esign">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            E-Sign &amp; Documents <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            E-Sign &amp; Documents
           </button>
           <div class="section-content">
             <div class="important-note"><strong>IMPORTANT:</strong> Before moving forward, go to the <a href="http://ironwoodlaw-agent-dashboard.s3-website-us-west-2.amazonaws.com/" target="_blank" style="color:var(--accent); font-weight:700;">ILG Agent Dashboard</a> and make sure there is an Account Advisor available before going through the next process. Slack whatever Account Advisor is available and let them know you’ve got a call coming in in a minute to confirm.<br><br>If no one is available, ask the customer what’s a good time for them to receive a call back &mdash; they can call them shortly, within the hour.</div>
@@ -1356,8 +1351,8 @@
 
         <!-- RVM Transfer to ILG -->
         <div class="collapsible-section" id="rvm-transfer">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            Transfer to ILG <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            Transfer to ILG
           </button>
           <div class="section-content">
             <div class="important-note"><strong>HOW TO TRANSFER TO ILG:</strong></div>
@@ -1380,8 +1375,8 @@
 
         <!-- RVM Compliance Checklist -->
         <div class="collapsible-section" id="rvm-compliance">
-          <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            Compliance Checklist <span class="chevron">&#9660;</span>
+          <button class="section-toggle" aria-expanded="true">
+            Compliance Checklist
           </button>
           <div class="section-content">
             <div class="important-note" style="background:#FFF8E1; border-left-color:#F0C040;"><strong style="color:#C0392B;">ATTENTION:</strong> <strong style="color:#B8860B;">Understand ALL of these questions. This is what the Account Executive is going to ask your client when you’re done with your sale. Knowing these ensures you’re preparing the client properly throughout the call and not promising anything you shouldn’t be.</strong></div>
