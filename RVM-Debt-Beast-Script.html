@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RVM Debt Beast Script | West Coast Enrollment Center</title>
+  <style>
+    :root {
+      --navy: #1B3A5C;
+      --accent: #2E75B6;
+      --accent-light: #E8F0F8;
+      --border: #B0C4DE;
+      --crm-bg: #FFF8E1;
+      --crm-border: #F0C040;
+      --important-bg: #FDECEC;
+      --important-border: #C0392B;
+      --reminder-bg: #F0F7EE;
+      --reminder-border: #5B9A4A;
+      --text: #333;
+      --muted: #666;
+      --bg: #f8f9fa;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+
+    header {
+      background: var(--navy);
+      color: white;
+      padding: 30px;
+      margin: -30px -30px 30px -30px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0 0 5px 0;
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .phase-index {
+      padding: 8px 0 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 16px;
+      margin-bottom: 20px;
+    }
+
+    .phase-index a {
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 4px 8px;
+      background: var(--accent-light);
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .phase-index a:hover {
+      color: #fff;
+      background: var(--accent);
+    }
+
+    .collapsible-section {
+      margin-top: 30px;
+      scroll-margin-top: 20px;
+    }
+
+    .section-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 10px 0 8px;
+      border: none;
+      border-bottom: 3px solid var(--accent);
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--navy);
+      font-family: inherit;
+    }
+
+    .section-toggle:hover {
+      color: var(--accent);
+    }
+
+    .section-toggle .chevron {
+      font-size: 18px;
+      transition: transform 0.2s;
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-left: 12px;
+    }
+
+    .section-toggle[aria-expanded="false"] .chevron {
+      transform: rotate(-90deg);
+    }
+
+    .section-toggle[aria-expanded="true"] .chevron {
+      transform: rotate(0deg);
+    }
+
+    .section-content {
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      max-height: 10000px;
+    }
+
+    .section-content.collapsed {
+      max-height: 0 !important;
+    }
+
+    h3.sub-heading {
+      font-size: 17px;
+      color: var(--accent);
+      margin: 25px 0 10px;
+      font-weight: 600;
+    }
+
+    .agent-line {
+      margin: 10px 0;
+      padding: 10px 15px;
+      border-radius: 6px;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      font-size: 15px;
+    }
+
+    .agent-line .placeholder {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .agent-line em {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .agent-line strong {
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    .stage-direction {
+      margin: 8px 0;
+      padding: 6px 15px;
+      font-style: italic;
+      color: #777;
+      font-size: 14px;
+    }
+
+    .crm-note {
+      margin: 10px 0;
+      padding: 10px 15px;
+      border-radius: 4px;
+      background: var(--crm-bg);
+      border-left: 5px solid var(--crm-border);
+      font-size: 14px;
+    }
+
+    .crm-note strong {
+      color: #B8860B;
+    }
+
+    .important-note {
+      margin: 10px 0;
+      padding: 10px 15px;
+      border-radius: 4px;
+      background: var(--important-bg);
+      border-left: 5px solid var(--important-border);
+      font-size: 14px;
+    }
+
+    .important-note strong {
+      color: var(--important-border);
+    }
+
+    .reminder-note {
+      margin: 10px 0;
+      padding: 10px 15px;
+      border-radius: 4px;
+      background: var(--reminder-bg);
+      border-left: 5px solid var(--reminder-border);
+      font-size: 14px;
+    }
+
+    .reminder-note strong {
+      color: var(--reminder-border);
+    }
+
+    .pro-tip-box {
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 6px;
+      background: #F5F0FF;
+      border-left: 5px solid #7C5CBF;
+      font-size: 14px;
+    }
+
+    .pro-tip-box strong {
+      color: #7C5CBF;
+    }
+
+    .pro-tip-box br {
+      display: block;
+      margin: 8px 0;
+    }
+
+    .optional-tag {
+      display: inline-block;
+      background: #FFF3CD;
+      color: #856404;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .blank {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .esign-steps {
+      margin: 12px 0 12px 20px;
+      padding: 0;
+    }
+
+    .esign-steps li {
+      margin: 8px 0;
+      font-size: 15px;
+    }
+
+    .qc-list {
+      margin: 12px 0 12px 20px;
+      padding: 0;
+    }
+
+    .qc-list li {
+      margin: 10px 0;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .checklist {
+      margin: 12px 0 12px 0;
+      list-style: none;
+      padding: 0;
+    }
+
+    .checklist li {
+      margin: 6px 0;
+      font-size: 15px;
+    }
+
+    .checklist li::before {
+      content: "\2713 ";
+      color: var(--reminder-border);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>RVM DEBT BEAST SCRIPT</h1>
+  <p>West Coast Enrollment Center | The Doc Pros</p>
+</header>
+
+<div class="phase-index">
+  <a href="#rvm-open">Step 1: Open</a>
+  <a href="#rvm-qualify">Step 2: Qualify</a>
+  <a href="#rvm-basic-info">Step 3: Basic Info</a>
+  <a href="#rvm-probe">Step 4: Probe for Pain</a>
+  <a href="#rvm-debt">Step 5: Debt Discussion</a>
+  <a href="#rvm-commit">Step 6: Commitment &amp; Goals</a>
+  <a href="#rvm-underwriting">Step 7: Underwriting Hold</a>
+  <a href="#rvm-how-works">Step 8: How It Works</a>
+  <a href="#rvm-numbers">Step 9: Present the Numbers</a>
+  <a href="#rvm-landing">Step 10: Soft Landing</a>
+  <a href="#rvm-close">Step 11: Close &amp; Enroll</a>
+  <a href="#rvm-esign">E-Sign &amp; Documents</a>
+  <a href="#rvm-transfer">Transfer to ILG</a>
+  <a href="#rvm-compliance">Compliance Checklist</a>
+</div>
+
+<!-- STEP 1: OPEN -->
+<div class="collapsible-section" id="rvm-open">
+  <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+    STEP 1: OPEN <span class="chevron">&#9660;</span>
+  </button>
+  <div class="section-content">
+    <div class="agent-line">West Coast Enrollment, this is <span class="blank">[NAME]</span>! How can I help you?</div>
+
+    <div class="agent-line">Are you calling in regard to the debt hardship program to eliminate your unsecured debt?</div>
+
+    <div class="important-note"><strong>If the client asks "What company is this?"</strong> &mdash; It's West Coast Enrollment.<br><strong>If they ask for the website:</strong> <a href="https://westcoastenrollmentcenter.com" target="_blank" style="color:var(--important-border);font-weight:600;">westcoastenrollmentcenter.com</a></div>
+
+    <div class="stage-direction">If they ask: "What was this call for? Why did I get this call?"</div>
+
+    <div class="agent-line">Sure, not a problem. From what I can tell, it looks like your credit bureau &mdash; Equifax &mdash; labeled it as a financial hardship. They asked a law firm to reach out and offer assistance. That would be the purpose of my call today. So first question to you: <span class="optional-tag">If Asked</span></div>
+
+    <div class="agent-line">What categories of debt are causing your hardship?</div>
+  </div>
+</div>
+
+<!-- STEP 2: QUALIFY -->
+<div class="collapsible-section" id="rvm-qualify">
+  <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+    STEP 2: QUALIFY <span class="chevron">&#9660;</span>
+  </button>
+  <div class="section-content">
+    <div class="important-note"><strong>Goal: Under 2 minutes.</strong> Qualify on three factors: Type of Debt, Total Amount, and Income Source.</div>
+
+    <div class="agent-line"><strong>1.</strong> Great &mdash; and what type of debts are causing your hardship? Credit cards and loans, or is it something else? <em>(Personal loans? Collection accounts? Payday loans? Cash advances? Vehicle repossession?)</em></div>
+
+    <div class="agent-line"><strong>2.</strong> And do you owe more than $6,000 in total?</div>
+
+    <div class="agent-line"><strong>3.</strong> And are you currently employed or do you have a source of household income? <em>(SSI, SSDI, unemployment?)</em></div>
+
+    <div class="crm-note"><strong>If "No" to income:</strong> "How are you currently paying your bills?" If they have zero income, get off the phone.</div>
+
+    <div class="agent-line">Perfect &mdash; it sounds like you might be eligible for one of our short-term hardship programs that will be a significant help to you. It will only take a few minutes to see if we can get you qualified, and I just need some basic information. Does that sound good?</div>
+
+    <div class="agent-line">Great, let's see if we can get you some help here.</div>
+  </div>
+</div>
+
+<!-- STEP 3: BASIC INFO -->
+<div class="collapsible-section" id="rvm-basic-info">
+  <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+    STEP 3: COLLECT BASIC INFO <span class="chevron">&#9660;</span>
+  </button>
+  <div class="section-content">
+    <div class="stage-direction">Collect: Full Name, Callback Number, Date of Birth, Email, Address.</div>
+
+    <div class="agent-line">Perfect, we can get started pulling up your file with:</div>
+
+    <div class="agent-line"><strong>1.</strong> The proper spelling of your first and last name. <em>(Reiterate spelling of first and last name.)</em></div>
+
+    <div class="agent-line"><strong>2.</strong> In case we get disconnected, is this the best number to reach you at? <em>(Confirm phone number.)</em></div>
+
+    <div class="agent-line"><strong>3.</strong> And for verification purposes, what is your date of birth?</div>
+
+    <div class="agent-line"><strong>4.</strong> What's a good email address for you?</div>
+
+    <div class="agent-line">Perfect. The next step for us today is to pull up a copy of your accounts and balances to figure out how much you owe and what debts we can and cannot help with. The way we search for your debts is simply with your name and address. Have you been living at your current address for more than 3 months?</div>
+
+    <div class="agent-line">Perfect, and what is your full street address?</div>
+
+    <div class="crm-note"><strong>You have two options here:</strong> You can either put them on hold and pull up their accounts, or you can pull up their accounts while you ask them the next set of questions.</div>
+  </div>
+</div>
+
+<!-- STEP 4: PROBE FOR PAIN -->
+<div class="collapsible-section" id="rvm-probe">
+  <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+    STEP 4: PROBE FOR PAIN <span class="chevron">&#9660;</span>
+  </button>
+  <div class="section-content">
+    <div class="stage-direction">Build rapport, gain understanding, show compassion &mdash; but find their weakness.</div>
+
+    <div class="agent-line">And while I am waiting for your debts to load:</div>
+
+    <div class="agent-line"><strong>1.</strong> Can you tell me about your current situation? Most importantly, what are you trying to accomplish?</div>
+
+    <div class="agent-line"><strong>2.</strong> How much are you currently paying on your debts per month right now? Minimum payments or more than the minimum?</div>
+
+    <div class="agent-line"><strong>3.</strong> Are you seeing the balances go down at all?</div>
+  </div>
+</div>
+
+<!-- STEP 5: DEBT DISCUSSION -->
+<div class="collapsible-section" id="rvm-debt">
+  <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+    STEP 5: DEBT DISCUSSION <span class="chevron">&#9660;</span>
+  </button>
+  <div class="section-content">
+    <div class="agent-line">Great. So I was able to locate everything. It looks like at this time your credit score is a <span class="blank">[SCORE]</span>. I don't mention this to beat you up &mdash; I want to point out a silver lining here. My clients that come to me with a high score already, we have to tread lightly to not cause any damage. In your case, since the damage is already done, we can just power straight through and knock the debts off the report &mdash; which is going to leave you debt-free with a high score a lot faster than most of my clients.</div>
+
+    <div class="agent-line">I want to go through these one at a time:</div>
+
+    <div class="crm-note"><strong>Go over each debt individually.</strong> Be delicate &mdash; a client wants to know you are listening and understand their situation. Cover: Creditor name, Balance, Status, Delinquent marks, Utilization %.</div>
+  </div>
+</div>
+
+<!-- STEP 6: COMMITMENT & GOALS -->
+<div class="collapsible-section" id="rvm-commit">
+  <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+    STEP 6: COMMITMENT &amp; GOALS <span class="chevron">&#9660;</span>
+  </button>
+  <div class="section-content">
+    <div class="stage-direction">Break them down to build them back up.</div>
+
+    <div class="agent-line">Okay great &mdash; so it looks like you have <span class="blank">[#]</span> accounts in total, and those accounts have a combined balance of <span class="blank">[$TOTAL]</span>.</div>
+
+    <div class="agent-line">Before I submit for approval, I always like to ask my clients if there were any specific goals for the day. In many cases when I am speaking with a borrower, it's because an event occurred that sparked their interest in becoming debt-free with a high score. Anything specific? Are you working towards a purchase? A goal you are trying to achieve? Or is this more to recover and rebound?</div>
+
+    <div class="agent-line">And did you have a time frame you were trying to achieve this in? <em>(When is your purchase/goal?)</em></div>
+
+    <h3 class="sub-heading">Income &amp; Hardship Discussion</h3>
+
+    <div class="agent-line">Okay, and next I wanted to go over your income to see if there are any additional hardship benefits I could get you approved for. How much are you currently bringing home per month after taxes?</div>
+
+    <div class="agent-line">Do you have any other hardships such as loss of income? Unexpected bills? Health problems? Or COVID?</div>
+
+    <div class="agent-line">And how about savings? Do you have any emergency savings? Is it hard for you to save, or have you depleted your savings at this point?</div>
+
+    <div class="stage-direction">Convey sympathy, compassion and concern &mdash; wait for response.</div>
+
+    <div class="crm-note"><strong>CRM:</strong> Enter Hardship Description in CRM.</div>
+  </div>
+</div>
+
+<!-- STEP 7: UNDERWRITING HOLD -->
+<div class="collapsible-section" id="rvm-underwriting">
+  <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+    STEP 7: UNDERWRITING HOLD <span class="chevron">&#9660;</span>
+  </button>
+  <div class="section-content">
+    <div class="agent-line">Okay perfect &mdash; that is all the information I need from you. The next step for me today is to submit your debts to my underwriting department for approval. If you are approved for a debt resolution program, I will help you get enrolled today. If you are denied for any reason, I will let you know the exact reasons.</div>
+
+    <div class="agent-line">I am going to put you on a brief hold for 2&ndash;3 minutes while I wait for a response. If you could grab yourself a pen and paper &mdash; when I come back on the line we will go over all your approval details together. Does this sound good?</div>
+
+    <div class="agent-line">Okay perfect, just give me a few minutes here. I will be right back on the line with a response. Please hold!</div>
+
+    <div class="crm-note"><strong>While on hold:</strong> Place on hold for 2&ndash;3 minutes. In CRM, go to Enrollment tab and adjust payment scheduler. Save the Owe/Pay/Save numbers so when you deliver them, it rolls right off your tongue.</div>
+
+    <div class="important-note"><strong>FIRST 10&ndash;15 DEALS:</strong> Before proceeding past this point, you must get approval from Rob first, Brian second, or Erick. Do not move forward until one of them reviews and gives the green light.</div>
+  </div>
+</div>
+
+<!-- STEP 8: HOW IT WORKS -->
+<div class="collapsible-section" id="rvm-how-works">
+  <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+    STEP 8: HOW IT WORKS <span class="chevron">&#9660;</span>
+  </button>
+  <div class="section-content">
+    <div class="agent-line">Hello <span class="blank">[NAME]</span>, are you still with me? Perfect &mdash; I have some great news for you! It looks like my underwriting department was able to get ALL of your debts approved for the program. <strong>Congratulations!</strong> Do you have your pen and paper?</div>
+
+    <div class="agent-line">Great! First, I wanted you to write down the name of the program you have been approved for:</div>
+
+    <div class="agent-line"><strong>"DEBT VALIDATION"</strong></div>
+
+    <div class="important-note"><strong>Slow down &mdash; this is the meat and potatoes!</strong></div>
+
+    <div class="agent-line">I have 2 words for you to write down as bullet points and then I will come back to what they mean. The 1st word is <strong>"Validate"</strong> and the 2nd word is <strong>"Update"</strong>.</div>
+
+    <h3 class="sub-heading">Explaining "Validate"</h3>
+
+    <div class="agent-line">Okay, so I wanted to take a moment to explain that first word "Validate" because this is going to do the most work for you with the types of debt you have &mdash; which all have a few things in common. They are private, unsecured, not tied to collateral.</div>
+
+    <div class="agent-line">In order to properly explain validation, I just want to touch on two laws that we're using which you could kind of consider the foundation of the program &mdash; specifically the <strong>Fair Credit Reporting Act</strong> and the <strong>Fair Debt Collection Practices Act</strong>.</div>
+
+    <div class="agent-line">These laws outline what a creditor can and cannot do, and how they must follow the laws in order to collect a debt from a borrower.</div>
+
+    <div class="agent-line">Now that being said, these laws at their core functions are simply designed to prevent false and inaccurate reporting, but these also are the exact laws as far as what sort of requirements a company needs to carry to even prove the debt's owed to begin with.</div>
+
+    <div class="agent-line">The way they prove it is through <strong>triple-verified debt</strong> by having your DOB, Social, and the original signed contract &mdash; which obviously nothing out of the normal here. It's the exact information that was used to open up these trade lines to begin with.</div>
+
+    <div class="agent-line">But a lot of people don't know is when a debt is sold or transferred in any way, there's multiple privacy laws in place that filter most of this information out from transferring.</div>
+
+    <div class="crm-note"><strong>Only say this if all of their accounts are current:</strong><br><br>Now, like in your case here, your debts are still active and in good standing, so I wanted to use a collection account as an example.</div>
+
+    <div class="agent-line">The obvious ones are your Social &mdash; no one can sell your Social for a profit. And <strong>YOU</strong> would know better than anyone else that after it was sold, you never sat down and signed any sort of new paperwork, agreements or contracts with the 3rd party collector. So that's 2 of the 3 major required laws that are broken.</div>
+
+    <h3 class="sub-heading">This Is Where We Step In</h3>
+
+    <div class="agent-line"><strong>This is where we step in!</strong> We are partnered with <strong>Ironwood Law Group</strong>. Our attorneys will hit them with <strong>Cease and Desist</strong> letters to stop all collection attempts while we work on your behalf. From there, we demand the legal proof we know for a fact <strong>THEY WILL NOT HAVE</strong>.</div>
+
+    <div class="agent-line">Once we are able to prove the debt to be invalid, it is deemed uncollectable, and we will request that the entire trade line is removed from your Credit Report in an expungement.</div>
+
+    <div class="agent-line">What this means is, all said and done, not only is the debt balance itself not owed, but the <strong>FULL TRADELINE</strong> and history of delinquency will be removed &mdash; so that no one in the future can see you even had these debts to begin with, let alone did not pay back the full balance.</div>
+
+    <div class="crm-note"><strong>If they have NO collections, read this:</strong><br><br>Now that example was based on collection accounts. The only difference between collection accounts and your debts are that yours are still with the original creditor. Meaning, they still have your original signed contract. Not a problem &mdash; there's just 1 additional step our attorneys will start off with which is called a <strong>strategic charge-off</strong>.<br><br>Our attorneys will force the debt to transfer, which will cause the loss of information to occur. This will allow us to validate and expunge these accounts the exact same way as if they were collection accounts.<br><br>Point being, these will all be handled in the same manner. <strong>Name, Account Number, Late Marks and Balance &mdash; Removed. Leaving you debt-free with a high score!</strong></div>
+
+    <div class="agent-line">So this is a true credit report <strong>RESET</strong>. Does that make sense?</div>
+
+    <h3 class="sub-heading">Explaining "Update"</h3>
+
+    <div class="agent-line">The 2nd step is a <strong>Credit Report Update</strong>. This is way less labor intensive but it does carry its own weight.</div>
+
+    <div class="agent-line">If any of the 30, 60 and 90+ day late marks are remaining past step one, we will request to remove them as well. This further clears the way for a higher credit score as a result.</div>
+
+    <div class="agent-line">These are the 2 major steps on your path to becoming completely debt-free with a high credit score.</div>
+  </div>
+</div>
+
+<!-- STEP 9: PRESENT THE NUMBERS -->
+<div class="collapsible-section" id="rvm-numbers">
+  <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+    STEP 9: PRESENT THE NUMBERS <span class="chevron">&#9660;</span>
+  </button>
+  <div class="section-content">
+    <div class="agent-line">Next, I have a few numbers for you to write down and then I will come back to what they mean.</div>
+
+    <div class="crm-note"><strong>Just give them the raw numbers &mdash; don't say Owe, Pay, or Save yet.</strong> Let them write them down first, then come back and explain each one.</div>
+
+    <div class="agent-line">The first number is <span class="blank">[$___]</span>. The second number is <span class="blank">[$___]</span>. And the third number is <span class="blank">[$___]</span>. Got those down?</div>
+
+    <div class="pro-tip-box"><strong>&#9733; PRO TIP &mdash; Owe / Pay / Save</strong><br><strong>OWE</strong> &ndash; The total balance including interest<br><strong>PAY</strong> &ndash; The flat-fee total they'll pay in the program<br><strong>SAVE</strong> &ndash; The difference (OWE minus PAY)<br><br><em>Example: Owe $20,000 &bull; Pay $7,000 &bull; Save $13,000</em></div>
+
+    <h3 class="sub-heading">Now Explain the Numbers</h3>
+
+    <div class="agent-line">Okay, so the first number is everything you owe combined with interest. You can label that <strong>"OWE"</strong>.</div>
+
+    <div class="agent-line">Now the good news is, because you have been approved for debt validation, you will only be required to pay back a total balance of that 2nd number. So, you can label that 2nd number <strong>"PAY"</strong>.</div>
+
+    <div class="agent-line">When I say "total payback" I mean <strong>TOTAL PAYBACK</strong>. That is everything included. Fees, cost, legal retainer costs and repayment all rolled into that number. It is a <strong>FLAT FEE</strong> program with no interest or hidden fees.</div>
+
+    <div class="agent-line">When you subtract this to what you currently owe, that difference is your savings. This is the 3rd number. You can label that <strong>"SAVE"</strong>.</div>
+
+    <div class="agent-line">So, from the top going down: that is Owe, Pay and Save. Do these 3 numbers make sense?</div>
+
+    <h3 class="sub-heading">Payment Schedule</h3>
+
+    <div class="agent-line">Perfect, so next I wanted to go over your approved payment schedule. I am happy to report this is going to be a very short program for you. As you may already know, on your own, this could take you over 6&ndash;10 years to pay these debts back in full &mdash; because of the crazy high interest and fees.</div>
+
+    <div class="stage-direction">Give the client the payment and term, or you can choose to give them 2 options if you are not 100% sure of the best payment:</div>
+
+    <div class="agent-line">The good news is for this program, your payment would be <span class="blank">[$___]</span> a month for <span class="blank">[X]</span> months.</div>
+
+    <div class="agent-line">So as you can understand, in addition to that save amount it will also save you 5&ndash;7 years of payments. It also appears this is going to be significantly cheaper per month vs. trying to pay them individually.</div>
+
+    <div class="agent-line">In this program your 1 payment will cover <strong>ALL</strong> of your debts, and would be a flat fee for whichever option you choose. So this obviously <strong>REPLACES</strong> any payment to any of these accounts &mdash; you will no longer be making payments to them.</div>
+  </div>
+</div>
+
+<!-- STEP 10: SOFT LANDING -->
+<div class="collapsible-section" id="rvm-landing">
+  <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+    STEP 10: SOFT LANDING <span class="chevron">&#9660;</span>
+  </button>
+  <div class="section-content">
+    <div class="stage-direction">Bob and weave &mdash; distract with an easy task.</div>
+
+    <div class="agent-line">Perfect, now there is only 1 requirement moving forward. As you can imagine, those exact same laws that prevent your creditors from selling your birthday and Social Security number, prevent us from redirecting your mail straight to us.</div>
+
+    <div class="agent-line">So all that means is when we get started, the creditor bills will be mailed to your mailbox. Your only task moving forward is pretty simple. When you receive these letters, all you have to do is take a picture and send it to us through email or text. Sound easy enough?</div>
+
+    <div class="agent-line">Those collection and creditor letters that you will receive in your mailbox are your <strong>GOLDEN TICKET</strong> to becoming debt-free and completing this program quickly and on schedule. <strong>AS SOON</strong> as you receive them &mdash; send them into us via Email or Text, and I will provide all of those numbers at the end of our call today.</div>
+  </div>
+</div>
+
+<!-- STEP 11: CLOSE & ENROLL -->
+<div class="collapsible-section" id="rvm-close">
+  <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+    STEP 11: CLOSE &amp; ENROLL <span class="chevron">&#9660;</span>
+  </button>
+  <div class="section-content">
+    <div class="agent-line">Okay, so if the number makes sense and this is something you wanted to proceed with, then it's a pretty straightforward enrollment.</div>
+
+    <div class="agent-line">Next step for us today is to complete your application, then we will structure your program and pick out whatever payment dates that work best for you. Then, most importantly, we will get your E-sign Documents generated and sent to you, so that you can review and sign electronically. Sounds good? <strong>Let's do it!</strong></div>
+
+    <div class="reminder-note"><strong>Reminder:</strong> Use the client's "Pain" and "Goals" from earlier if you need extra motivation to cross the finish line.</div>
+
+    <h3 class="sub-heading">Confirm Details</h3>
+
+    <div class="agent-line"><strong>1.</strong> Confirm address, income, credit score, and goals from earlier in the call.</div>
+
+    <div class="agent-line"><strong>2.</strong> Preferred callback time: Morning, Afternoon, or Evening?</div>
+
+    <div class="agent-line"><strong>3.</strong> Best email address for documents?</div>
+
+    <h3 class="sub-heading">Select Start Date</h3>
+
+    <div class="agent-line">Your payment is what kicks off your legal protection and puts the attorneys to work. Every day we wait, these balances keep climbing. When's the soonest we can get that first payment going for you?</div>
+
+    <div class="crm-note"><strong>If they can't start this week:</strong> Pull up the calendar together. Ask about their next pay date, direct deposit vs. paper check, and any competing bills. Payments draft at 6:00 AM Eastern.</div>
+
+    <div class="crm-note"><strong>If they're hesitant on the date:</strong> Ask them directly &mdash; "Is it more of a timing thing, or is the monthly amount the concern?" If it's affordability, offer to stretch the term to bring the payment down so they can start sooner and stay successful. We want them enrolled sooner rather than later &mdash; a lower payment they can actually make beats a higher one they keep pushing off.</div>
+
+    <div class="crm-note"><strong>Maximum start date: 16 calendar days from today.</strong> Exception: clients on a fixed income (retirement, disability, SSI) &mdash; work with their payment schedule.</div>
+
+    <h3 class="sub-heading">Collect Payment Information</h3>
+
+    <div class="agent-line">The next step for us today is to secure your payment information.</div>
+
+    <div class="agent-line">We process all program payments by debit card. <strong>NOTHING will be charged until your first scheduled payment of <span class="blank">[$AMOUNT]</span> on <span class="blank">[DATE]</span>.</strong></div>
+
+    <div class="agent-line"><strong>1.</strong> First and last name on card?</div>
+
+    <div class="crm-note"><strong>Ask:</strong> Is there a middle initial on your card?</div>
+
+    <div class="agent-line"><strong>2.</strong> Is the billing address the same as your mailing address?</div>
+
+    <div class="agent-line"><strong>3.</strong> 16-digit card number</div>
+
+    <div class="agent-line"><strong>4.</strong> Expiration date</div>
+
+    <div class="agent-line"><strong>5.</strong> CVV</div>
+  </div>
+</div>
+
+<!-- E-SIGN & DOCUMENTS -->
+<div class="collapsible-section" id="rvm-esign">
+  <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+    E-Sign &amp; Documents <span class="chevron">&#9660;</span>
+  </button>
+  <div class="section-content">
+    <div class="important-note"><strong>IMPORTANT:</strong> Before moving forward, go to the <a href="http://ironwoodlaw-agent-dashboard.s3-website-us-west-2.amazonaws.com/" target="_blank" style="color:var(--accent); font-weight:700;">ILG Agent Dashboard</a> and make sure there is an Account Advisor available before going through the next process. Slack whatever Account Advisor is available and let them know you've got a call coming in in a minute to confirm.<br><br>If no one is available, ask the customer what's a good time for them to receive a call back &mdash; they can call them shortly, within the hour.</div>
+
+    <div class="agent-line">Great, so we will move onto one of the last steps for us today. As promised, I have your E-Sign documents for you.</div>
+
+    <div class="agent-line">Allow me one moment to get these generated. It will be coming from <strong>Horizon Financial Services</strong> and the subject will say <strong>"Action Required, Review Your Enrollment."</strong></div>
+
+    <div class="agent-line">Have you ever done an electronic signature before? Perfect!</div>
+
+    <div class="stage-direction">Send out docs, walk them through them.</div>
+
+    <div class="important-note"><strong>IMPORTANT:</strong> Make sure the client knows that if they have any automatic payments, they need to make sure those get stopped. This is where we send them the <strong>ACH Revocation Form</strong> and instructions if they have installment loans that are being debited directly. It's already set up as an email template in Communications called <strong>ACH Revocation Instructions</strong>.</div>
+
+    <div class="reminder-note"><strong>REMINDER:</strong> Let the client know that after they're done signing, it's going to ask them to create a password &mdash; that's where their portal lives.</div>
+
+    <div class="agent-line">So the last step for us today is to introduce you to your account manager, and they're going to go over a quick checklist. It should not take more than a few minutes. Sound good?</div>
+
+    <div class="reminder-note"><strong>REMINDER:</strong> Be sure to give them your contact information as well. Let them know you will be texting them your info along with sending a breakdown email of the numbers and program. Go to Communications &rarr; Send Email and send the <strong>ILG Program Offer Breakdown &ndash; Approval</strong> template (found at the bottom of the email template list).</div>
+
+    <div class="stage-direction">If they don't have additional questions, let them know you're going to place them on a brief hold and get them transferred over to your account management with ILG.</div>
+  </div>
+</div>
+
+<!-- TRANSFER TO ILG -->
+<div class="collapsible-section" id="rvm-transfer">
+  <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+    Transfer to ILG <span class="chevron">&#9660;</span>
+  </button>
+  <div class="section-content">
+    <div class="important-note"><strong>HOW TO TRANSFER TO ILG:</strong></div>
+    <ol class="esign-steps">
+      <li>Add call</li>
+      <li>Type 50 then call</li>
+      <li>Once ILG agent picks up, give them file details</li>
+      <li>When ready to blind transfer &mdash; merge the 2 calls</li>
+      <li>Last step: click attended call (the 2 arrows pointing to the right)</li>
+    </ol>
+    <div style="margin-top:15px; padding:15px; text-align:center; background:#E8F0F8; border-radius:8px; font-size:15px; color:#1B3A5C;">
+      <strong style="display:block; font-size:17px; margin-bottom:6px;">Ironwood Law Group</strong>
+      Customer Service Number: <strong>(800) 425-7439</strong><br>
+      Customer Service Email: <strong>support@ironwoodlawgroup.com</strong><br>
+      <a href="https://ironwoodlawgroup.com/" target="_blank" style="color:#2E75B6;">https://ironwoodlawgroup.com/</a>
+    </div>
+    <div class="reminder-note"><strong>REMINDER:</strong> Go to Slack and enter your deal into your daily deal group. This is your bragging rights!</div>
+  </div>
+</div>
+
+<!-- COMPLIANCE CHECKLIST -->
+<div class="collapsible-section" id="rvm-compliance">
+  <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
+    Compliance Checklist <span class="chevron">&#9660;</span>
+  </button>
+  <div class="section-content">
+    <div class="important-note" style="background:#FFF8E1; border-left-color:#F0C040;"><strong style="color:#C0392B;">ATTENTION:</strong> <strong style="color:#B8860B;">Understand ALL of these questions. This is what the Account Executive is going to ask your client when you're done with your sale. Knowing these ensures you're preparing the client properly throughout the call and not promising anything you shouldn't be.</strong></div>
+    <div class="stage-direction">ILG Account Manager will go over these questions with your client:</div>
+    <div class="agent-line"><strong>AM Script:</strong> I'm going to ask a few quick yes-or-no questions just to make sure everything is clear. If anything needs clarification, just let me know.</div>
+    <ol class="qc-list">
+      <li>Do you understand that this program is <strong>not a loan</strong> and we are not lending you money?</li>
+      <li>Do you understand that this is <strong>not debt consolidation or traditional debt settlement</strong>, and we are not taking out new loans to pay off your debts?</li>
+      <li>Do you understand that your payments go toward <strong>attorney fees for legal representation</strong> and the dispute process?</li>
+      <li>Do you understand that in order for our team to begin disputing your accounts, those creditors typically stop receiving payments and the accounts may go into collections?</li>
+      <li>Do you understand that during the first few months you may receive collection calls, and that this is a normal part of the process?
+        <div class="reminder-note" style="margin-top:8px;"><strong>SCRIPT FOR CLIENT:</strong> "I have retained legal representation. Please direct any communication to Ironwood at 800-425-7439." Then politely hang up. Many clients also choose to block those numbers.</div>
+      </li>
+      <li>Do you understand that this process typically takes about <strong>18&ndash;24 months</strong> depending on the accounts involved?</li>
+      <li>Do you understand that if you receive any legal notices or lawsuits, you must <strong>send those to us immediately</strong> so we can assist?</li>
+      <li>Do you understand that if any enrolled debt is secured by collateral, such as a vehicle, the lender may have the right to repossess that collateral?</li>
+      <li>Do you understand that <strong>stopping automatic payments</strong> to enrolled creditors is important so it does not interfere with the dispute process?</li>
+      <li>And finally &mdash; do you understand that this program works best as a <strong>partnership</strong>, meaning staying in communication with us and sending documents when requested is important for success?</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+function toggleSection(btn) {
+  const content = btn.nextElementSibling;
+  const expanded = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', !expanded);
+  if (expanded) {
+    content.classList.add('collapsed');
+  } else {
+    content.classList.remove('collapsed');
+  }
+}
+</script>
+
+</body>
+</html>

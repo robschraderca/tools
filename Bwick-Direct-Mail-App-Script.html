@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bwick Direct Mail — Application Script</title>
+<style>
+  :root {
+    --navy: #1B3A5C;
+    --accent: #2E75B6;
+    --accent-light: #E8F0F8;
+    --border: #B0C4DE;
+    --crm-bg: #FFF8E1;
+    --crm-border: #F0C040;
+    --important-bg: #FDECEC;
+    --important-border: #C0392B;
+    --reminder-bg: #F0F7EE;
+    --reminder-border: #5B9A4A;
+    --text: #333;
+    --muted: #666;
+    --bg: #f8f9fa;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+  /* Sidebar Nav */
+  .sidebar {
+    position: fixed; top: 0; left: 0; width: 280px; height: 100vh;
+    background: var(--navy); color: #fff; padding: 20px 0;
+    overflow-y: auto; z-index: 100;
+  }
+  .sidebar h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; padding: 0 20px 15px; color: rgba(255,255,255,0.5); border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; }
+  .sidebar a {
+    display: block; padding: 10px 20px; color: rgba(255,255,255,0.8);
+    text-decoration: none; font-size: 14px; transition: all 0.2s;
+    border-left: 3px solid transparent;
+  }
+  .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.1); color: #fff; border-left-color: var(--accent); }
+  .sidebar .sub { padding-left: 36px; font-size: 13px; color: rgba(255,255,255,0.5); }
+  .sidebar .sub:hover { color: rgba(255,255,255,0.8); }
+
+  /* Main Content */
+  .main { margin-left: 280px; max-width: 820px; padding: 30px 40px 60px; }
+
+  /* Title Block */
+  .title-block { text-align: center; padding: 30px 0 25px; border-bottom: 4px solid var(--accent); margin-bottom: 30px; }
+  .title-block h1 { font-size: 28px; color: var(--navy); margin-bottom: 4px; letter-spacing: 1px; }
+  .title-block .subtitle { font-size: 16px; color: var(--muted); margin-bottom: 8px; }
+  .title-block .script-label { font-size: 20px; color: var(--accent); font-weight: 700; }
+  .title-block .source { font-size: 13px; color: #999; font-style: italic; margin-top: 10px; }
+
+  /* Section Headings */
+  h2.section-heading {
+    font-size: 22px; color: var(--navy); margin: 40px 0 15px;
+    padding-bottom: 8px; border-bottom: 3px solid var(--accent);
+    scroll-margin-top: 20px;
+  }
+  h3.sub-heading {
+    font-size: 17px; color: var(--accent); margin: 25px 0 10px;
+    scroll-margin-top: 20px;
+  }
+
+  /* Script Lines */
+  .agent-line {
+    margin: 10px 0; padding: 10px 15px; border-radius: 6px;
+    background: #fff; border: 1px solid #e0e0e0;
+  }
+  .agent-line .placeholder { font-weight: 700; color: var(--accent); }
+
+  .stage-direction {
+    margin: 8px 0; padding: 6px 15px; font-style: italic;
+    color: #777; font-size: 14px;
+  }
+
+  .crm-note {
+    margin: 10px 0; padding: 10px 15px; border-radius: 4px;
+    background: var(--crm-bg); border-left: 5px solid var(--crm-border);
+    font-size: 14px;
+  }
+  .crm-note strong { color: #B8860B; }
+
+  .important-note {
+    margin: 10px 0; padding: 10px 15px; border-radius: 4px;
+    background: var(--important-bg); border-left: 5px solid var(--important-border);
+    font-size: 14px;
+  }
+  .important-note strong { color: var(--important-border); }
+
+  .reminder-note {
+    margin: 10px 0; padding: 10px 15px; border-radius: 4px;
+    background: var(--reminder-bg); border-left: 5px solid var(--reminder-border);
+    font-size: 14px;
+  }
+  .reminder-note strong { color: var(--reminder-border); }
+
+  .overview-text { margin: 8px 0; font-size: 15px; line-height: 1.7; }
+
+  .crm-steps-list { margin: 10px 0 10px 20px; }
+  .crm-steps-list li { margin: 6px 0; font-size: 15px; }
+
+  .next-step {
+    margin: 30px 0; padding: 15px; text-align: center;
+    background: var(--accent-light); border-radius: 8px;
+    font-size: 17px; color: var(--navy); font-weight: 600;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <h2>Script Sections</h2>
+  <a href="#s1">1. Outbound — Form Filled</a>
+  <a href="#s2">2. Outbound — Answer Connect</a>
+  <a href="#s3">3. Inbound Call</a>
+  <a class="sub" href="#fallback">Fallback: No Invitation Code</a>
+  <a href="#s4">4. Verification &amp; Info Gathering</a>
+  <a class="sub" href="#confirm-id">Confirm Identity</a>
+  <a class="sub" href="#verify-address">Verify Address</a>
+  <a class="sub" href="#address-duration">Address Duration</a>
+  <a class="sub" href="#confirm-phone">Confirm Phone</a>
+  <a class="sub" href="#get-email">Get Email</a>
+  <a href="#s5">5. Loan &amp; Application Explanation</a>
+  <a href="#s6">6. Application Questions</a>
+  <a class="sub" href="#edu-clarify">Education Clarification</a>
+  <a class="sub" href="#edu-why">Why Education Is Needed</a>
+  <a href="#s7">7. Soft Credit Pull</a>
+  <a class="sub" href="#dob">Date of Birth</a>
+  <a class="sub" href="#ssn">Social Security Number</a>
+  <a class="sub" href="#permission">Get Permission</a>
+  <a class="sub" href="#hold">Hold &amp; Prepare File</a>
+  <a href="#s8">8. Motion CRM Steps</a>
+</nav>
+
+<div class="main">
+
+  <div class="title-block">
+    <h1>BWICK</h1>
+    <div class="subtitle">Script Helper</div>
+    <div class="script-label">DIRECT MAIL — APPLICATION SCRIPT</div>
+    <div class="subtitle">Loan Consolidation Program</div>
+    <div class="source">Source: Motion CRM Direct Mail App Script for Doc Pros (2/14/2026)</div>
+  </div>
+
+  <!-- Section 1 -->
+  <h2 class="section-heading" id="s1">1. Outbound Call — Form Filled</h2>
+  <div class="stage-direction">Use this opening when the prospect filled out an online form in response to the mail offer.</div>
+  <div class="agent-line">Hi, is this <span class="placeholder">[First Name]</span>?</div>
+  <div class="stage-direction">Pause for a response.</div>
+  <div class="agent-line">Hey <span class="placeholder">[First Name]</span>, this is <span class="placeholder">[Agent Name]</span> with Horizon Financial Services — I have your online submission for the loan offer letter you received from us.</div>
+  <div class="agent-line">I just wanted to know if now's a good time to go over everything with you?</div>
+  <div class="stage-direction">Pause for a response.</div>
+  <div class="agent-line">Perfect. On the first page of that letter, you will see an 8–11 digit <strong>"Invitation Code" (pin code)</strong> — could you read that to me please?</div>
+  <div class="crm-note"><strong>CRM NOTE:</strong> Enter the invitation code into the search field in Motion CRM.</div>
+  <div class="agent-line">One moment while I pull up your information.</div>
+  <div class="stage-direction">Proceed below to the Verification &amp; Info Gathering section.</div>
+
+  <!-- Section 2 -->
+  <h2 class="section-heading" id="s2">2. Outbound Call — Answer Connect</h2>
+  <div class="stage-direction">Use this opening when the prospect left a voicemail/message via Answer Connect.</div>
+  <div class="agent-line">Hi, is this <span class="placeholder">[First Name]</span>?</div>
+  <div class="stage-direction">Pause for a response.</div>
+  <div class="agent-line">Hey <span class="placeholder">[First Name]</span>, this is <span class="placeholder">[Agent Name]</span> with Horizon Financial Services — It looks like you called in and left a message to receive more information on the loan offer letter you received from us.</div>
+  <div class="agent-line">I just wanted to know if now's a good time to go over everything with you?</div>
+  <div class="stage-direction">Pause for a response.</div>
+  <div class="agent-line">Perfect. On the first page of that letter, you will see an 8–11 digit <strong>"Invitation Code"</strong> — could you read that to me please?</div>
+  <div class="crm-note"><strong>CRM NOTE:</strong> Enter the invitation code into the search field in Motion CRM.</div>
+  <div class="agent-line">One moment while I pull up your information.</div>
+  <div class="stage-direction">Proceed below to the Verification &amp; Info Gathering section.</div>
+
+  <!-- Section 3 -->
+  <h2 class="section-heading" id="s3">3. Inbound Call</h2>
+  <div class="stage-direction">Use this opening when the prospect calls in directly.</div>
+  <div class="agent-line">Thank you for calling <strong>Horizon Financial Services</strong>, this is <span class="placeholder">[Agent Name]</span>. Were you calling about the letter we sent you in the mail?</div>
+  <div class="agent-line">Perfect. On the first page of that letter, you will see an 8–11 digit <strong>"Invitation Code"</strong> — could you read that to me please?</div>
+  <div class="crm-note"><strong>CRM NOTE:</strong> Enter the invitation code into the search field in Motion CRM.</div>
+  <div class="agent-line">One moment while I pull up your information.</div>
+
+  <h3 class="sub-heading" id="fallback">Fallback: No Invitation Code</h3>
+  <div class="stage-direction">If the prospect does not have their invitation code, use this flow instead.</div>
+  <div class="agent-line">Okay, that's fine. I'll just need to get the correct spelling of your first and last name to pull up your information in our system.</div>
+  <div class="crm-note"><strong>CRM NOTE:</strong> Enter the name in the search field in Motion CRM, then continue to Verification below.</div>
+
+  <!-- Section 4 -->
+  <h2 class="section-heading" id="s4">4. Verification &amp; Info Gathering</h2>
+  <div class="stage-direction">All call types converge here after pulling up the prospect's information.</div>
+
+  <h3 class="sub-heading" id="confirm-id">Confirm Identity</h3>
+  <div class="agent-line">Okay, I got your information pulled up and just to confirm — am I speaking with <span class="placeholder">[Caller's First and Last Name]</span>?</div>
+
+  <h3 class="sub-heading" id="verify-address">Verify Address</h3>
+  <div class="agent-line">Okay, great, and I have your current address at <span class="placeholder">[street number and name, city, state, and zip]</span>?</div>
+  <div class="crm-note"><strong>CRM NOTE:</strong> If the address is different, update the new address in Motion CRM.</div>
+
+  <h3 class="sub-heading" id="address-duration">Address Duration</h3>
+  <div class="agent-line">And have you been at that address for at least 2 years or more?</div>
+  <div class="important-note"><strong>IMPORTANT:</strong> If YES — you will only need the last 4 digits of their SSN later. If NO — you will need the full Social Security Number.</div>
+
+  <h3 class="sub-heading" id="confirm-phone">Confirm Phone</h3>
+  <div class="agent-line">And is the phone number you're calling in on <span class="placeholder">[XXX-XXX-XXXX]</span> the best number to reach you at?</div>
+  <div class="stage-direction">If not: "What number would you like us to contact you at?"</div>
+
+  <h3 class="sub-heading" id="get-email">Get Email</h3>
+  <div class="agent-line">Perfect, and what's the best email address for you?</div>
+  <div class="important-note"><strong>IMPORTANT:</strong> Repeat each letter and number for the email and confirm.</div>
+
+  <!-- Section 5 -->
+  <h2 class="section-heading" id="s5">5. Loan &amp; Application Explanation</h2>
+  <div class="agent-line">Great, <span class="placeholder">[Caller's Name]</span> — again, my name is <span class="placeholder">[Agent Name]</span>, and I'll be guiding you through this process today.</div>
+  <div class="agent-line">So just to give you a quick overview — the money you receive from the loan will wrap up all your unsecured debt into one loan and one repayment. We work with the largest lending network in the country and rates start in the single digits.</div>
+  <div class="stage-direction">Pause for a response.</div>
+  <div class="agent-line">So the first step is to gather some information for your loan application and if everything lines up, you could be funded as soon as today. <strong>Sound good?</strong></div>
+  <div class="stage-direction">Pause for a response.</div>
+  <div class="agent-line">Awesome. So as part of the application, we'll do a soft credit check — that just helps us verify your balances and make sure we're not missing any accounts that could be added to your consolidation loan. <strong>Does that make sense?</strong></div>
+  <div class="stage-direction">Pause for a response.</div>
+  <div class="agent-line">Perfect — let's go ahead and get started.</div>
+
+  <!-- Section 6 -->
+  <h2 class="section-heading" id="s6">6. Application Questions</h2>
+  <div class="agent-line">What loan amount are you looking to get approved for today?</div>
+  <div class="agent-line">Okay got it, and what is your current employment status?</div>
+  <div class="agent-line">How often are you paid — weekly, bi-weekly, semi-monthly, or monthly?</div>
+  <div class="agent-line">And what is your gross annual income?</div>
+  <div class="agent-line">Do you own your home or rent?</div>
+  <div class="agent-line">Perfect. And just for the application, what's the highest level of education you've completed?</div>
+
+  <h3 class="sub-heading" id="edu-clarify">If Client Needs Clarification on Education</h3>
+  <div class="agent-line">This is just one of those standard lender questions — what's the highest level of school you've finished?</div>
+  <div class="stage-direction">Examples: Associate degree, Bachelor's, High School, Master's, still in school</div>
+
+  <h3 class="sub-heading" id="edu-why">If Client Asks Why Education Is Needed</h3>
+  <div class="agent-line">Good question. Some lenders use it as part of their risk model, kind of like employment length — it doesn't approve or deny you by itself.</div>
+
+  <!-- Section 7 -->
+  <h2 class="section-heading" id="s7">7. Soft Credit Pull &amp; File Submission</h2>
+  <div class="agent-line">Okay thank you for that and we're almost done here. The last step is a soft pull on your credit. It won't show up as a hard inquiry or impact your score — it just gives us what we need to verify your accounts.</div>
+
+  <h3 class="sub-heading" id="dob">Collect Date of Birth</h3>
+  <div class="agent-line">What's your date of birth?</div>
+  <div class="stage-direction">Repeat back DOB to confirm.</div>
+
+  <h3 class="sub-heading" id="ssn">Collect SSN</h3>
+  <div class="stage-direction">If at address for 2+ years:</div>
+  <div class="agent-line">And I just need the last four digits of your Social Security Number.</div>
+  <div class="stage-direction">Repeat back the 4 digits.</div>
+  <div class="stage-direction">If at address for less than 2 years:</div>
+  <div class="agent-line">And I just need your Social Security Number.</div>
+  <div class="stage-direction">Repeat back the 9 digits.</div>
+
+  <h3 class="sub-heading" id="permission">Get Permission</h3>
+  <div class="agent-line">Got it. And do you give us permission to run your soft credit check to finalize your application?</div>
+  <div class="crm-note"><strong>CRM NOTE:</strong> Enter the SSN and click "I Agree, Run Soft Credit Check." <strong>IMPORTANT:</strong> If there are 4 extra digits on the zip code, erase them and save. You can only pull credit on a 5-digit zip code.</div>
+
+  <h3 class="sub-heading" id="hold">Hold &amp; Prepare File</h3>
+  <div class="agent-line">Great. One moment while I prepare your file.</div>
+  <div class="stage-direction">Place the call on hold for approximately 20 seconds.</div>
+
+  <!-- Section 8 -->
+  <h2 class="section-heading" id="s8">8. Motion CRM Steps</h2>
+  <div class="stage-direction">Complete these steps in Motion CRM while the client is on hold:</div>
+  <ul class="crm-steps-list">
+    <li>Change status from <strong>New Lead</strong> to <strong>Apped</strong></li>
+    <li>Select <strong>"Debt Consolidation"</strong> for Loan Purpose</li>
+    <li>Select any <strong>Credit Rating</strong> when creating the app (correct it after you pull credit and find the actual score)</li>
+    <li>Pull Credit in the <strong>Debts</strong> tab</li>
+    <li>Select and review any qualified accounts to include</li>
+    <li>Assign the lead to yourself</li>
+  </ul>
+
+  <div class="next-step">NEXT STEP: Move over to the Main Direct Mail Script and continue.</div>
+
+</div>
+
+<script>
+  // Highlight active sidebar link on scroll
+  const sections = document.querySelectorAll('[id]');
+  const links = document.querySelectorAll('.sidebar a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 60) current = s.id; });
+    links.forEach(a => {
+      a.classList.remove('active');
+      if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
