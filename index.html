@@ -466,7 +466,7 @@
       <button onclick="jumpToPhase('script-rvm', 'rvm-landing')"><span>Soft Landing</span></button>
       <button onclick="jumpToPhase('script-rvm', 'rvm-commitment')"><span>Commitment</span></button>
       <button onclick="jumpToPhase('script-rvm', 'rvm-close')"><span>Close</span></button>
-      <button onclick="jumpToPhase('script-rvm', 'rvm-qc')"><span>QC Script</span></button>
+      <button onclick="jumpToPhase('script-rvm', 'rvm-end-of-call')"><span>End of Call</span></button>
     </div>
 
     <div class="sidebar-section">Reference</div>
@@ -1055,7 +1055,7 @@
       <div id="script-rvm" class="tab-content">
         <div class="phase-divider" id="rvm-phase" onclick="togglePhase('rvm')">
           RVM SCRIPT <span class="phase-chevron">&#9660;</span>
-          <div class="phase-sub">Bwick Direct Mail Call Script</div>
+          <div class="phase-sub">Financial Hardship Center — Ironwood Law Group Call Script</div>
         </div>
         <div class="phase-index" id="phase-rvm-index">
           <a href="#rvm-open" onclick="expandAndScroll('rvm','rvm-open')">Open</a>
@@ -1071,7 +1071,7 @@
           <a href="#rvm-landing" onclick="expandAndScroll('rvm','rvm-landing')">Landing</a>
           <a href="#rvm-commitment" onclick="expandAndScroll('rvm','rvm-commitment')">Commitment</a>
           <a href="#rvm-close" onclick="expandAndScroll('rvm','rvm-close')">Close</a>
-          <a href="#rvm-qc" onclick="expandAndScroll('rvm','rvm-qc')">Qc</a>
+          <a href="#rvm-end-of-call" onclick="expandAndScroll('rvm','rvm-end-of-call')">End of Call</a>
         </div>
         <div class="phase-content" id="phase-rvm-content">
 
@@ -1080,10 +1080,11 @@
             0. OPEN <span class="chevron">&#9660;</span>
           </button>
           <div class="section-content">
-            <div class="agent-line">West Coast Enrollment, this is <span class="blank">________</span>! How can I help you?</div>
+            <div class="agent-line">Thank you for calling the Financial Hardship Center, this is <span class="blank">________</span>! How can I help you?</div>
             <div class="agent-line">Are you calling in regard to the debt hardship program to eliminate your unsecured debt?</div>
             <div class="stage-direction">If they ask: &quot;What was this call for? Why did I get this call?&quot;</div>
-            <div class="agent-line">Sure, not a problem. From what I can tell, it looks like your credit bureau — Equifax — labeled it as a financial hardship. They asked a law firm to reach out and offer assistance. That would be the purpose of my call today. So first question to you: <span class="optional-tag">Optional</span></div>
+            <div class="agent-line">Sure, not a problem. From what I can tell, it looks like your credit bureau — Equifax — labeled it as a financial hardship. They asked a law firm to reach out and offer assistance. That would be the purpose of my call today.</div>
+            <div class="agent-line">So first question to you: what categories of debt are causing your hardship? <em>(Then back on script.)</em></div>
           </div>
         </div>
 
@@ -1092,11 +1093,12 @@
             1. QUALIFY <span class="chevron">&#9660;</span>
           </button>
           <div class="section-content">
-            <div class="crm-note">(Under 2 minutes: Type, Amount, Income)</div>
-            <div class="agent-line"><strong>1. </strong>Great — and what type of debts are causing your hardship? Credit cards and loans, or is it something else? (Personal Loans? Collection Accounts? Payday Loans? Cash Advances? Vehicle Repossession?)</div>
-            <div class="agent-line"><strong>2. </strong>And do you owe more than $6,000 in total?</div>
-            <div class="agent-line"><strong>3. </strong>And are you currently employed or do you have a source of household income? (SSI, SSDI, Unemployment?)</div>
-            <div class="stage-direction">IF &quot;No&quot; to income: How are you currently paying your bills?If they have zero income get off the phone.</div>
+            <div class="crm-note">(UNDER 2 MINUTES: Type, Amount, Income)</div>
+            <div class="agent-line"><strong>1. </strong>Great — and what type of debts are causing your hardship? Credit cards and loans, or is it something else? <em>(Personal loans? Collection accounts? Payday loans? Cash advances? Vehicle repossession?)</em></div>
+            <div class="agent-line"><strong>2. </strong>And do you owe more than $5,000 in total?</div>
+            <div class="agent-line"><strong>3. </strong>And are you currently employed or do you have a source of household income? <em>(SSI, SSDI, unemployment?)</em></div>
+            <div class="stage-direction">IF &quot;No&quot; to income:</div>
+            <div class="agent-line">How are you currently paying your bills?</div>
             <div class="agent-line">Perfect — it sounds like you might be eligible for one of our short-term hardship programs that will be a significant help to you. It will only take a few minutes to see if we can get you qualified, and I just need some basic information. Does that sound good?</div>
             <div class="agent-line">Great, let’s see if we can get you some help here.</div>
           </div>
@@ -1107,18 +1109,16 @@
             2. BASIC INFO <span class="chevron">&#9660;</span>
           </button>
           <div class="section-content">
-            <div class="crm-note">(Name, Contact Info, D.O.B.Email )</div>
+            <div class="crm-note">(Name, Contact Info, D.O.B.)</div>
             <div class="crm-note"><strong>CRM:</strong> In Motion, go to Leads → top right, click <strong>New Lead</strong>.</div>
             <div class="crm-note"><strong>CRM:</strong> Make sure you select <strong>Marketer = Horizon Firm</strong>.</div>
             <div class="agent-line">Perfect, we can get started pulling up your file with:</div>
-            <div class="agent-line"><strong>4. </strong>The proper spelling of your first and last name. <em>(Reiterate spelling of first and last name.)</em></div>
-            <div class="agent-line"><strong>5. </strong>In case we get disconnected, is this the best number to reach you at? <em>(Confirm phone number.)</em></div>
-            <div class="agent-line"><strong>6. </strong>And for verification purposes, what is your date of birth? <em>(Confirm DOB.)</em></div>
-            <div class="agent-line"><strong>7. </strong>What’s a good email address for you <em>(Confirm Email.)</em></div>
-            <div class="agent-line">Perfect. The next step for us today is to pull up a copy of your accounts and balances to figure out how much you owe and what debts we can and cannot help with. Its a soft credit pull so it will not affect your score.</div>
-            <div class="agent-line">The way we search for your debts is simply with your name and address.</div>
-            <div class="agent-line">Have you been living at your current address for more than 3 months</div>
-            <div class="agent-line">Perfect, and what is your full street address? <em>(Confirm Address.)</em></div>
+            <div class="agent-line"><strong>1. </strong>The proper spelling of your first and last name. <em>(Reiterate spelling of first and last name.)</em></div>
+            <div class="agent-line"><strong>2. </strong>In case we get disconnected, is this the best number to reach you at? <em>(Confirm phone number.)</em></div>
+            <div class="agent-line"><strong>3. </strong>And for verification purposes, what is your date of birth?</div>
+            <div class="agent-line">Perfect, so the next step for us today is to pull up a copy of your accounts and balances to figure out how much you owe and what debts we CAN AND CANNOT help with. The way we search for your debts is simply with your name and address.</div>
+            <div class="agent-line">Have you been living at your current address for more than 3 months?</div>
+            <div class="agent-line">Perfect, and what is your full street address?</div>
             <div class="crm-note"><strong>CRM:</strong> After you have entered that info, scroll down to the bottom and select <strong>Create Lead</strong>.</div>
           </div>
         </div>
@@ -1128,13 +1128,12 @@
             3. PROBE FOR PAIN <span class="chevron">&#9660;</span>
           </button>
           <div class="section-content">
-            <div class="crm-note">(Build rapport, gain understanding, show compassion — but find their weakness)</div>
-            <div class="agent-line">I am going to put you on a brief hold while we pull up your accounts.</div>
-            <div class="crm-note"><strong>CRM:</strong> At this point you will be brought back to the lead screen and select the lead you just created.</div>
-            <div class="crm-note"><strong>CRM:</strong> You will be brought back to the lead screen. Select the lead you just created.</div>
-            <div class="crm-note"><strong>CRM:</strong> Once that happens you will be brought to this screen. Select the <strong>Debt</strong> tab.</div>
-            <div class="crm-note"><strong>CRM:</strong> Then select <strong>Pull Credit</strong>.</div>
-            <div class="stage-direction">Once that happens you will be brought to this screen and select the debt tab</div>
+            <div class="crm-note">(Build rapport, gain understanding, show compassion — but find their weakness.)</div>
+            <div class="crm-note"><strong>CRM:</strong> Go back to the lead screen and select the lead you just created → <strong>Debt</strong> tab → <strong>Pull Credit</strong>.</div>
+            <div class="agent-line">And while I am waiting for your debts to load:</div>
+            <div class="agent-line"><strong>1.</strong> Can you tell me about your current situation? Most importantly, what are you trying to accomplish?</div>
+            <div class="agent-line"><strong>2.</strong> How much are you currently paying on your debts per month right now? Minimum payments or more than the minimum?</div>
+            <div class="agent-line"><strong>3.</strong> Are you seeing the balances go down at all?</div>
           </div>
         </div>
 
@@ -1143,38 +1142,30 @@
             4. DEBT DISCUSSION <span class="chevron">&#9660;</span>
           </button>
           <div class="section-content">
-            <div class="crm-note">(Pre-fight interview: Creditor names, balances, total)</div>
-            <div class="crm-note"><strong>CRM:</strong> At this point you will be at a screen that looks like this. This is where you review all debts to decide what's included and what's not. The system does a good job but you need to double-check.</div>
-            <div class="crm-note"><strong>CRM:</strong> The next step is to select the report where the arrow is pointed.</div>
-            <div class="crm-note"><strong>CRM:</strong> That will pull up the credit report in detail.</div>
-            <div class="stage-direction">that will then pull up the credit report in detail, and it will look something like this</div>
+            <div class="crm-note">(Pre-fight interview: Creditor names, balances, total.)</div>
+            <div class="crm-note"><strong>CRM:</strong> Review all debts to decide what's included and what's not. The system does a good job, but double-check. Then click the report icon to pull up the credit report in detail.</div>
             <div class="agent-line">Great. So I was able to locate everything. It looks like at this time your credit score is a <span class="blank">________</span>.</div>
-            <div class="agent-line">I don’t mention this to beat you up — I want to point out a silver lining here.</div>
-            <div class="agent-line">My clients that come to me with a high score already, we have to tread lightly to not cause any damage. In your case, since the damage is already done, we can just power straight through and knock the debts off the report — which is going to leave you debt-free with a high score a lot faster than most of my clients.</div>
+            <div class="agent-line">I don’t mention this to beat you up — I want to point out a silver lining here. My clients that come to me with a high score already, we have to tread lightly to not cause any damage. In your case, since the damage is already done, we can just power straight through and knock the debts off the report — which is going to leave you debt-free with a high score a lot faster than most of my clients.</div>
             <div class="agent-line">I want to go through these one at a time:</div>
-            <div class="crm-note">(Go over the name and balance of each debt. Be delicate — a client wants to know you are listening and understand their situation. Cover: Creditor name, Balance, Status, Delinquent marks, Utilization %.)</div>
+            <div class="crm-note">Go over each debt individually. Be delicate — a client wants to know you are listening and understand their situation. Cover: Creditor name, Balance, Status, Delinquent marks, Utilization %.</div>
             <div class="crm-note"><strong>CRM:</strong> Click on the lead you created — this will bring you to the main screen.</div>
-            <div class="agent-line">And while I am waiting for your debts to load:</div>
-            <div class="agent-line"><strong>8. </strong>Can you tell me about your current situation? Most importantly, what are you trying to accomplish?</div>
-            <div class="agent-line"><strong>9. </strong>How much are you currently paying on your debts per month right now? Minimum payments or more than the minimum?</div>
           </div>
         </div>
 
         <div class="collapsible-section" id="rvm-commit">
           <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            5. PROBING / COMMITMENT <span class="chevron">&#9660;</span>
+            5. MORE PROBING / COMMITMENT / CONSEQUENCE <span class="chevron">&#9660;</span>
           </button>
           <div class="section-content">
-            <div class="crm-note">(Break them down to build them back up)</div>
-            <div class="agent-line">Okay great — so it looks like you have <span class="blank">________</span> accounts in total, and those accounts have a combined balance of $<span class="blank">________</span>.</div>
-            <div class="agent-line">Before I submit for approval, I always like to ask my clients if there were any specific goals for the day. In many cases when I am speaking with a borrower, it’s because an event occurred that sparked their interest in becoming debt-free with a high score.</div>
-            <div class="agent-line">Anything specific? Are you working towards a purchase? A goal you are trying to achieve? Or is this more to recover and rebound?</div>
+            <div class="crm-note">(Break them down to build them back up.)</div>
+            <div class="agent-line">Okay great — so it looks like you have <span class="blank">________</span> # of accounts in total, and those accounts have a combined balance of $<span class="blank">________</span>.</div>
+            <div class="agent-line">Before I submit for approval, I always like to ask my clients if there were any specific goals for the day. In many cases when I am speaking with a borrower, it’s because an event occurred that sparked their interest in becoming DEBT FREE with a HIGH SCORE. Anything specific? Are you working towards a purchase? A goal you are trying to achieve? Or is this just more to recover and rebound?</div>
             <div class="agent-line">And did you have a time frame you were trying to achieve this in? <em>(When is your purchase/goal?)</em></div>
-            <div class="agent-line">Okay, and next I wanted to go over your income to see if there are any additional hardship benefits I could get you approved for.</div>
-            <div class="agent-line">How much are you currently bringing home per month after taxes?</div>
+            <div class="agent-line">Okay, and next I wanted to go over your income to see if there are any additional hardship benefits I could get you approved for. How much are you currently bringing home per month after taxes?</div>
             <div class="agent-line">Do you have any other hardships such as loss of income? Unexpected bills? Health problems? Or COVID?</div>
-            <div class="agent-line">And how about savings? Do you have any emergency savings? Or have you depleted your savings at this point?</div>
+            <div class="agent-line">And how about savings? Do you have any emergency savings? Is it hard for you to save, or have you depleted your savings at this point?</div>
             <div class="crm-note">(Convey sympathy, compassion and concern — wait for response.)</div>
+            <div class="crm-note"><strong>CRM:</strong> Put in Hardship Description in CRM.</div>
           </div>
         </div>
 
@@ -1183,36 +1174,21 @@
             6. UNDERWRITING <span class="chevron">&#9660;</span>
           </button>
           <div class="section-content">
-            <div class="stage-direction">Walk-on song: Pen, paper, hold, build tension</div>
+            <div class="stage-direction">Walk-on song: Pen, paper, hold, build tension.</div>
             <div class="agent-line">Okay perfect — that is all the information I need from you. The next step for me today is to submit your debts to my underwriting department for approval.</div>
             <div class="agent-line">If you are approved for a debt resolution program, I will help you get enrolled today. If you are denied for any reason, I will let you know the exact reasons.</div>
             <div class="agent-line">I am going to put you on a brief hold for 2–3 minutes while I wait for a response. If you could grab yourself a pen and paper — when I come back on the line we will go over all your approval details together. Does this sound good?</div>
             <div class="agent-line">Okay perfect, just give me a few minutes here. I will be right back on the line with a response. Please hold!</div>
             <div class="stage-direction">Place on hold for 2–3 minutes.</div>
-            <div class="stage-direction">Push Data To Doc Pros And Go Create the Program</div>
-            <div class="stage-direction">
-            <strong>CRM Step 1:</strong> In Motion, click the button to convert the lead to a customer and push the data to Doc Pros CRM.
-          </div>
-            <div class="stage-direction">
-            <strong>CRM Step 2:</strong> After you select Enroll, you will be brought to another screen. Scroll all the way to the bottom and select <strong>Continue</strong>.
-          </div>
-            <div class="stage-direction">
-            <strong>CRM Step 3:</strong> At the bottom of the screen, select <strong>Push Data &amp; Finish</strong>. Then select <strong>OK</strong> on the confirmation popup.
-          </div>
-            <div class="stage-direction">
-            <strong>CRM Step 4:</strong> Go to <strong>Doc Pros CRM</strong> and find the lead. Click the <strong>client name</strong> to open their record.
-          </div>
-            <div class="stage-direction">
-            <strong>CRM Step 5:</strong> On the client screen, click the <strong>Enrollment</strong> tab.
-          </div>
-            <div class="stage-direction">
-            <strong>CRM Step 6:</strong> Click <strong>Select Plan</strong> and choose <strong>"The Doc Pros 1"</strong>. Then select how many months. Make sure the payment plan is <strong>more than $230/month</strong> (that is the minimum).
-          </div>
-            <div class="stage-direction">
-            <strong>CRM Step 7:</strong> Adjust the number of months to make the payment attractive to the client. The payment needs to be <strong>cheaper than their current monthly payments</strong>.
-          </div>
-            <div class="crm-note"><strong>CRM:</strong> Go to the Calculator in this script helper and add the numbers from the program snapshot to get Owe / Pay / Save.</div>
-            <div class="crm-note"><strong>CRM:</strong> It will then give you the Owe / Pay / Save result. Now get back on the phone with the client and pitch.</div>
+            <div class="crm-note"><strong>While on hold:</strong> In CRM, go to the Enrollment tab and adjust the payment scheduler.</div>
+            <div class="crm-note"><strong>CRM Step 1:</strong> In Motion, click the button to convert the lead to a customer and push the data to Doc Pros CRM.</div>
+            <div class="crm-note"><strong>CRM Step 2:</strong> After you select Enroll, scroll to the bottom and select <strong>Continue</strong>.</div>
+            <div class="crm-note"><strong>CRM Step 3:</strong> Click <strong>Push Data &amp; Finish</strong>, then <strong>OK</strong> on the confirmation popup.</div>
+            <div class="crm-note"><strong>CRM Step 4:</strong> Go to <strong>Doc Pros CRM</strong> and find the lead. Click the client name to open their record.</div>
+            <div class="crm-note"><strong>CRM Step 5:</strong> Click the <strong>Enrollment</strong> tab.</div>
+            <div class="crm-note"><strong>CRM Step 6:</strong> Click <strong>Select Plan</strong> → <strong>"The Doc Pros 1"</strong>. Select months. Payment plan must be more than $230/month (minimum).</div>
+            <div class="crm-note"><strong>CRM Step 7:</strong> Adjust the number of months so the payment is attractive — cheaper than their current monthly payments.</div>
+            <div class="crm-note"><strong>CRM:</strong> Use the Calculator in this script helper to get Owe / Pay / Save, then get back on the phone with the client and pitch.</div>
           </div>
         </div>
 
@@ -1221,14 +1197,15 @@
             7. HOW IT WORKS <span class="chevron">&#9660;</span>
           </button>
           <div class="section-content">
-            <div class="crm-note">(Shadow box — show them what we do)</div>
-            <div class="agent-line">Hello <span class="blank">________</span>, are you still with me? Perfect — I have some great news for you! It looks like my underwriting department was able to get ALL of your debts approved for the program. Congratulations! Do you have your pen and paper?</div>
+            <div class="crm-note">(Shadow Box — show them what we do.)</div>
+            <div class="agent-line">Hello <span class="blank">________</span>, are you still with me? Perfect — I have some great news for you! It looks like my underwriting department was able to get ALL of your debts approved for the program. So, Congratulations! Do you have your pen and paper?</div>
+            <div class="agent-line">Great! First, I wanted you to write down the name of the program you have been approved for: <strong>"DEBT RESOLUTION"</strong></div>
           </div>
         </div>
 
         <div class="collapsible-section" id="rvm-validation">
           <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            8. Debt Validation <span class="chevron">&#9660;</span>
+            8. DEBT VALIDATION <span class="chevron">&#9660;</span>
           </button>
           <div class="section-content">
             <div class="agent-line">I have 2 words for you to write down as bullet points, and then I will circle back to what they mean. The 1st word is “Validate” and the 2nd word is “Update.”</div>
@@ -1240,17 +1217,17 @@
             <div class="agent-line">Your original creditors obviously had this information, but what a lot of people don’t know is that when a debt is sold or transferred in any way, there are multiple privacy laws in place that prevent most of this information from being sold.</div>
             <div class="agent-line">The obvious ones are your social — no one can sell your social for a profit — and YOU would know better than anyone that after it was sold, you never sat down and signed any sort of new paperwork, agreements, or contracts with the 3rd-party collector.</div>
             <div class="agent-line">That’s 2 of the 3 major required laws that are broken.</div>
-            <div class="agent-line">We are partners with the Doc Pros. Simply put, we are going to demand legal proof from these creditors, which they WILL NOT HAVE. We will also hit them with Cease and Desist letters to stop all collection attempts.</div>
-            <div class="agent-line">We are going to demand information we know for a fact they will not have. Once we are able to prove the debt to be invalid, it is deemed uncollectable, and we will request that the entire trade line is removed from your credit report in an expungement.</div>
+            <div class="agent-line">THIS IS WHERE WE STEP IN! We are partnered with Ironwood Law Group. Simply put, they are going to demand legal proof from these creditors, which they WILL NOT HAVE. They will also hit them with “Cease and Desist” letters to stop all collection attempts.</div>
+            <div class="agent-line">They are going to demand information WE KNOW FOR A FACT THEY WILL NOT HAVE. Once they are able to prove the debt to be invalid, it is deemed uncollectable, and they will request that the entire trade line is removed from your Credit Report in an expungement.</div>
             <div class="agent-line">What this means is, all said and done, not only is the debt balance itself not owed, but the FULL TRADELINE and history of delinquency will be removed,</div>
             <div class="agent-line">so that no one in the future can see you even had these debts to begin with,</div>
             <div class="agent-line">let alone did not pay back the full balance.</div>
-            <div class="important-note"><strong>TIP:</strong> PRO TIP — ALL ACCOUNTS ACTIVE (NOT DEFAULTED)</div>
-            <div class="important-note"><strong>TIP:</strong> READ THIS FOR EVERYONE IN GOOD STANDING — Print and tape to wall.</div>
-            <div class="stage-direction">Add this to the pitch:</div>
-            <div class="agent-line">Now — that example was based on collection accounts. The only difference between collection accounts and your debts is that yours are still with the original creditor, meaning they still have your original signed contract. Not a problem — there’s just 1 additional step our attorneys will start off with, which is called a Strategic Charge-Off. <span class="optional-tag">Optional</span></div>
-            <div class="agent-line">Our attorneys will force the debt to transfer, which will cause the loss of information to occur. This will allow us to validate and expunge these accounts the exact same way as if they were collection accounts. <span class="optional-tag">Optional</span></div>
-            <div class="agent-line">Point being — these will all be handled in the same manner: Name, Account Number, Late Marks, and Balance Removed. Leaving you debt-free with a high score! <span class="optional-tag">Optional</span></div>
+            <div class="important-note"><strong>PRO TIP FOR PITCH — ALL ACCOUNTS ACTIVE (NOT DEFAULTED).</strong> Need to read this for everyone in good standing. Print this out and tape it to the wall to have ready to roll.</div>
+            <div class="stage-direction">ONLY if all the debts are active (not defaulted): pitch the same way, but at the end ADD —</div>
+            <div class="agent-line">Now — that example was based on collection accounts. The only difference between collection accounts and your debts is that yours are still with the original creditor.</div>
+            <div class="agent-line">Here’s the good news — that is no problem at all. Ironwood Law Group begins disputing directly with original creditors right away, the same as with collection accounts.</div>
+            <div class="agent-line">We will challenge their ability to validate and legally enforce the debt, demand proof of all required documentation pursuant to state and federal laws, and move to have the account expunged from your credit report the same way.</div>
+            <div class="agent-line">Point being — these will all be handled in the same manner: Name, Account Number, Late Marks, and Balance removed. Leaving you debt-free with a high score!</div>
             <div class="agent-line">The 2nd step is a “Credit Report Update.” This is way less labor-intensive, but it does carry its own weight. If any of the 30, 60, and 90+ day late marks are remaining past step one, we will request to remove them as well. This further clears the way for a higher credit score as a result.</div>
             <div class="agent-line">These are the 2 major steps on your path to becoming completely debt-free with a high credit score.</div>
             <div class="agent-line">So this is a true credit report RESET. Does that make sense?</div>
@@ -1288,8 +1265,10 @@
           </button>
           <div class="section-content">
             <div class="crm-note">(Bob and weave — distract with an easy task)</div>
-            <div class="agent-line">Perfect. Now there is only 1 requirement moving forward. As you can imagine, those exact same laws that prevent your creditors from selling your birthday and social security number also prevent us from redirecting your mail straight to us. So all that means is: when we get started, the creditor bills will be mailed to your mailbox. Your only task moving forward is pretty simple — when you receive these letters, all you have to do is take a picture and send it to us through email. Sound easy enough?</div>
-            <div class="important-note"><strong>TIP:</strong> These collection and creditor letters that you will receive in your mailbox are your GOLDEN TICKET to becoming debt free and completing this program quickly and on schedule.</div>
+            <div class="agent-line">Perfect. Now here’s what happens next. The moment your first payment is processed, Ironwood Law Group takes over all communication on your behalf.</div>
+            <div class="agent-line">You don’t need to send us anything — we go straight to work disputing directly with your creditors and any collection accounts right away.</div>
+            <div class="agent-line">Your only job moving forward is simple: just stay reachable and let us handle everything. Sound good?</div>
+            <div class="important-note"><strong>TIP:</strong> From the moment we get started, Ironwood Law Group handles all creditor and collector communication directly. The client does NOT need to forward mail or photos — that messaging has been retired.</div>
           </div>
         </div>
 
@@ -1309,114 +1288,115 @@
             12. CLOSE <span class="chevron">&#9660;</span>
           </button>
           <div class="section-content">
-            <div class="crm-note">(Last round! Complete the file: Application, Schedule, Card, Docs.)</div>
-            <div class="agent-line">Great. So the address you gave me earlier in the call — <span class="blank">________</span> — this is your current address, correct? Okay, perfect. And I have your income listed as <span class="blank">________</span>, current credit score <span class="blank">________</span>, and goals for the day: (read back goal to keep them motivated.) Correct?</div>
+            <div class="crm-note">(Last round! Complete the file: Application, Schedule, ACH, Docs.)</div>
+
+            <!-- Confirmation -->
+            <div class="agent-line">Great. So the address you gave me earlier in the call — <span class="blank">________</span> — this is your current address, correct? Okay, perfect. And I have your income listed as <span class="blank">________</span>, current credit score <span class="blank">________</span>, and goals for the day: <em>(read back goal to keep them motivated.)</em> Correct?</div>
             <div class="agent-line">And I always like to ask my clients: when we call regarding your program, is there a preferred time of day for our customer service team to reach you? Morning, Afternoon, or Night?</div>
             <div class="agent-line">Perfect. And later in the call I am going to send my contact info and program documents. What’s the best email for you?</div>
             <div class="crm-note">(Subtle reassurance that there will be good communication.)</div>
-            <div class="agent-line">Perfect — so your application is complete. The next step for us today is to structure your program. Lets pick out a payment date that works for you.</div>
-            <div class="agent-line">Your monthly payment secures your legal protection and starts the work on your accounts immediately. These balances are increasing every day — what's the soonest you can get started? Tomorrow is the soonest we can start.</div>
-            <div class="crm-note"><strong>CRM:</strong> Now go to the enrollment tab — make sure you are on the right month because it usually opens the next month first. Select a date.</div>
+
+            <!-- Payment scheduling -->
+            <div class="agent-line">Perfect — so your application is complete. Your monthly payment is what secures your legal protection and starts the work on your accounts. We need to get started AS SOON AS POSSIBLE, since these balances are increasing every day.</div>
+            <div class="agent-line">The payment again is $<span class="blank">________</span>. You don’t have to pay anything upfront today to get the ball rolling — most often my clients choose to schedule their payment for their upcoming pay day.</div>
+            <div class="agent-line">The first payment can be as soon as two (2) business days from today. When are you paid next?</div>
+            <div class="stage-direction">LET THEM TALK (Ok Great…)</div>
+
+            <!-- Objection: can't pay this week -->
+            <div class="important-note"><strong>TIP:</strong> Objection — &quot;No, I can’t pay this week&quot;</div>
+            <div class="agent-line">Ok, let’s pull up the calendar together. When is the next time you get paid — this Friday or next Friday? Do you know how much your paycheck will be for? <em>(Hourly Rate × Number of Hours Worked.)</em></div>
+            <div class="agent-line">And do you have any other bills coming out that day? Ok — I just want to be sure it’s successful so we can get to work asap without delays. Let’s select next Friday <span class="blank">________</span> (Date).</div>
+            <div class="agent-line"><strong>Important:</strong> Do you get direct deposit on that day, or is it a PAPER CHECK? Reason being — payments draft very early in the morning, around 6:00 AM Eastern.</div>
+
+            <!-- Objection: can't pay this Friday or next Friday -->
+            <div class="important-note"><strong>TIP:</strong> Objection — &quot;I can’t pay this Friday or next Friday&quot;</div>
+            <div class="agent-line">Ok… let’s go back a little bit. Is the monthly payment too high? I want this to be super smooth for you without a headache. The very farthest I can put the payment out is 16 calendar days from today — but generally when someone asks for that, it’s more of an affordability issue rather than a scheduling issue. So if you need me to stretch out the term slightly, I can — so we can get started sooner rather than later.</div>
+            <div class="crm-note">(Let them talk. What is the ROOT cause they are resisting scheduling soon? What day is manageable to start the program?)</div>
+
+            <!-- Enrollment CRM steps -->
+            <div class="crm-note"><strong>CRM:</strong> Go to the enrollment tab — make sure you are on the right month (it usually opens the next month first). Select a date.</div>
             <div class="crm-note"><strong>CRM:</strong> Select frequency to <strong>Monthly</strong>.</div>
-            <div class="crm-note"><strong>CRM:</strong> Select frequency to monthly.</div>
             <div class="crm-note"><strong>CRM:</strong> Then select occurrence to reflect the date you selected to start with.</div>
-            <div class="crm-note"><strong>CRM:</strong> Once that is done, click save enrollment.</div>
-            <div class="crm-note"><strong>CRM:</strong> Once that is done, click <strong>Save Enrollment</strong>.</div>
-            <div class="crm-note"><strong>CRM:</strong> After you do that, click on the name to go back to the main screen.</div>
-            <div class="stage-direction">After you do that click on the name and it will take you back to main screen</div>
-            <div class="crm-note"><strong>CRM:</strong> Now go to the <strong>Credit Card</strong> tab.</div>
-            <div class="crm-note"><strong>CRM:</strong> Select <strong>Debit Card</strong>.</div>
-            <div class="crm-note"><strong>CRM:</strong> Enter the rest of the info. Make sure you ask if they have a middle initial. Verify the billing address, then click <strong>Save Card</strong>.</div>
-            <div class="important-note"><strong>TIP:</strong> Objection: &quot;I can’t pay this Friday or next Friday&quot;</div>
-            <div class="agent-line">Okay … let’s go back a little bit. Is the monthly payment too high? I want this to be super smooth for you without a headache. The very farthest I can put the payment out is 16 calendar days from today. But generally when someone asks for that, it’s more of an affordability issue rather than a scheduling issue — so if you need me to stretch out the term slightly, I can — so we can get started sooner rather than later.</div>
-            <div class="crm-note">(Let them talk. What is the ROOT cause why they are resisting scheduling soon? What day is manageable to start the program?)</div>
-            <div class="crm-note"><strong>CRM:</strong> Now go back to the enrollment screen.</div>
-            <div class="crm-note"><strong>CRM:</strong> Then <strong>Edit Enrollment</strong>.</div>
-            <div class="crm-note"><strong>CRM:</strong> Click <strong>Save &amp; Generate Contract</strong>.</div>
-            <div class="crm-note"><strong>CRM:</strong> At this screen, select template to use (there is only 1 option).</div>
-            <div class="crm-note"><strong>CRM:</strong> Then select <strong>Send SMS</strong>.</div>
-            <div class="crm-note"><strong>CRM:</strong> Then <strong>Send for Signature</strong>.</div>
-            <div class="agent-line">Perfect. So we have completed your application and payment schedule. The next step for us today is to secure your benefits by including the payment information.. We do all of our program payments using a debit card.</div>
-            <div class="agent-line">NOTHING WILL BE CHARGED UNTIL THAT FIRST PAYMENT WE SELECTED OF <span class="blank">________</span></div>
-            <div class="agent-line">Is it just your first and last name on the card, or is there a middle initial listed? And is the billing address on the card the same as your mailing address? Go ahead with your 16-digit card number whenever you’re ready… And expiration… and CVV.</div>
-            <div class="stage-direction">Now go to the credit card tab</div>
-            <div class="stage-direction">Select Debit Card</div>
-            <div class="stage-direction">Then enter the rest of the info. Make sure you ask if they have a middle initial on their card. And verify the billing address is the same as the home address and then click SAVE CARD green button</div>
-            <div class="agent-line">Great. So we will move on to one of the last steps for us today. As promised, I have your E-Sign documents for you. Allow me one moment to get these generated. I will send them through EMAIL and TEXT MESSAGE to make it easy for you to locate.</div>
-            <div class="agent-line">Have you ever done an electronic signature before?</div>
-            <div class="stage-direction">Now go back to enrollment screen</div>
-            <div class="stage-direction">Then Edit enrollment</div>
-            <div class="stage-direction">Then Click on Save and Generate Contract</div>
-            <div class="stage-direction">At this screen select template to use there is only 1 option</div>
-            <div class="stage-direction">Then select send sms</div>
-            <div class="stage-direction">Then send for signature</div>
-            <div class="agent-line">Perfect! While you are working on that, I am going to multitask a bit. I will send you a text with my contact info — just to be a bit redundant in case you lose your scratch paper.</div>
+            <div class="crm-note"><strong>CRM:</strong> Click <strong>Save Enrollment</strong>.</div>
+            <div class="crm-note"><strong>CRM:</strong> Click on the client’s name to go back to the main screen.</div>
+
+            <!-- ACH payment information -->
+            <div class="agent-line">Perfect — so we have completed your application and payment schedule. The next step for us today is to secure your benefits by including the payment information you would like to use.</div>
+            <div class="agent-line">We do all of our program payments using <strong>ACH</strong>. <strong>NOTHING WILL BE CHARGED UNTIL THAT FIRST PAYMENT WE SELECTED OF $<span class="blank">________</span>.</strong></div>
+            <div class="agent-line">Is it just your first and last name on the checking account, or is there a middle initial listed?</div>
+            <div class="agent-line">And is the billing address on the account the same as your mailing address?</div>
+            <div class="agent-line">Ok great — and who do you do your banking with? <em>(Bank Name.)</em></div>
+            <div class="agent-line">I’ll need your routing number first, then your account number. Go ahead with your routing number whenever you’re ready… and your account number.</div>
+            <div class="crm-note"><strong>CRM:</strong> Now go to the <strong>Credit Card / Payment</strong> tab. Select <strong>ACH</strong>.</div>
+            <div class="crm-note"><strong>CRM:</strong> Enter routing + account, confirm middle initial, verify billing address matches mailing address, then click <strong>Save</strong>.</div>
+
+            <!-- Contract / E-Sign -->
+            <div class="crm-note"><strong>CRM:</strong> Go back to the enrollment screen → <strong>Edit Enrollment</strong> → <strong>Save &amp; Generate Contract</strong>.</div>
+            <div class="crm-note"><strong>CRM:</strong> Select template (only 1 option) → <strong>Send SMS</strong> → <strong>Send for Signature</strong>.</div>
+            <div class="agent-line">Great — so we will move on to one of the last steps for us today. As promised, I have your E-Sign documents for you. Allow me one moment to get these generated. I will send them through <strong>EMAIL</strong> to make it easy for you to locate. It will say <em>“Action required: Review your enrollment.”</em></div>
+            <div class="agent-line">Have you ever done an electronic signature before? Perfect — I’m going to send them over now.</div>
+            <div class="stage-direction">Walk the client through the docs.</div>
+
             <div class="important-note"><strong>TIP:</strong> E-Sign Instructions</div>
-            <div class="agent-line"><strong>11. </strong>Open text message that says “Document Signature Requested.”</div>
-            <div class="agent-line"><strong>12. </strong>Click the checkbox that agrees to terms and conditions using an e-signature document, then click the green button that says “Begin Signing.”</div>
-            <div class="agent-line"><strong>13. </strong>Tap on the orange initial box on the right-hand side that says “Tap / Click to Place Initials.”</div>
-            <div class="agent-line"><strong>14. </strong>Draw signature, then draw initials at the bottom using your finger. At the bottom, tap the green button that says “Adopt and Confirm Signature.”</div>
-            <div class="agent-line"><strong>15. </strong>Tap on the rest of the orange boxes throughout the document. At the bottom, once done, tap the green button that says “Finish Document.”</div>
-            <div class="stage-direction">Once they have signed agreement and you see it in your mailbox read:</div>
-            <div class="agent-line">Great I have it and say congratulations, I am required to read you these questions so they know I did my job correctly.</div>
-            <div class="important-note"><strong>TIP:</strong> Objection: "I can't pay this Friday or next Friday"</div>
-            <div class="agent-line">Okay … let's go back a little bit. Is the monthly payment too high? I want this to be super smooth for you without a headache. The very farthest I can push this would be 30 days from today before the first payment would be due.</div>
-            <div class="crm-note">(Let them talk. What is the ROOT cause why they are resisting scheduling soon? What day is manageable to start the program?)</div>
-            <div class="agent-line">Perfect. So we have completed your application and payment schedule. The next step for us today is to secure your benefits by including the payment information.</div>
-            <div class="important-note"><strong>TIP:</strong> NOTHING WILL BE CHARGED UNTIL THAT FIRST PAYMENT WE SELECTED OF <span class="blank">________</span></div>
-            <div class="agent-line">Is it just your first and last name on the card, or is there a middle initial listed? And is the billing address on the card the same as your mailing address?</div>
-            <div class="stage-direction">Now go to the credit card tab</div>
-            <div class="stage-direction">Select Debit Card</div>
-            <div class="stage-direction">Then enter the rest of the info. Make sure you ask if they have a middle initial on their card. And verify the billing address is the same as the home address.</div>
-            <div class="agent-line">Great. So we will move on to one of the last steps for us today. As promised, I have your E-Sign documents for you. Allow me one moment to get these generated — I will walk you through signing them step by step.</div>
-            <div class="agent-line">Have you ever done an electronic signature before?</div>
-            <div class="stage-direction">Now go back to enrollment screen</div>
-            <div class="stage-direction">Then Edit enrollment</div>
-            <div class="stage-direction">Then Click on Save and Generate Contract</div>
-            <div class="stage-direction">At this screen select template to use there is only 1 option</div>
-            <div class="stage-direction">Then select send sms</div>
-            <div class="stage-direction">Then send for signature</div>
-            <div class="agent-line">Perfect! While you are working on that, I am going to multitask a bit. I will send you a text with my contact info — just to be a bit redundant in case you ever need to reach me.</div>
-            <div class="important-note"><strong>TIP:</strong> E-Sign Instructions</div>
-            <div class="agent-line">11. Open text message that says "Document Signature Requested." <span class="optional-tag">Optional</span></div>
-            <div class="agent-line">12. Click the checkbox that agrees to terms and conditions using an e-signature document, then click the green button that says "Begin Signing." <span class="optional-tag">Optional</span></div>
-            <div class="agent-line">13. Tap on the orange initial box on the right-hand side that says "Tap / Click to Place Initials." <span class="optional-tag">Optional</span></div>
-            <div class="agent-line">14. Draw signature, then draw initials at the bottom using your finger. At the bottom, tap the green button that says "Adopt and Confirm Signature." <span class="optional-tag">Optional</span></div>
-            <div class="agent-line">15. Tap on the rest of the orange boxes throughout the document. At the bottom, once done, tap the green button that says "Finish Document." <span class="optional-tag">Optional</span></div>
-            <div class="stage-direction">Once they have signed agreement and you see it in your mailbox read:</div>
-            <div class="agent-line">Great I have it and say congratulations, I am required to read you these questions so they know I did my job correctly.</div>
-            <div class="agent-line"><strong>1. </strong>You understand the payments you are making go towards your validation program and the monthly legal coverage — and not directly to pay your debts, correct?</div>
-            <div class="agent-line"><strong>2. </strong>You understand this is not a debt settlement program, but a Debt VALIDATION program, and the payments for your program do not go to an escrow account?</div>
-            <div class="agent-line"><strong>3. </strong>You understand that in the very rare case that you receive a summons — Resolve Law Group will connect you with a local attorney who will assist you in settling the account for you at no cost for their LEGAL SERVICES — and that you will be paying that settlement directly to the creditor, but again this will still be at a fraction of the cost of the particular account?</div>
-            <div class="agent-line"><strong>4. </strong>You understand that your FIRST payment in the program is scheduled for <span class="blank">________</span> (Date) in the amount of $<span class="blank">________</span>. If your first payment is not successful and you do not reschedule, the program and all services will be canceled?</div>
-            <div class="agent-line"><strong>5. </strong>Lastly, we will require that you send us all 3rd-party collection letters you receive directly — so any you already have, or anything new that shows up, send us a copy through email or text.</div>
-            <div class="agent-line">Other than that, we are completely done for the day. Customer Support will reach out to you from their direct number, 949-288-5830, in the next 1–2 days for a short “Welcome Call.” It has been such a pleasure to assist you. Never hesitate to reach out if you have any questions, comments, or concerns. Hope you have a great rest of your day! Talk to you soon!</div>
-            <div class="important-note"><strong>TIP: POST-CLOSE CHECKLIST</strong></div>
-            <div class="crm-note">• Name, birthday, phone number, email, pay schedule, and card — Saved</div>
-            <div class="crm-note">• Docs Signed and show "Completed"</div>
-            <div class="crm-note">• DEAL Submitted</div>
-            <div class="crm-note">• Deal on Scoreboard</div>
-            <div class="crm-note">Once you are done make sure you hit submit but make sure you never hit that button without a signed contract</div>
+            <div class="agent-line"><strong>1.</strong> Open the email that says “Action required: Review your enrollment.”</div>
+            <div class="agent-line"><strong>2.</strong> Click the checkbox that agrees to terms and conditions using an e-signature document, then click the green button that says “Begin Signing.”</div>
+            <div class="agent-line"><strong>3.</strong> Tap the orange initial box on the right-hand side that says “Tap / Click to Place Initials.”</div>
+            <div class="agent-line"><strong>4.</strong> Draw signature, then draw initials at the bottom using your finger. Tap the green button that says “Adopt and Confirm Signature.”</div>
+            <div class="agent-line"><strong>5.</strong> Tap on the rest of the orange boxes throughout the document. Once done, tap the green button that says “Finish Document.”</div>
+            <!-- Wrap & Handoff -->
+            <div class="important-note"><strong>TIP:</strong> Wrap-up &amp; Handoff to Ironwood Law Group</div>
+            <div class="agent-line">Congratulations — you are officially on the path to being debt-free and lendable in the near future!</div>
+            <div class="agent-line">I am also going to send you my direct number and email — think of me as your personal rep on this program.</div>
+            <div class="stage-direction">Send the contact text immediately while still on the call (or right after).</div>
+            <div class="stage-direction">Send the <strong>ILG Program Offer Breakdown — Approval</strong> email. Confirm the accurate numbers are showing on the email before sending.</div>
+
+            <div class="important-note"><strong>TIP:</strong> ILG Welcome Call Routing</div>
+            <div class="crm-note">• Under $25K → <strong>Ext. 50</strong></div>
+            <div class="crm-note">• $25K and over → <strong>Ext. 60</strong></div>
+            <div class="crm-note">• Debt over $12K → transfer to <strong>US closer RVM sales queue 9903</strong></div>
+            <div class="agent-line">Now I’m going to transfer you over to Ironwood Law Group for your short Welcome Call so we can officially get the program started for you. One moment please.</div>
+            <div class="stage-direction">Check Agent Available Link, then warm-transfer the client to ILG for the Welcome Call. If no concierge is available, set up a callback time.</div>
+
+            <div class="agent-line">It has been such a pleasure to assist you. Never hesitate to reach out if you have any questions, comments, or concerns. Hope you have a great rest of your day! Talk to you soon!</div>
           </div>
         </div>
 
-        <div class="collapsible-section" id="rvm-qc">
+        <div class="collapsible-section" id="rvm-end-of-call">
           <button class="section-toggle" aria-expanded="true" onclick="toggleSection(this)">
-            13. QC SCRIPT <span class="chevron">&#9660;</span>
+            13. END OF CALL CHECKLIST <span class="chevron">&#9660;</span>
           </button>
           <div class="section-content">
-            <div class="agent-line"><strong>1. </strong>You understand the payments you are making go towards your validation program and the monthly legal coverage — and not directly to pay your debts, correct?</div>
-            <div class="agent-line"><strong>2. </strong>You understand this is not a debt settlement program, but a Debt VALIDATION program, and the payments for your program do not go to an escrow account?</div>
-            <div class="agent-line"><strong>3. </strong>You understand that in the very rare case that you receive a summons — Resolve Law Group will connect you with a local attorney who will assist you in settling the account for you at no cost for their LEGAL SERVICES — and that you will be paying that settlement directly to the creditor, but again this will still be at a fraction of the cost of the particular account?</div>
-            <div class="agent-line"><strong>4. </strong>You understand that your FIRST payment in the program is scheduled for <span class="blank">________</span> (Date) in the amount of $<span class="blank">________</span>. If your first payment is not successful and you do not reschedule, the program and all services will be canceled?</div>
-            <div class="agent-line"><strong>5. </strong>Lastly, we will require that you send us all 3rd-party collection letters you receive directly — so any you already have, or anything new that shows up, send us a copy through email or text.</div>
-            <div class="agent-line">Other than that, we are completely done for the day. Customer Support will reach out to you from their direct number, 949-288-5830, in the next 1–2 days for a short “Welcome Call.” It has been such a pleasure to assist you. Never hesitate to reach out if you have any questions, comments, or concerns. Hope you have a great rest of your day! Talk to you soon!</div>
-            <div class="important-note"><strong>TIP: POST-CLOSE CHECKLIST</strong></div>
-            <div class="crm-note">• Name, birthday, phone number, email, pay schedule, and card — Saved</div>
-            <div class="crm-note">• Docs Signed and show "Completed"</div>
+            <div class="crm-note">Run this checklist on EVERY call before you hang up — closed, pitched, or follow-up.</div>
+
+            <div class="important-note"><strong>1 — Change Status in CRM</strong></div>
+            <div class="crm-note">• Update lead status immediately after the call based on the outcome (what happened / next step).</div>
+            <div class="crm-note">• Add call outcome notes to the lead record.</div>
+            <div class="crm-note">• Confirm the lead is self-assigned to you in Motion.</div>
+
+            <div class="important-note"><strong>2 — Send ILG Program Offer Breakdown — Approval</strong></div>
+            <div class="crm-note">If the deal closed (or you pitched and the client is thinking about it / a follow-up), send the <strong>ILG Program Offer Breakdown — Approval</strong> email.</div>
+            <div class="crm-note">Confirm the accurate numbers are showing on the email before sending.</div>
+
+            <div class="important-note"><strong>3 — Set Appointment / Task</strong></div>
+            <div class="crm-note">Schedule a specific callback date and time before ending the call — &quot;sometime next week&quot; is NOT a task.</div>
+            <div class="crm-note">Log the task in the CRM with the agreed date and purpose.</div>
+
+            <div class="important-note"><strong>4 — After the Deal is Closed</strong></div>
+            <div class="crm-note">Remind the client to turn off auto-pay on ALL enrolled accounts immediately — paying creditors directly defeats the dispute process.</div>
+            <div class="crm-note">Check the Agent Available Link and transfer the client for the Welcome Call.</div>
+            <div class="crm-note">If no concierges are available, set up a callback time.</div>
+
+            <div class="important-note"><strong>POST-CLOSE CHECKLIST</strong></div>
+            <div class="crm-note">• Name, birthday, phone number, email, pay schedule, and ACH — Saved</div>
+            <div class="crm-note">• Docs Signed and show &quot;Completed&quot;</div>
             <div class="crm-note">• DEAL Submitted</div>
             <div class="crm-note">• Deal on Scoreboard</div>
-            <div class="crm-note">Once you are done make sure you hit submit but make sure you never hit that button without a signed contract</div>
+            <div class="crm-note">Make sure you hit submit — but NEVER hit that button without a signed contract.</div>
+
+            <div class="important-note"><strong>ILG TRANSFER ROUTING (reminder)</strong></div>
+            <div class="crm-note">• Under $25K → <strong>Ext. 50</strong></div>
+            <div class="crm-note">• $25K and over → <strong>Ext. 60</strong></div>
+            <div class="crm-note">• Debt over $12K → transfer to <strong>US closer RVM sales queue 9903</strong></div>
           </div>
         </div>
         </div><!-- /phase-rvm-content -->
